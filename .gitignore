@@ -1,3 +1,5 @@
 .vscode
 /BackEnd/.env
+/BackEnd/src/.env
+/BackEnd/src/database/prisma/.env
 /BackEnd/node_modules

@@ -3,4 +3,8 @@ Project at Da Nang University of Technology. PBL6 project (Specialized informati
 
 Steps to run this project:
 1. Run `npm i` command
-2. Run `npm start` command
+2. Create database:
+    - Create new .env file in BackEnd/src/database/prisma as sample .env.example
+    - Run `cd BackEnd` command
+    - Run `npx prisma db push` command
+3. Run `npm start` command
