@@ -6,7 +6,8 @@
   "scripts": {
     "beautiful": "lint-staged",
     "start": "nodemon --inspect src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "insert-data-test": "node src/database/insert/index.js"
   },
   "author": "",
   "license": "ISC",

@@ -28,16 +28,16 @@ model User {
   id_user       Int         @id @default(autoincrement()) @db.UnsignedInt
   username      String      @unique @db.VarChar(100)
   password      String      @db.VarChar(100)
-  id_role       User_Role
+  id_role       User_Role   @default(traveller)
   name          String      @db.VarChar(100)
   email         String      @unique @db.VarChar(100)
-  Gender        Boolean
-  date_of_birth DateTime
+  gender        Boolean
+  date_of_birth DateTime    @db.Date()
   phone_number  String      @db.Char(10)
-  Address       String      @db.Text
+  address       String      @db.Text
   create_at     DateTime    @default(now())
-  Point         Int         @db.UnsignedMediumInt
-  status        User_Status
+  point         Int         @db.UnsignedMediumInt
+  status        User_Status @default(active)
 
   info_supplier Info_Supplier[]
   product       Product[]
@@ -54,7 +54,7 @@ model Info_Supplier {
   id_user          Int    @db.UnsignedInt
   user             User   @relation(fields: [id_user], references: [id_user])
   tax_id_number    String @unique @db.VarChar(13)
-  Fee              Int    @db.UnsignedSmallInt
+  fee              Int    @db.UnsignedSmallInt
 }
 
 model City {
@@ -74,47 +74,67 @@ model Location {
   product Product[]
 }
 
-enum Product_Status {
+model Product {
+  id_product     Int      @id @default(autoincrement()) @db.UnsignedInt
+  name           String
+  id_user        Int      @db.UnsignedInt
+  user           User     @relation(fields: [id_user], references: [id_user])
+  location_map   String
+  time           Float    @db.Float
+  quantity       Int      @db.UnsignedSmallInt
+  age            Int      @db.UnsignedSmallInt
+  count_complete BigInt   @default(0) @db.UnsignedBigInt
+  description    String   @db.LongText
+  count_rate     Int      @default(0) @db.UnsignedInt
+  avg_rate       Int      @default(0) @db.UnsignedInt
+  id_location    Int      @db.UnsignedInt
+  location       Location @relation(fields: [id_location], references: [id_location])
+
+  schedule_product Schedule_Product[]
+  discount         Discount[]
+  rate             Rate[]
+}
+
+enum Schedule_Product_Status {
   active
+  full
   inactive
   cancel
 }
 
-model Product {
-  id_product     Int            @id @default(autoincrement()) @db.UnsignedInt
-  name           String
-  id_user        Int            @db.UnsignedInt
-  user           User           @relation(fields: [id_user], references: [id_user])
-  Location_map   String
-  start_time     DateTime
-  end_time       DateTime
-  quantity       Int            @db.UnsignedSmallInt
-  price          Int            @db.UnsignedInt
-  Age            Int            @db.UnsignedSmallInt
-  count_complete BigInt         @db.UnsignedBigInt
-  description    String         @db.LongText
-  avg_rate       Int            @db.UnsignedInt
-  id_location    Int            @db.UnsignedInt
-  location       Location       @relation(fields: [id_location], references: [id_location])
-  status         Product_Status
+model Schedule_Product {
+  id_schedule_product Int                     @id @default(autoincrement()) @db.UnsignedInt
+  id_product          Int                     @db.UnsignedInt
+  product             Product                 @relation(fields: [id_product], references: [id_product])
+  start_time          DateTime
+  end_time            DateTime
+  price               Int                     @db.UnsignedInt
+  booked              Int                     @default(0) @db.UnsignedSmallInt
+  status              Schedule_Product_Status @default(active)
 
-  discount  Discount[]
   info_cart Info_Cart[]
   info_bill Info_Bill[]
-  rate      Rate[]
+}
+
+enum status_Discount {
+  active
+  full
+  cancel
 }
 
 model Discount {
-  id_discount Int      @id @default(autoincrement()) @db.UnsignedInt
-  id_user     Int      @db.UnsignedInt
-  user        User     @relation(fields: [id_user], references: [id_user])
-  id_product  Int      @db.UnsignedInt
-  product     Product  @relation(fields: [id_product], references: [id_product])
+  id_discount Int             @id @default(autoincrement()) @db.UnsignedInt
+  id_user     Int             @db.UnsignedInt
+  user        User            @relation(fields: [id_user], references: [id_user])
+  id_product  Int             @db.UnsignedInt
+  product     Product         @relation(fields: [id_product], references: [id_product])
   start_time  DateTime
   end_time    DateTime
-  value       Int      @db.UnsignedSmallInt
-  count       Int      @db.UnsignedSmallInt
-  Point       Int      @db.UnsignedMediumInt
+  value       Int             @db.UnsignedSmallInt
+  count       Int             @db.UnsignedSmallInt
+  point       Int             @db.UnsignedMediumInt
+  applited    Int             @db.UnsignedSmallInt @default(0)
+  status      status_Discount @default(active)
 
   bill Bill[]
 }
@@ -128,17 +148,16 @@ model Cart {
 }
 
 model Info_Cart {
-  id_info_cart Int     @id @default(autoincrement()) @db.UnsignedInt
-  id_cart      Int     @db.UnsignedInt
-  cart         Cart    @relation(fields: [id_cart], references: [id_cart])
-  id_product   Int     @db.UnsignedInt
-  poruduct     Product @relation(fields: [id_product], references: [id_product])
+  id_info_cart        Int              @id @default(autoincrement()) @db.UnsignedInt
+  id_cart             Int              @db.UnsignedInt
+  cart                Cart             @relation(fields: [id_cart], references: [id_cart])
+  id_schedule_product Int              @db.UnsignedInt
+  schedule_poruduct   Schedule_Product @relation(fields: [id_schedule_product], references: [id_schedule_product])
 }
 
 enum Bill_Status {
-  done
-  complete
-  paiding
+  paid
+  pending
   cancel
 }
 
@@ -156,11 +175,11 @@ model Bill {
 }
 
 model Info_Bill {
-  id_info_bill Int     @id @default(autoincrement()) @db.UnsignedInt
-  id_bill      Int     @db.UnsignedInt
-  bill         Bill    @relation(fields: [id_bill], references: [id_bill])
-  id_product   Int     @db.UnsignedInt
-  product      Product @relation(fields: [id_product], references: [id_product])
+  id_info_bill        Int              @id @default(autoincrement()) @db.UnsignedInt
+  id_bill             Int              @db.UnsignedInt
+  bill                Bill             @relation(fields: [id_bill], references: [id_bill])
+  id_schedule_product Int              @db.UnsignedInt
+  schedule_product    Schedule_Product @relation(fields: [id_schedule_product], references: [id_schedule_product])
 }
 
 enum Rate_Status {
@@ -176,7 +195,7 @@ model Rate {
   user       User        @relation(fields: [id_user], references: [id_user])
   comment    String      @db.Text
   star       Int         @db.UnsignedSmallInt
-  status     Rate_Status
+  status     Rate_Status @default(presently)
 }
 
 model Contact {
