@@ -9,12 +9,12 @@ const insertDataBill = async () => {
                 id_user: 2,
                 quantity: 4,
                 id_discount: 1,
-                status: 'paiding'
+                status: 'paided'
             }
         ]
     })
     
-    await prisma.info_bill.createMany({
+    await prisma.info_Bill.createMany({
         data: [
             {
                 id_bill: 1,
