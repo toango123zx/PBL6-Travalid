@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "beautiful": "lint-staged",
-    "start": "nodemon --inspect src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon --exec babel-node --inspect src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "insert-data-test": "node src/database/insert/index.js"
   },
   "author": "",
   "license": "ISC",
@@ -18,17 +19,20 @@
       "pre-commit": "lint-staged"
     }
   },
-  "prisma":{
+  "prisma": {
     "schema": "src/database/prisma/schema.prisma"
   },
   "dependencies": {
-    "@prisma/client": "^5.4.1",
+    "@prisma/client": "^5.4.2",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "morgan": "^1.10.0",
     "nodemon": "^3.0.1"
   },
   "devDependencies": {
-    "prisma": "^5.4.1"
+    "@babel/core": "^7.23.0",
+    "@babel/node": "^7.22.19",
+    "@babel/preset-env": "^7.22.20",
+    "prisma": "^5.4.2"
   }
 }
