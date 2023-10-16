@@ -8,7 +8,7 @@ const insertDataUser = async () => {
             {
                 username: 'admin',
                 password: 'admin',
-                id_role: "admin",
+                role: "admin",
                 name: 'admin',
                 email: "admin@gmail.com",
                 gender: true,
@@ -21,7 +21,7 @@ const insertDataUser = async () => {
             {
                 username: 'traveller',
                 password: 'traveller',
-                id_role: "traveller",
+                role: "traveller",
                 name: 'traveller',
                 email: "traveller@gmail.com",
                 gender: true,
@@ -34,7 +34,7 @@ const insertDataUser = async () => {
             {
                 username: 'travel_supplier',
                 password: 'travel_supplier',
-                id_role: "travel_supplier",
+                role: "travel_supplier",
                 name: 'travel_supplier',
                 email: "travel_supplier@gmail.com",
                 gender: true,

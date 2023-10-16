@@ -28,7 +28,7 @@ model User {
   id_user       Int         @id @default(autoincrement()) @db.UnsignedInt
   username      String      @unique @db.VarChar(100)
   password      String      @db.VarChar(100)
-  id_role       User_Role   @default(traveller)
+  role          User_Role   @default(traveller)
   name          String      @db.VarChar(100)
   email         String      @unique @db.VarChar(100)
   gender        Boolean
@@ -36,7 +36,7 @@ model User {
   phone_number  String      @db.Char(10)
   address       String      @db.Text
   create_at     DateTime    @default(now())
-  point         Int         @db.UnsignedMediumInt
+  point         Int         @default(0) @db.UnsignedMediumInt
   status        User_Status @default(active)
 
   info_supplier Info_Supplier[]
@@ -132,8 +132,8 @@ model Discount {
   end_time    DateTime
   value       Int             @db.UnsignedSmallInt
   count       Int             @db.UnsignedSmallInt
-  point       Int             @db.UnsignedMediumInt
-  applited    Int             @db.UnsignedSmallInt @default(0)
+  point       Int             @default(0) @db.UnsignedMediumInt
+  applited    Int             @default(0) @db.UnsignedSmallInt
   status      status_Discount @default(active)
 
   bill Bill[]
