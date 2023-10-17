@@ -7,23 +7,13 @@ export const show = async (req, res, next) => {
         data: "show"
     })
 }
-
 export const getAllProduct = async (req, res, next) => {
     try {
-        console.log("getAllProduct");
-        const userId = 1;
         const allProduct = await prisma.product.findMany();
-        const formattedProductList = allProduct.map(product => {
-            return {
-                ...product,
-                count_complete	: parseInt(product.id),
-            };
-        });
-
         res.status(200).send({
             status: 'success',
             msg: 'You have successfully.',
-            data: formattedProductList,
+            data: allProduct,
         });
     } catch (err) {
         console.error('getAllProduct: ', err);
@@ -36,33 +26,104 @@ export const getAllProduct = async (req, res, next) => {
 export const getProductById = async (req, res, next) => {
     try {
         const userId = parseInt(req.query.userId);
-        console.log("getProductById");
-        const allProduct = await prisma.product.findUnique({
-            where: { id_product : userId }
-          });
-        const formattedProductList =  {
-                ...allProduct,
-                count_complete	: parseInt(allProduct.id),
-            };
+        const Product = await prisma.product.findUnique({
+            where: { id_product: userId }
+        });
         res.status(200).send({
             status: 'success',
-            msg: 'You have successfully.', 
-            data: formattedProductList,
+            msg: 'You have successfully.',
+            data: Product,
         });
     } catch (err) {
         console.error('getProductById: ', err);
         res.status(500).send({
-            msg: 'Get internal server error in get all product',
+            msg: 'Get internal server error in get product',
         });
     }
 };
 export const createProduct = async (req, res, next) => {
-    // Some code here
-}
+    try {
+        const { name, id_user, location_map, time, quantity, age, description, id_location } = req.body;
+        const createProduct = await prisma.product.create({
+            data: {
+                name: name,
+                id_user: id_user,
+                location_map: location_map,
+                time: time,
+                quantity: quantity,
+                age: age,
+                description: description,
+                id_location: id_location,
+            }
+        });
+        res.status(200).send({
+            status: 'success',
+            msg: 'You have successfully.',
+            data: createProduct,
+        });
+    } catch (err) {
+        console.error('createProduct: ', err);
+        res.status(500).send({
+            msg: 'Get internal server error in get product',
+        });
+    }
+};
+
 export const updateProduct = async (req, res, next) => {
-    // Some code here
-}
+    try {
+        const id_product = parseInt(req.query.id_product);
+        const { name, id_user, location_map, time, quantity, age, description, id_location } = req.body;
+        const updateProduct = await prisma.product.update({
+            where: {
+                id_product: id_product
+            },
+            data: {
+                name: name,
+                id_user: id_user,
+                location_map: location_map,
+                time: time,
+                quantity: quantity,
+                age: age,
+                description: description,
+                id_location: id_location,
+            }
+        });
+        res.status(200).send({
+            status: 'success',
+            msg: 'You have successfully.',
+            data: updateProduct,
+        });
+    } catch (err) {
+        console.error('updateProduct: ', err);
+        res.status(500).send({
+            msg: 'Update Product error',
+        });
+    }
+};
+
 export const deleteProduct = async (req, res, next) => {
-    // Some code here
-}
+    try {
+        const id_product = parseInt(req.query.id_product);
+        const deleteRates = await prisma.rate.deleteMany({
+            where: {
+                id_product: id_product
+            }
+          });
+        const deleteProduct = await prisma.product.delete({
+            where: {
+                id_product: id_product
+            },
+        });
+        res.status(200).send({
+            status: 'success',
+            msg: 'You have successfully.',
+            data: deleteProduct,
+        });
+    } catch (err) {
+        console.error('deleteProduct: ', err);
+        res.status(500).send({
+            msg: 'Delete erorr',
+        });
+    }
+};
 
