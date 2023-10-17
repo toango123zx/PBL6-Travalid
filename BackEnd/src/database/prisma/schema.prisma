@@ -83,7 +83,7 @@ model Product {
   time           Float    @db.Float
   quantity       Int      @db.UnsignedSmallInt
   age            Int      @db.UnsignedSmallInt
-  count_complete BigInt   @default(0) @db.UnsignedBigInt
+  count_complete Int   @default(0) @db.UnsignedInt
   description    String   @db.LongText
   count_rate     Int      @default(0) @db.UnsignedInt
   avg_rate       Int      @default(0) @db.UnsignedInt
