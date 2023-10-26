@@ -3,7 +3,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 export const travellerSignUpValidation = (req, res, next) => {
-    const { name, email, gender, date_of_birth, phone_number } = req.body;
+    const { name, email, role, gender, date_of_birth, phone_number } = req.body;
 
     const __notCharName = /[\d~`!@#$%^&*()_\-+={[}\]|;:<,>.?/]+/;
     const __charEmail = /^[a-zA-Z0-9._%-]+@gmail\.com$/;
@@ -21,6 +21,11 @@ export const travellerSignUpValidation = (req, res, next) => {
             position: "email",
             msg: "as sample: user1@gmail.com",
         });
+    }
+    if (!role && (role === "traveller" || role === "travel_supplier" ||
+        role === "hotel_supplier" || role === "restaurant_supplier" ||
+        role === "transportation_supplier" || role === "admin")) {
+        return res.sendStatus(500);
     }
     if (!(__charGender.test(gender))) {
         return res.status(422).json({
@@ -50,7 +55,24 @@ export const travellerSignUpValidation = (req, res, next) => {
     next();
 }
 
-export const checkDuplicateUsernames = async (req, res, next) => {
+export const supplierSignUpValidation = ([travellerSignUpValidation, (req, res, next) => {
+
+    const __tax_id_number = req.body.tax_id_number;
+
+    if (String(__tax_id_number).length > 13) {
+        return res.status(422).json({
+            position: "tax_id_number",
+            msg: "Less than or equal to 13 characters",
+        });
+    }
+
+    next();
+}])
+
+export const checkDuplicateUser = async (req, res, next) => {
+
+    const __tax_id_number = req.body.tax_id_number;
+
     const __user = await prisma.user.findFirst({
         select: {
             password: true,
@@ -74,6 +96,26 @@ export const checkDuplicateUsernames = async (req, res, next) => {
     if (__user !== null) {
         return res.status(409).json({
             position: "username or email",
+            msg: "already exist",
+        });
+    }
+
+    if (!(__tax_id_number)) {
+        return next();
+    }
+
+    const __info_supplier = await prisma.info_Supplier.findFirst({
+        select: {
+            id_info_supplier: true,
+        },
+        where: {
+            tax_id_number: __tax_id_number,
+        }
+    })
+    
+    if (__info_supplier !== null) {
+        return res.status(409).json({
+            position: "tax id number",
             msg: "already exist",
         });
     }
