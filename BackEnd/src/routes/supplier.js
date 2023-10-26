@@ -5,8 +5,8 @@ const { PrismaClient } = require('@prisma/client');
 import * as authController from '../controllers/authController'
 import * as authValidation from '../middleware/authValidation'
 
-const travellerRouter = express.Router();
+const supplierRouter = express.Router();
 
-travellerRouter.post('/sign-up', authValidation.travellerSignUpValidation, authValidation.checkDuplicateUser, authController.travellerSignUp)
+supplierRouter.post('/sign-up', authValidation.supplierSignUpValidation, authValidation.checkDuplicateUser, authController.supplierSignUp)
 
-module.exports = travellerRouter;
+module.exports = supplierRouter;

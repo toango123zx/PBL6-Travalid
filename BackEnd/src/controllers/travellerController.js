@@ -16,6 +16,9 @@ export const creteUser = async (req) => {
         address: req.address,
         salt: ""
     }
+    if (req.role && !(req.role === "traveller")) {
+        __user.role = req.role
+    }
 
     const { __salt, __hashedPassword } = hash.hashPassword(req.password);
 
@@ -31,5 +34,19 @@ export const creteUser = async (req) => {
         return false;
     }
 
+    return true;
+}
+
+export const deleteUser = async (username) => {
+    try {
+        await prisma.user.delete({
+            where: {
+                username: username
+            }
+        })
+    } catch (e) {
+        return false;
+    }
+    
     return true;
 }
