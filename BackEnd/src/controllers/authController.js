@@ -35,3 +35,49 @@ export const supplierSignUp = (travellerSignUp, async (req, res, next) => {
 
     return res.sendStatus(200);
 })
+
+export const signIn = async (req, res, next) => {
+    const __username = req.body.username.replace(/\s/g, '');;
+    const __password = req.body.password;
+    const __user = await prisma.user.findFirst({
+        select: {
+            username: true,
+            password: true,
+            salt: true,
+            role: true,
+            email: true,
+            status: true
+        },
+        where: {
+            username: __username,
+            NOT: {
+                role: "traveller",
+                status: "inactive"
+            }
+        }
+    })
+
+    if (__user === null) {
+        return res.status(404).json({
+            position: "username",
+            msg: "username does not exist"
+        });
+    }
+
+    console.log(typeof (hash.comparePassword(__user.password, __user.salt, __password)))
+    if (!(hash.comparePassword(__user.password, __user.salt, __password))) {
+        return res.status(401).json({
+            position: "password",
+            msg: "Invalid password",
+        });
+    }
+
+    __user['token'] = __user.password;
+
+    delete __user.password;
+    delete __user.salt;
+
+    return res.status(200).json({
+        data: __user,
+    });
+}
