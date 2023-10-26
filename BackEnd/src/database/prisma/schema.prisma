@@ -27,8 +27,9 @@ enum User_Status {
 model User {
   id_user       Int         @id @default(autoincrement()) @db.UnsignedInt
   username      String      @unique @db.VarChar(100)
-  password      String      @db.VarChar(100)
+  password      String      @db.Char(128)
   role          User_Role   @default(traveller)
+  image         String      @default("https://drive.google.com/file/d/1FLEG8MIbWkBQu72L4x-MB1--iSj-3RMu/view?usp=drive_link")
   name          String      @db.VarChar(100)
   email         String      @unique @db.VarChar(100)
   gender        Boolean
@@ -38,6 +39,7 @@ model User {
   create_at     DateTime    @default(now())
   point         Int         @default(0) @db.UnsignedMediumInt
   status        User_Status @default(active)
+  salt          String      @db.Char(32)
 
   info_supplier Info_Supplier[]
   product       Product[]
@@ -54,7 +56,7 @@ model Info_Supplier {
   id_user          Int    @db.UnsignedInt
   user             User   @relation(fields: [id_user], references: [id_user])
   tax_id_number    String @unique @db.VarChar(13)
-  fee              Int    @db.UnsignedSmallInt
+  fee              Int    @default(10) @db.UnsignedSmallInt
 }
 
 model City {
@@ -75,20 +77,20 @@ model Location {
 }
 
 model Product {
-  id_product     Int      @id @default(autoincrement()) @db.UnsignedInt
-  name           String
-  id_user        Int      @db.UnsignedInt
-  user           User     @relation(fields: [id_user], references: [id_user])
-  location_map   String
-  time           Float    @db.Float
-  quantity       Int      @db.UnsignedSmallInt
-  age            Int      @db.UnsignedSmallInt
-  count_complete BigInt   @default(0) @db.UnsignedBigInt
-  description    String   @db.LongText
-  count_rate     Int      @default(0) @db.UnsignedInt
-  avg_rate       Int      @default(0) @db.UnsignedInt
-  id_location    Int      @db.UnsignedInt
-  location       Location @relation(fields: [id_location], references: [id_location])
+  id_product   Int    @id @default(autoincrement()) @db.UnsignedInt
+  name         String
+  id_user      Int    @db.UnsignedInt
+  user         User   @relation(fields: [id_user], references: [id_user])
+  location_map String
+  time         Float  @db.Float
+  quantity     Int    @db.UnsignedSmallInt
+  age          Int    @db.UnsignedSmallInt
+
+  description String   @db.LongText
+  count_rate  Int      @default(0) @db.UnsignedInt
+  avg_rate    Int      @default(0) @db.UnsignedInt
+  id_location Int      @db.UnsignedInt
+  location    Location @relation(fields: [id_location], references: [id_location])
 
   schedule_product Schedule_Product[]
   discount         Discount[]
