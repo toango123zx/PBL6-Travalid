@@ -1,8 +1,6 @@
-const { PrismaClient } = require('@prisma/client');
-var bodyParser = require('body-parser');
 import * as hash from '../helpers/hash';
 
-const prisma = new PrismaClient();
+const { prisma } = require('../config/prismaDatabase');
 
 export const creteUser = async (req) => {
     const __user = {
@@ -15,10 +13,10 @@ export const creteUser = async (req) => {
         phone_number: req.phone_number,
         address: req.address,
         salt: ""
-    }
+    };
     if (req.role && !(req.role === "traveller")) {
         __user.role = req.role
-    }
+    };
 
     const { __salt, __hashedPassword } = hash.hashPassword(req.password);
 
@@ -28,7 +26,7 @@ export const creteUser = async (req) => {
     try {
         await prisma.user.create({
             data: __user
-        })
+        });
     }
     catch (e) {
         return false;
@@ -43,7 +41,7 @@ export const deleteUser = async (username) => {
             where: {
                 username: username
             }
-        })
+        });
     } catch (e) {
         return false;
     }

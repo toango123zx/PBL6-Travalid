@@ -1,10 +1,6 @@
-const { PrismaClient } = require('@prisma/client');
-var bodyParser = require('body-parser');
-import * as hash from '../helpers/hash';
-import * as envSupplier from '../config/envSupplier'
-import * as travellerController from '../controllers/travellerController'
+import * as envSupplier from '../config/envSupplier';
 
-const prisma = new PrismaClient();
+const { prisma } = require('../config/prismaDatabase');
 
 export const creteInfoSupplier = async (req) => {
     const __user = await prisma.user.findFirst({
@@ -21,16 +17,16 @@ export const creteInfoSupplier = async (req) => {
         id_user: __user.id_user,
         tax_id_number: req.tax_id_number,
         fee: envSupplier.fee
-    }
+    };
 
     try {
         await prisma.info_Supplier.create({
             data: __info_supplier,
-        })
+        });
     }
     catch (e) {
         return false;
     }
 
     return true;
-}
+};

@@ -77,20 +77,20 @@ model Location {
 }
 
 model Product {
-  id_product   Int    @id @default(autoincrement()) @db.UnsignedInt
-  name         String
-  id_user      Int    @db.UnsignedInt
-  user         User   @relation(fields: [id_user], references: [id_user])
-  location_map String
-  time         Float  @db.Float
-  quantity     Int    @db.UnsignedSmallInt
-  age          Int    @db.UnsignedSmallInt
-
-  description String   @db.LongText
-  count_rate  Int      @default(0) @db.UnsignedInt
-  avg_rate    Int      @default(0) @db.UnsignedInt
-  id_location Int      @db.UnsignedInt
-  location    Location @relation(fields: [id_location], references: [id_location])
+  id_product     Int      @id @default(autoincrement()) @db.UnsignedInt
+  name           String
+  id_user        Int      @db.UnsignedInt
+  user           User     @relation(fields: [id_user], references: [id_user])
+  location_map   String
+  time           Float    @db.Float
+  quantity       Int      @db.UnsignedSmallInt
+  age            Int      @db.UnsignedSmallInt
+  count_complete Int   @default(0) @db.UnsignedInt
+  description    String   @db.LongText
+  count_rate     Int      @default(0) @db.UnsignedInt
+  avg_rate       Int      @default(0) @db.UnsignedInt
+  id_location    Int      @db.UnsignedInt
+  location       Location @relation(fields: [id_location], references: [id_location])
 
   schedule_product Schedule_Product[]
   discount         Discount[]
