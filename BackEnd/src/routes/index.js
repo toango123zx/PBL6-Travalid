@@ -1,14 +1,8 @@
-
-const { PrismaClient } = require('@prisma/client');
-
-const siteRouter = require('./site');
-const travellerRouter = require('./traveller');
-const supplierRouter = require('./supplier');
-const productRouter = require('./product')
+const authRouter = require('./auth');
+const productRouter = require('./product');
 
 function route(app) {
-    app.use('/', siteRouter);
-    app.use('/traveller', travellerRouter);;
+    app.use('/', authRouter);
     app.use('/product', productRouter);
     app.use('/supplier', supplierRouter)
 }
