@@ -21,4 +21,3 @@ route(app);
 app.listen(envApp.port, () => {
   console.log(`http://localhost:${envApp.port}`);
 })
-

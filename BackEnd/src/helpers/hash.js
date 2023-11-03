@@ -7,7 +7,7 @@ export const hashPassword = (input) => {
         __salt,
         __hashedPassword,
     };
-}
+};
 
 export const comparePassword = (hashPassword, salt, rawPassword) => {
     const __hashedRawPassword = crypto.pbkdf2Sync(
@@ -19,4 +19,4 @@ export const comparePassword = (hashPassword, salt, rawPassword) => {
     ).toString('hex');
     
     return hashPassword === __hashedRawPassword;
-}
+};

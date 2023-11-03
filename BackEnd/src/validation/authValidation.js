@@ -1,4 +1,4 @@
-const { prisma } = require('../config/prismaDatabase');
+import * as userService from '../services/userService';
 
 export const travellerSignUpValidation = (req, res, next) => {
     const { name, email, role, gender, date_of_birth, phone_number } = req.body;
@@ -51,7 +51,7 @@ export const travellerSignUpValidation = (req, res, next) => {
     };
 
     next();
-}
+};
 
 export const supplierSignUpValidation = ([travellerSignUpValidation, (req, res, next) => {
 
@@ -68,30 +68,16 @@ export const supplierSignUpValidation = ([travellerSignUpValidation, (req, res, 
 }]);
 
 export const checkDuplicateUser = async (req, res, next) => {
+    const __tax_id_number = !(req.body.tax_id_number) ? "" : req.body.tax_id_number.replace(/\s/g, '');
+    const __user = await userService.getUser(req.body.username.replace(/\s/g, ''), req.body.email.replace(/\s/g, ''), __tax_id_number);
+    if (__user !== null && __tax_id_number) {
+        return res.status(409).json({
+            position: "username or email or tax id number",
+            msg: "already exist",
+        });
+    };
 
-    const __tax_id_number = req.body.tax_id_number;
-
-    const __user = await prisma.user.findFirst({
-        select: {
-            password: true,
-            salt: true,
-            role: true,
-            email: true,
-            status: true,
-        },
-        where: {
-            OR: [
-                {
-                    username: req.body.username.replace(/\s/g, ''),
-                },
-                {
-                    email: req.body.email,
-                }
-            ]
-        }
-    });
-
-    if (__user !== null) {
+    if (__user !== null && !(__tax_id_number)) {
         return res.status(409).json({
             position: "username or email",
             msg: "already exist",
@@ -102,21 +88,5 @@ export const checkDuplicateUser = async (req, res, next) => {
         return next();
     };
 
-    const __info_supplier = await prisma.info_Supplier.findFirst({
-        select: {
-            id_info_supplier: true,
-        },
-        where: {
-            tax_id_number: __tax_id_number,
-        }
-    });
-
-    if (__info_supplier !== null) {
-        return res.status(409).json({
-            position: "tax id number",
-            msg: "already exist",
-        });
-    };
-
     next();
-}
+};
