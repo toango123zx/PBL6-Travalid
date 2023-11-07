@@ -9,7 +9,6 @@ export const getUser = async (username, email, tax_id_number) => {
                 password: true,
                 salt: true,
                 role: true,
-                email: true,
                 status: true,
             },
             where: {
@@ -32,7 +31,7 @@ export const getUser = async (username, email, tax_id_number) => {
                     status: "inactive",
                 },
             }
-        })
+        });
     } catch (e) {
         return false;
     };
@@ -42,13 +41,12 @@ export const creteUser = async (user) => {
     try {
         await prisma.user.create({
             data: user
-        })
-    }
-    catch (e) {
+        });
+        return true;
+    } catch (e) {
         return false;
     };
 
-    return true;
 };
 
 export const createSupplier = async (user, info_Supplier) => {
@@ -61,10 +59,9 @@ export const createSupplier = async (user, info_Supplier) => {
     try {
         await prisma.user.create({
             data: supplier
-        })
+        });
         return true;
-    }
-    catch (e) {
+    } catch (e) {
         return false;
     };
 };
@@ -75,10 +72,9 @@ export const deleteUser = async (username) => {
             where: {
                 username: username
             }
-        })
+        });
+        return true;
     } catch (e) {
         return false;
     };
-
-    return true;
 };
