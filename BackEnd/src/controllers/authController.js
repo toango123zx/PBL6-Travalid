@@ -84,8 +84,8 @@ export const refreshSignInToken = (req, res, next) => {
     const __newTokens = authHelper.refreshSignInToken(__refreshToken);
     if (!__newTokens) {
         return res.status(403).json({
-            position: "refreshToken is incorrect",
-            msg: "Refresh token is not valid"
+            position: "Id discount",
+                msg: "The user has no control over this resource"
         });
     };
     const { __token, __refreshToken: __newRefreshToken } = __newTokens;
