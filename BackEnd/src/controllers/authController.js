@@ -1,5 +1,7 @@
 import * as envSupplier from '../config/envSupplier';
 import * as userService from '../services/userService';
+import * as hash from '../helpers/hash';
+import * as authHelper from '../helpers/authHelper';
 
 export const travellerSignUp = async (req, res, next) => {
     const __user = req.user;
@@ -20,7 +22,7 @@ export const supplierSignUp = async (req, res, next) => {
         tax_id_number: req.body.tax_id_number,
         fee: envSupplier.fee
     };
-    
+
     if (await userService.createSupplier(__user, __info_supplier)) {
         return res.sendStatus(200);
     } else {
@@ -54,13 +56,45 @@ export const signIn = async (req, res, next) => {
             msg: "Invalid password",
         });
     };
-
-    __user['token'] = __user.password;
-
+    
     delete __user.password;
     delete __user.salt;
+    
+    const { __token, __refreshToken } = authHelper.createSignInToken(__user);
+
+    res.cookie('refreshToken', __refreshToken, {
+        httpOnly: true
+    });
 
     return res.status(200).json({
         data: __user,
+        token: __token
+    });
+};
+
+export const refreshSignInToken = (req, res, next) => {
+    const __refreshToken = req.cookies.refreshToken;
+    if (!__refreshToken) {
+        return res.status(401).json({
+            position: "refreshToken does not exist",
+            msg: "You're not authenticated"
+        });
+    };
+
+    const __newTokens = authHelper.refreshSignInToken(__refreshToken);
+    if (!__newTokens) {
+        return res.status(403).json({
+            position: "refreshToken is incorrect",
+            msg: "Refresh token is not valid"
+        });
+    };
+    const { __token, __refreshToken: __newRefreshToken } = __newTokens;
+
+    res.cookie('refreshToken', __newRefreshToken, {
+        httpOnly: true
+    });
+
+    return res.json({
+        token: __token,
     });
 };

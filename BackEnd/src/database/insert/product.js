@@ -68,19 +68,23 @@ const insertDataProduct = async () => {
             {
                 id_user: 3,
                 id_product: 1,
+                name: 'Tet nguyen dan 2023',
+                description: "no problem",
                 start_time: new Date('2023-10-15 06:00'),
                 end_time: new Date('2023-10-18 20:00'),
                 value: 20,
-                count: 20,
+                quantity: 20,
                 point: 0,
             },
             {
                 id_user: 3,
                 id_product: 2,
+                name: 'Tet nguyen dan 2023',
+                description: "no problem",
                 start_time: new Date('2023-10-15 06:00'),
                 end_time: new Date('2023-10-18 20:00'),
                 value: 30,
-                count: 10,
+                quantity: 10,
                 point: 0
             }
 

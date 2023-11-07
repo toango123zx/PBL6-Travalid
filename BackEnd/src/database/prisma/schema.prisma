@@ -85,7 +85,7 @@ model Product {
   time           Float    @db.Float
   quantity       Int      @db.UnsignedSmallInt
   age            Int      @db.UnsignedSmallInt
-  count_complete Int   @default(0) @db.UnsignedInt
+  count_complete Int      @default(0) @db.UnsignedInt
   description    String   @db.LongText
   count_rate     Int      @default(0) @db.UnsignedInt
   avg_rate       Int      @default(0) @db.UnsignedInt
@@ -130,10 +130,12 @@ model Discount {
   user        User            @relation(fields: [id_user], references: [id_user])
   id_product  Int             @db.UnsignedInt
   product     Product         @relation(fields: [id_product], references: [id_product])
+  name        String
+  description String          @db.LongText
   start_time  DateTime
   end_time    DateTime
   value       Int             @db.UnsignedSmallInt
-  count       Int             @db.UnsignedSmallInt
+  quantity       Int             @db.UnsignedSmallInt
   point       Int             @default(0) @db.UnsignedMediumInt
   applited    Int             @default(0) @db.UnsignedSmallInt
   status      status_Discount @default(active)
@@ -158,6 +160,7 @@ model Info_Cart {
 }
 
 enum Bill_Status {
+  done
   paided
   pending
   cancel
@@ -171,7 +174,7 @@ model Bill {
   id_discount Int         @db.UnsignedInt
   discount    Discount    @relation(fields: [id_discount], references: [id_discount])
   quantity    Int         @db.UnsignedSmallInt
-  status      Bill_Status
+  status      Bill_Status @default(pending)
 
   info_bill Info_Bill[]
 }
