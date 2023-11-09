@@ -114,3 +114,22 @@ export const createDiscount = async (req, res) => {
         msg: "Error from the server",
     });
 };
+
+export const cancelDiscount = async (req, res) => {
+    const __user = req.user;
+    const __id_discount = Number(req.params.id);
+    switch (await discountService.updateDiscount(__id_discount, __user.id_user, __user.role, 'cancel')) {
+        case true:
+            return res.sendStatus(200);
+        case false:
+            return res.status(403).json({
+                position: "Id discount",
+                msg: "The user has no control over this resource"
+            });
+        case null:
+            return res.status(500).json({
+                position: "Discount status",
+                msg: "Error from the server: Invalid discount status"
+            });
+    };
+};

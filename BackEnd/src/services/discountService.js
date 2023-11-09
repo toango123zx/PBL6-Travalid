@@ -32,7 +32,7 @@ export const getAllDiscount = async () => {
             orderBy: [
                 {
                     value: 'desc',
-                }, 
+                },
                 {
                     end_time: 'asc',
                 },
@@ -81,7 +81,7 @@ export const getDiscounts = async (id_user) => {
                 },
                 {
                     value: 'desc',
-                }, 
+                },
                 {
                     quantity: 'desc'
                 }]
@@ -135,6 +135,35 @@ export const createDiscount = async (discount) => {
         return true;
     } catch (e) {
         console.log(e)
+        return false;
+    };
+};
+
+export const updateDiscount = async (id_discount, id_user, role, status) => {
+    const __checkStatus = ["full", "cancel"];
+    if (!__checkStatus.includes(String(status))) {
+        return null;
+    };
+    if (String(status) === 'full' || role === 'admin') {
+        id_user = {
+            not: 0,
+        };
+    } else {
+        id_user = Number(id_user);
+    };
+    try {
+        await prisma.discount.update({
+            where: {
+                id_discount: Number(id_discount),
+                id_user: id_user,
+                status: 'active'
+            },
+            data: {
+                status: String(status)
+            }
+        });
+        return true;
+    } catch (e) {
         return false;
     };
 };
