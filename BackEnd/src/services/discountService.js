@@ -126,3 +126,15 @@ export const getDetailDiscount = async (id_discount) => {
         return false;
     };
 };
+
+export const createDiscount = async (discount) => {
+    try {
+        await prisma.discount.create({
+            data: discount,
+        });
+        return true;
+    } catch (e) {
+        console.log(e)
+        return false;
+    };
+};
