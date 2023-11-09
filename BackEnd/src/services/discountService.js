@@ -47,3 +47,46 @@ export const getAllDiscount = async () => {
         return false;
     };
 };
+
+export const getDiscounts = async (id_user) => {
+    try {
+        return prisma.discount.findMany({
+            select: {
+                id_discount: true,
+                id_product: true,
+                name: true,
+                start_time: true,
+                description: true,
+                end_time: true,
+                value: true,
+                quantity: true,
+                point: true,
+                applited: true,
+                status: true,
+                user: {
+                    select: {
+                        role: true,
+                    }
+                }
+            },
+            where: {
+                id_user: Number(id_user),
+            },
+            orderBy: [
+                {
+                    start_time: 'desc',
+                },
+                {
+                    end_time: 'desc',
+                },
+                {
+                    value: 'desc',
+                }, 
+                {
+                    quantity: 'desc'
+                }]
+        });
+    } catch (e) {
+        return false;
+    };
+};
