@@ -55,7 +55,7 @@ export const checkAdminRole = async (req, res, next) => {
     if (req.user.role === "admin") {
         return next();
     };
-    return res.sendStatus(403).json({
+    return res.status(403).json({
         position: "User role is not accessible",
         msg: "Users need site administrator permissions to access this resource"
     });
@@ -65,17 +65,18 @@ export const checkSupplierRole = async (req, res, next) => {
     if (req.user.role.includes('supplier')) {
         return next();
     };
-    return res.sendStatus(403).json({
+    return res.status(403).json({
         position: "User role is not accessible",
         msg: "Users need permission from the website supplier to access this resource"
     });
 };
 
 export const checkSupplierOrAdminRole = async (req, res, next) => {
+    // return res.json(req.user.role.includes('supplier'))
     if (req.user.role.includes('supplier') || req.user.role === 'admin') {
          return next();
     };
-    return res.sendStatus(403).json({
+    return res.status(403).json({
         position: "User role is not accessible",
         msg: "Users need to be an administrator or website suppllier to access this resource"
     });
