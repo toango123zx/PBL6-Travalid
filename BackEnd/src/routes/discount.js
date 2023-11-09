@@ -8,5 +8,6 @@ discountRouter.get('/all', discountController.getAllDiscount);
 discountRouter.get('/', authMiddleware.verifyToken, authMiddleware.checkSupplierOrAdminRole, discountController.getDiscounts);
 discountRouter.get('/:id', discountController.getDetailDiscount);
 discountRouter.post('/', authMiddleware.verifyToken, authMiddleware.checkSupplierOrAdminRole, discountController.createDiscount);
+discountRouter.delete('/:id', authMiddleware.verifyToken, authMiddleware.checkSupplierOrAdminRole, discountController.cancelDiscount);
 
 module.exports = discountRouter;
