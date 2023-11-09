@@ -36,3 +36,19 @@ export const getDiscounts = async (req, res) => {
         });
     };
 };
+
+export const getDetailDiscount = async (req, res) => {
+    const __id_discount = Number(req.params.id);
+    let __discount = await discountService.getDetailDiscount(__id_discount);
+    if (!__discount) {
+        return res.status(404).json({
+            position: "id discount",
+            msg: "This discount code could not be found"
+        });
+    } else {
+        __discount.user = __discount.user.role;
+        return res.status(200).json({
+            data: __discount
+        });
+    };
+};
