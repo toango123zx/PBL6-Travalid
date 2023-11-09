@@ -7,6 +7,7 @@ export const getUser = async (username, email, tax_id_number) => {
                 id_user: true,
                 username: true,
                 password: true,
+                date_of_birth: true,
                 salt: true,
                 role: true,
                 status: true,
