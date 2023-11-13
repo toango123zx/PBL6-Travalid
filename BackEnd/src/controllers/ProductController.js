@@ -25,9 +25,9 @@ export const getAllProduct = async (req, res, next) => {
 
 export const getProductById = async (req, res, next) => {
     try {
-        const id_product = parseInt(req.query.id_product);
+        const userId = parseInt(req.query.userId);
         const Product = await prisma.product.findUnique({
-            where: { id_product: id_product }
+            where: { id_product: userId }
         });
         res.status(200).send({
             status: 'success',

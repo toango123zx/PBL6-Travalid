@@ -1,13 +1,13 @@
-import * as envApp from './config/envApp';
-
 require('dotenv').config();
-const path = require('path');
 const express = require('express');
 const cookies = require("cookie-parser");
 const bodyParser = require('body-parser');
-const app = express();
 const morgan = require('morgan');
-const port = process.env.PORT || 3000;
+const path = require('path');
+const app = express();
+
+import * as envApp from './config/envApp';
+
 const route = require('./routes');
 
 app.use(express.static(path.join(__dirname, '../public')));
