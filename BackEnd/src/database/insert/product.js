@@ -33,31 +33,31 @@ const insertDataProduct = async () => {
             {
                 id_product: 1,
                 start_time: new Date('2023-10-21 06:00'),
-                end_time: new Date('2023-10-22 20:00'),
+                end_time: new Date('2023-11-22 20:00'),
                 price: 1000000,
             },
             {
                 id_product: 1,
-                start_time: new Date('2023-10-20 06:00'),
-                end_time: new Date('2023-10-21 20:00'),
+                start_time: new Date('2023-11-23 06:00'),
+                end_time: new Date('2023-11-24 20:00'),
                 price: 1500000,
             },
             {
                 id_product: 1,
-                start_time: new Date('2023-10-19 06:00'),
-                end_time: new Date('2023-10-20 20:00'),
+                start_time: new Date('2023-11-25 06:00'),
+                end_time: new Date('2023-11-26 20:00'),
                 price: 1800000,
             },
             {
                 id_product: 2,
-                start_time: new Date('2023-10-20 06:00'),
-                end_time: new Date('2023-10-21 20:00'),
+                start_time: new Date('2023-11-27 06:00'),
+                end_time: new Date('2023-11-28 20:00'),
                 price: 120000,
             },
             {
                 id_product: 2,
-                start_time: new Date('2023-10-23 06:00'),
-                end_time: new Date('2023-10-23 08:00'),
+                start_time: new Date('2023-11-29 06:00'),
+                end_time: new Date('2023-11-30 08:00'),
                 price: 100000,
             }
         ]
