@@ -169,7 +169,7 @@ enum Bill_Status {
 model Bill {
   id_bill     Int         @id @default(autoincrement()) @db.UnsignedInt
   id_user     Int         @db.UnsignedInt
-  user        User        @relation(fields: [id_bill], references: [id_user])
+  user        User        @relation(fields: [id_user], references: [id_user])
   time        DateTime    @default(now())
   id_discount Int         @db.UnsignedInt
   discount    Discount    @relation(fields: [id_discount], references: [id_discount])

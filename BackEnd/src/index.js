@@ -1,3 +1,5 @@
+import * as envApp from './config/envApp';
+
 require('dotenv').config();
 const path = require('path');
 const express = require('express');
