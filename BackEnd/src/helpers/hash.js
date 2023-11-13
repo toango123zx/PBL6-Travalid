@@ -1,8 +1,8 @@
-const crypto = require('crypto')
+const crypto = require('crypto');
 
 export const hashPassword = (input) => {
-    const __salt = crypto.randomBytes(16).toString('hex')
-    const __hashedPassword = crypto.pbkdf2Sync(input, __salt, 1000, 64, 'sha1').toString('hex')
+    const __salt = crypto.randomBytes(16).toString('hex');
+    const __hashedPassword = crypto.pbkdf2Sync(input, __salt, 1000, 64, 'sha1').toString('hex');
     return {
         __salt,
         __hashedPassword,
@@ -16,7 +16,7 @@ export const comparePassword = (hashPassword, salt, rawPassword) => {
         1000,
         64,
         'sha1'
-    ).toString('hex')
+    ).toString('hex');
     
     return hashPassword === __hashedRawPassword;
 };
