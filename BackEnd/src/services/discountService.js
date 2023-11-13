@@ -32,7 +32,7 @@ export const getAllDiscount = async () => {
             orderBy: [
                 {
                     value: 'desc',
-                },
+                }, 
                 {
                     end_time: 'asc',
                 },
@@ -81,7 +81,7 @@ export const getDiscounts = async (id_user) => {
                 },
                 {
                     value: 'desc',
-                },
+                }, 
                 {
                     quantity: 'desc'
                 }]
@@ -124,6 +124,43 @@ export const getDetailDiscount = async (id_discount) => {
         });
     } catch (e) {
         return false;
+    };
+};
+
+export const getDiscountbySchedulesProduct = async (id_discount, id_schedule_product) => {
+    try {
+        return await prisma.discount.findFirst({
+            select: {
+                id_discount: true,
+                id_product: true,
+                value: true,
+                quantity: true,
+                point: true,
+                applited: true,
+            },
+            where: {
+                id_discount: Number(id_discount),
+                end_time: {
+                    gte: new Date()
+                },
+                status: "active",
+                product: {
+                    schedule_product: {
+                        some: {
+                            status: "active",
+                            start_time: {
+                                gt: new Date()
+                            },
+                            id_schedule_product: {
+                                in: id_schedule_product
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    } catch (e) {
+        return false
     };
 };
 
