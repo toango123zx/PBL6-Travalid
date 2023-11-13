@@ -9,5 +9,6 @@ const authRouter = express.Router();
 authRouter.post('/sign-up/supplier', authValidation.supplierSignUpValidation, authValidation.checkDuplicateUser, authMiddleware.createUser, authController.supplierSignUp);
 authRouter.post('/sign-up/traveller', authValidation.travellerSignUpValidation, authValidation.checkDuplicateUser, authMiddleware.createUser,  authController.travellerSignUp);
 authRouter.post('/sign-in', authController.signIn);
+authRouter.put('/refresh-token', authController.refreshSignInToken);
 
 module.exports = authRouter;
