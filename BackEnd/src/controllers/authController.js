@@ -1,6 +1,37 @@
+import * as envSupplier from '../config/envSupplier';
 import * as userService from '../services/userService';
 import * as hash from '../helpers/hash';
 import * as authHelper from '../helpers/authHelper';
+
+export const travellerSignUp = async (req, res, next) => {
+    const __user = req.user;
+
+    if (!userService.creteUser(__user)) {
+        return res.status(500).json({
+            position: "insert prisma",
+            msg: "Unable to add user table data to the database",
+        });
+    };
+
+    return res.sendStatus(200);
+};
+
+export const supplierSignUp = async (req, res, next) => {
+    const __user = req.user;
+    const __info_supplier = {
+        tax_id_number: req.body.tax_id_number,
+        fee: envSupplier.fee
+    };
+
+    if (await userService.createSupplier(__user, __info_supplier)) {
+        return res.sendStatus(200);
+    } else {
+        return res.status(500).json({
+            position: "Prisma create Supplier",
+            msg: "Error from the server",
+        });
+    };
+};
 
 export const signIn = async (req, res, next) => {
     const __username = req.body.username.replace(/\s/g, '');
