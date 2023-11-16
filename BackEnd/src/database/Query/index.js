@@ -4,7 +4,6 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 const insertData = async () => {
-    console.log("hihi")
     const users = await prisma.user.findUnique({
         where: {
             id_user: 1,

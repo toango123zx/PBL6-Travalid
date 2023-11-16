@@ -33,31 +33,31 @@ const insertDataProduct = async () => {
             {
                 id_product: 1,
                 start_time: new Date('2023-10-21 06:00'),
-                end_time: new Date('2023-10-22 20:00'),
+                end_time: new Date('2023-11-22 20:00'),
                 price: 1000000,
             },
             {
                 id_product: 1,
-                start_time: new Date('2023-10-20 06:00'),
-                end_time: new Date('2023-10-21 20:00'),
+                start_time: new Date('2023-11-23 06:00'),
+                end_time: new Date('2023-11-24 20:00'),
                 price: 1500000,
             },
             {
                 id_product: 1,
-                start_time: new Date('2023-10-19 06:00'),
-                end_time: new Date('2023-10-20 20:00'),
+                start_time: new Date('2023-11-25 06:00'),
+                end_time: new Date('2023-11-26 20:00'),
                 price: 1800000,
             },
             {
                 id_product: 2,
-                start_time: new Date('2023-10-20 06:00'),
-                end_time: new Date('2023-10-21 20:00'),
+                start_time: new Date('2023-11-27 06:00'),
+                end_time: new Date('2023-11-28 20:00'),
                 price: 120000,
             },
             {
                 id_product: 2,
-                start_time: new Date('2023-10-23 06:00'),
-                end_time: new Date('2023-10-23 08:00'),
+                start_time: new Date('2023-11-29 06:00'),
+                end_time: new Date('2023-11-30 08:00'),
                 price: 100000,
             }
         ]
@@ -68,19 +68,23 @@ const insertDataProduct = async () => {
             {
                 id_user: 3,
                 id_product: 1,
+                name: 'Tet nguyen dan 2023',
+                description: "no problem",
                 start_time: new Date('2023-10-15 06:00'),
                 end_time: new Date('2023-10-18 20:00'),
                 value: 20,
-                count: 20,
+                quantity: 20,
                 point: 0,
             },
             {
                 id_user: 3,
                 id_product: 2,
+                name: 'Tet nguyen dan 2023',
+                description: "no problem",
                 start_time: new Date('2023-10-15 06:00'),
                 end_time: new Date('2023-10-18 20:00'),
                 value: 30,
-                count: 10,
+                quantity: 10,
                 point: 0
             }
 
