@@ -23,7 +23,10 @@ export const travellerSignUpValidation = (req, res, next) => {
     if (!role && (role === "traveller" || role === "travel_supplier" ||
         role === "hotel_supplier" || role === "restaurant_supplier" ||
         role === "transportation_supplier" || role === "admin")) {
-        return res.sendStatus(500);
+        return res.sendStatus(422).json({
+            position: "role",
+            msg: "Invalid role information",
+        });;
     };
     if (!(__charGender.test(gender))) {
         return res.status(422).json({

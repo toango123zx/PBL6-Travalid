@@ -35,14 +35,28 @@ export const verifyToken = (req, res, next) => {
             msg: "You're not authenticated"
         });
     };
-    
-    const verify = authHelper.verifyToken(__token.split(" ")[1], req.cookies.refreshToken);
 
-    if (verify.error || !verify) {
-        return res.status(403).json({
-            position: "Token is incorrect",
-            msg: "Token is not valid"
-        });
+    const verify = authHelper.verifyToken(__token.split(" ")[1], req.cookies.refreshToken);
+    if (verify.error) {
+        switch (verify.error.name) {
+            case undefined:
+                break;
+            case "TokenExpiredError":
+                return res.status(403).json({
+                    position: "Token expire",
+                    msg: "Expired token require a request to reissue the token"
+                });
+            case "TokenNotInitializedError":
+                return res.status(403).json({
+                    position: "refresh token does not exist",
+                    msg: "The user is not logged into the system"
+                });
+            default:
+                return res.status(403).json({
+                    position: "Incorrect token",
+                    msg: "Incorrect token"
+                });
+        };
     } else {
         delete verify.data.iat;
         delete verify.data.exp;
@@ -74,7 +88,7 @@ export const checkSupplierRole = async (req, res, next) => {
 export const checkSupplierOrAdminRole = async (req, res, next) => {
     // return res.json(req.user.role.includes('supplier'))
     if (req.user.role.includes('supplier') || req.user.role === 'admin') {
-         return next();
+        return next();
     };
     return res.status(403).json({
         position: "User role is not accessible",

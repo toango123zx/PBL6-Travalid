@@ -56,10 +56,10 @@ export const signIn = async (req, res, next) => {
             msg: "Invalid password",
         });
     };
-    
+
     delete __user.password;
     delete __user.salt;
-    
+
     const { __token, __refreshToken } = authHelper.createSignInToken(__user);
 
     res.cookie('refreshToken', __refreshToken, {
@@ -80,13 +80,27 @@ export const refreshSignInToken = (req, res, next) => {
             msg: "You're not authenticated"
         });
     };
-
     const __newTokens = authHelper.refreshSignInToken(__refreshToken);
-    if (!__newTokens) {
-        return res.status(403).json({
-            position: "Id discount",
-                msg: "The user has no control over this resource"
-        });
+    if (__newTokens.error) {
+        switch (__newTokens.error.name) {
+            case undefined:
+                break;
+            case "TokenExpiredError":
+                return res.status(403).json({
+                    position: "Refresh token expire",
+                    msg: "Expired refresh token require a request to reissue the token"
+                });
+            case "TokenNotInitializedError":
+                return res.status(403).json({
+                    position: "refresh token does not exist",
+                    msg: "The user is not logged into the system"
+                });
+            default:
+                return res.status(403).json({
+                    position: "Incorrect refresh token",
+                    msg: "Incorrect refresh token"
+                });
+        };
     };
     const { __token, __refreshToken: __newRefreshToken } = __newTokens;
 

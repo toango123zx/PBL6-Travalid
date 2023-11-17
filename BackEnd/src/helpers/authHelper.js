@@ -29,18 +29,24 @@ export const verifyToken = (token, refreshToken) => {
             };
         });
     } else {
-        return false;
+        return {
+            error: { name: "TokenNotInitializedError" }
+        };
     };
 };
 
 export const refreshSignInToken = (refreshToken) => {
     if (!(listRefreshToken.includes(refreshToken))) {
-        return false;
+        return {
+            error: { name: "TokenNotInitializedError" }
+        };
     };
 
     return jwt.verify(refreshToken, envApp.jwtSecretRefreshKey, (e, __user) => {
         if (e) {
-            return false;
+            return {
+                error: e,
+            };
         };
         delete __user.iat;
         delete __user.exp;
