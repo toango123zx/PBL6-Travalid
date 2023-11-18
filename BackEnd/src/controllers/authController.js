@@ -6,6 +6,13 @@ import * as authHelper from '../helpers/authHelper';
 export const travellerSignUp = async (req, res, next) => {
     const __user = req.user;
 
+    if (__user.role !== "traveller" || __user.role) {
+        return res.status(422).json({
+            position: "Traveller role",
+            msg: "Invalid traveller role error for the system",
+        });
+    };
+
     if (!userService.creteUser(__user)) {
         return res.status(500).json({
             position: "insert prisma",
@@ -18,6 +25,14 @@ export const travellerSignUp = async (req, res, next) => {
 
 export const supplierSignUp = async (req, res, next) => {
     const __user = req.user;
+
+    if (!__user.role.includes('supplier')) {
+        return res.status(422).json({
+            position: "Supplier role",
+            msg: "Invalid supplier role error for the system",
+        });
+    };
+    
     const __info_supplier = {
         tax_id_number: req.body.tax_id_number,
         fee: envSupplier.fee
@@ -31,6 +46,19 @@ export const supplierSignUp = async (req, res, next) => {
             msg: "Error from the server",
         });
     };
+};
+
+export const adminSignUp = async (req, res, next) => {
+    const __user = req.user;
+
+    if (!userService.creteUser(__user)) {
+        return res.status(500).json({
+            position: "insert prisma",
+            msg: "Unable to add user table data to the database",
+        });
+    };
+
+    return res.sendStatus(200);
 };
 
 export const signIn = async (req, res, next) => {
