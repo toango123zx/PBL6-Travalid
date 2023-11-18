@@ -1,6 +1,6 @@
 import * as userService from '../services/userService';
 
-export const travellerSignUpValidation = (req, res, next) => {
+export const userSignUpValidation = (req, res, next) => {
     const { name, email, role, gender, date_of_birth, phone_number } = req.body;
 
     const __notCharName = /[\d~`!@#$%^&*()_\-+={[}\]|;:<,>.?/]+/;
@@ -56,17 +56,29 @@ export const travellerSignUpValidation = (req, res, next) => {
     next();
 };
 
-export const supplierSignUpValidation = ([travellerSignUpValidation, (req, res, next) => {
+export const supplierSignUpValidation = ([userSignUpValidation, (req, res, next) => {
 
-    const __tax_id_number = req.body.tax_id_number;
-
-    if (String(__tax_id_number).length > 13) {
+    const __tax_id_number = String(req.body.tax_id_number);
+    
+    if (__tax_id_number.length > 13) {
         return res.status(422).json({
             position: "tax_id_number",
             msg: "Less than or equal to 13 characters",
         });
     };
 
+    next();
+}]);
+
+export const adminSignUpValidation = ([userSignUpValidation, (req, res, next) => {
+    const __user = req.user;
+    const __role = String(req.body.role);
+    if (__user.role === "admin" && __role === "admin") {
+        return res.status(403).json({
+            position: "The role of the creator",
+            msg: "The user must have the administrator role to create an administrator account",
+        });
+    };
     next();
 }]);
 
