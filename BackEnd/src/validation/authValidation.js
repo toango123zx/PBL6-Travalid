@@ -1,86 +1,87 @@
 import * as userService from '../services/userService';
+const Joi = require('joi');
 
-export const userSignUpValidation = (req, res, next) => {
-    const { name, email, role, gender, date_of_birth, phone_number } = req.body;
+const userSchema = Joi.object({
+    username: Joi.string().required(),
+    password: Joi.string().required(),
+    name: Joi.string().pattern(/^[^\d~`!@#$%^&*()_+\-={[}\]|;:'",<.>?/]+$/).required(),
+    email: Joi.string().email().required(),
+    gender: Joi.number().valid(0, 1).required(),
+    phone_number: Joi.string().length(10).pattern(/^[0-9]+$/).required(),
+    address: Joi.string(),
+    date_of_birth: Joi.date().max(new Date()).iso().required(),
+    status: Joi.string()
+});
 
-    const __notCharName = /[\d~`!@#$%^&*()_\-+={[}\]|;:<,>.?/]+/;
-    const __charEmail = /^[a-zA-Z0-9._%-]+@gmail\.com$/;
-    const __charGender = /^(?:true|false|1|0)$/;
-    const __charPhoneNumber = /^[0-9]{10}$/;
 
-    if (__notCharName.test(name)) {
-        return res.status(422).json({
-            position: "name",
-            msg: "Names that contain numbers or special characters"
-        });
-    };
-    if (!(__charEmail.test(email))) {
-        return res.status(422).json({
-            position: "email",
-            msg: "as sample: user1@gmail.com",
-        });
-    };
-    if (!role && (role === "traveller" || role === "travel_supplier" ||
-        role === "hotel_supplier" || role === "restaurant_supplier" ||
-        role === "transportation_supplier" || role === "admin")) {
-        return res.sendStatus(422).json({
-            position: "role",
-            msg: "Invalid role information",
-        });;
-    };
-    if (!(__charGender.test(gender))) {
-        return res.status(422).json({
-            position: "gender",
-            msg: "as sample: true or false or 1 or 0",
-        });
-    };
-    if (new Date(date_of_birth) == "Invalid Date") {
-        return res.status(422).json({
-            position: "date_of_birth",
-            msg: "Invalid date and as sample: yy-mm-dd",
-        });
-    };
-    if (new Date(date_of_birth) >= new Date()) {
-        return res.status(422).json({
-            position: "date_of_birth",
-            msg: "date_of_birth greater than the current date",
-        });
-    };
-    if (!(__charPhoneNumber.test(phone_number))) {
-        return res.status(422).json({
-            position: "phone number",
-            msg: "as sample: 0000000000",
-        });
-    };
+const travellerSchema = userSchema.keys({
+    role: Joi.string().valid('traveller')
+});
 
+const supplierSchema = userSchema.keys({
+    tax_id_number: Joi.string().max(13).required(),
+    role: Joi.string().valid('transportation_supplier', 'restaurant_supplier', 'hotel_supplier', 'travel_supplier').required(),
+});
+
+const adminSchema = userSchema.keys({
+    role: Joi.string().valid('admin').required()
+});
+
+
+export const travellerSignUpValidation = (req, res, next) => {
+    try {
+        const { error } = travellerSchema.validate(req.body);
+        if (error) {
+            return res.status(400).send({
+                message: error.message
+            });
+        }
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).send('Internal Server Error');
+    }
+    next();
+}
+
+
+export const supplierSignUpValidation = (req, res, next) => {
+    try {
+        const { error } = supplierSchema.validate(req.body);
+        if (error) {
+            return res.status(400).send({
+                message: error.message,
+            });
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('Internal Server Error');
+    }
     next();
 };
 
-export const supplierSignUpValidation = ([userSignUpValidation, (req, res, next) => {
-
-    const __tax_id_number = String(req.body.tax_id_number);
-    
-    if (__tax_id_number.length > 13) {
-        return res.status(422).json({
-            position: "tax_id_number",
-            msg: "Less than or equal to 13 characters",
-        });
-    };
-
-    next();
-}]);
-
-export const adminSignUpValidation = ([userSignUpValidation, (req, res, next) => {
+export const adminSignUpValidation = ((req, res, next) => {
     const __user = req.user;
-    const __role = String(req.body.role);
-    if (__user.role === "admin" && __role === "admin") {
+    if (__user.role !== "admin") {
         return res.status(403).json({
             position: "The role of the creator",
             msg: "The user must have the administrator role to create an administrator account",
         });
     };
+    try {
+        const { error } = adminSchema.validate(req.body);
+        if (error) {
+            return res.status(400).send({
+                message: error.message,
+            });
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('Internal Server Error');
+    }
     next();
-}]);
+
+});
 
 export const checkDuplicateUser = async (req, res, next) => {
     const __tax_id_number = !(req.body.tax_id_number) ? "" : req.body.tax_id_number.replace(/\s/g, '');
