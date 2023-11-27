@@ -6,7 +6,7 @@ const userSchema = Joi.object({
     password: Joi.string().required(),
     name: Joi.string().pattern(/^[^\d~`!@#$%^&*()_+\-={[}\]|;:'",<.>?/]+$/).required(),
     email: Joi.string().email().required(),
-    gender: Joi.number().valid(0, 1).required(),
+    gender: Joi.number().valid(0, 1, true , false).required(),
     phone_number: Joi.string().length(10).pattern(/^[0-9]+$/).required(),
     address: Joi.string(),
     date_of_birth: Joi.date().max(new Date()).iso().required(),
