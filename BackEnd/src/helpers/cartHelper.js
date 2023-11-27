@@ -1,5 +1,3 @@
-import { Schedule_Product_Status } from "@prisma/client";
-
 export const formatCartFormDb = (cart) => {
     cart = cart.map((scheduleProduct) => {
         scheduleProduct = {

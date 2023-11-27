@@ -34,7 +34,6 @@ export const getSchedulesProductByDiscounts = async (id_schedules_product, id_di
 
 export const getScheduleProduct = async(id_schedules_product) => {
     try {
-        console.log(id_schedules_product)
         return prisma.schedule_Product.findFirst({
             select: {
                 id_schedule_product: true,
@@ -72,7 +71,6 @@ export const getScheduleProduct = async(id_schedules_product) => {
 
 export const getSchedulesProduct = async(id_schedules_product) => {
     try {
-        console.log(id_schedules_product)
         return prisma.schedule_Product.findMany({
             select: {
                 id_schedule_product: true,
