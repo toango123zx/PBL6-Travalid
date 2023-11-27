@@ -10,7 +10,8 @@ export const getAllDiscount = async (req, res) => {
         });
     } else {
         __discounts = __discounts.map((discount) => {
-            discount.user = discount.user.role;
+            discount.supplier = discount.user.role;
+            delete discount.user;
             return discount;
         });
         return res.status(200).json({
@@ -29,7 +30,8 @@ export const getDiscounts = async (req, res) => {
         });
     } else {
         __discounts = __discounts.map((discount) => {
-            discount.user = discount.user.role;
+            discount.supplier = discount.user.role;
+            delete discount.user;
             return discount;
         });
         return res.status(200).json({
@@ -47,7 +49,8 @@ export const getDetailDiscount = async (req, res) => {
             msg: "This discount code could not be found"
         });
     } else {
-        __discount.user = __discount.user.role;
+        __discount.supplier = __discount.user.role;
+        delete __discount.user;
         return res.status(200).json({
             data: __discount
         });
