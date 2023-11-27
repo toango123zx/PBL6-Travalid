@@ -3,8 +3,7 @@ import * as scheduleProductService from '../services/scheduleProductService';
 import * as discountService from '../services/discountService';
 import * as billHelper from '../helpers/billHelper';
 
-
-export const getBills = async (req, res) => {
+export const getPurchaseBills = async (req, res) => {
     const __user = req.user;
     const __bills = await billService.getBills(__user.id_user);
     if (!__bills) {

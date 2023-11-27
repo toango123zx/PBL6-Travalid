@@ -2,21 +2,16 @@ export const formatBillFormDb = (bill) => {
     let sum = 0;
     bill.schedule_product = bill.info_bill.map((__valueInfoBill) => {
         __valueInfoBill = {
-            ...__valueInfoBill.info_bill,
-            ...__valueInfoBill.schedule_product,
-            ...__valueInfoBill.schedule_product.product,
-            ...__valueInfoBill.schedule_product.product.location
+            ...__valueInfoBill,
+            ...__valueInfoBill.schedule_product
         };
-        delete __valueInfoBill.schedule_product;
-        delete __valueInfoBill.product;
-        delete __valueInfoBill.location;
-        sum += __valueInfoBill.price;
+        sum += __valueInfoBill.price
+        delete __valueInfoBill.schedule_product
         return __valueInfoBill;
     });
-    bill.cost = sum
-    bill.voucher = -(bill.discount.value * sum / 100);
+    bill.cost = sum;
+    bill.voucher = - (sum * bill.discount_value / 100)
     bill.total = sum + bill.voucher;
-    delete bill.discount;
-    delete bill.info_bill;
+    delete bill.info_bill
     return bill;
 };

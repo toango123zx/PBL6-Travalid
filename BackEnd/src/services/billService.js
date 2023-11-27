@@ -1,6 +1,19 @@
 const { prisma } = require('../config/prismaDatabase');
 
-export const getBills = async (id_user) => {
+export const getBills = async (id_user, id_supplier) => {
+    if (id_user && id_supplier) {
+        return false;
+    };
+    let __where;
+    if (id_user) {
+        __where = {
+            id_user: Number(id_user)
+        }
+    } else {
+        __where = {
+            id_supplier: Number(id_supplier)
+        }
+    };
     try {
         return await prisma.bill.findMany({
             select: {
@@ -9,9 +22,7 @@ export const getBills = async (id_user) => {
                 quantity: true,
                 status: true,
             },
-            where: {
-                id_user: Number(id_user)
-            }
+            where: __where
         })
     } catch (e) {
         return false;
