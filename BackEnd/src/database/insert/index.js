@@ -16,9 +16,9 @@ const insertData = async () => {
     await insertDataLocation();
     await insertDataUser();
     await insertDataProduct();
-    await insertDataRate();
-    await insertDataContact();
-    await insertDataCart();
+    // await insertDataRate();
+    // await insertDataContact();
+    // await insertDataCart();
     await insertDataBill();
 }
 

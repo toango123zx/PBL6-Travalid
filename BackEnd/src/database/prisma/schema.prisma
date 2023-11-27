@@ -41,14 +41,15 @@ model User {
   status        User_Status @default(active)
   salt          String      @db.Char(32)
 
-  info_supplier Info_Supplier[]
-  product       Product[]
-  discount      Discount[]
-  cart          Cart[]
-  bill          Bill[]
-  rate          Rate[]
-  contact       Contact[]
-  info_contact  Info_Contact[]
+  info_supplier  Info_Supplier[]
+  product        Product[]
+  discount       Discount[]
+  cart           Cart[]
+  bill_traveller Bill[]
+  bill_supplier  Bill[]          @relation("supplier")
+  rate           Rate[]
+  contact        Contact[]
+  info_contact   Info_Contact[]
 }
 
 model Info_Supplier {
@@ -91,6 +92,7 @@ model Product {
   avg_rate       Int      @default(0) @db.UnsignedInt
   id_location    Int      @db.UnsignedInt
   location       Location @relation(fields: [id_location], references: [id_location])
+  city           String
 
   schedule_product Schedule_Product[]
   discount         Discount[]
@@ -114,7 +116,7 @@ model Schedule_Product {
   booked              Int                     @default(0) @db.UnsignedSmallInt
   status              Schedule_Product_Status @default(active)
 
-  info_cart Info_Cart[]
+  cart      Cart[]
   info_bill Info_Bill[]
 }
 
@@ -135,7 +137,7 @@ model Discount {
   start_time  DateTime
   end_time    DateTime
   value       Int             @db.UnsignedSmallInt
-  quantity       Int             @db.UnsignedSmallInt
+  quantity    Int             @db.UnsignedSmallInt
   point       Int             @default(0) @db.UnsignedMediumInt
   applited    Int             @default(0) @db.UnsignedSmallInt
   status      status_Discount @default(active)
@@ -144,19 +146,13 @@ model Discount {
 }
 
 model Cart {
-  id_cart Int  @id @default(autoincrement()) @db.UnsignedInt
-  id_user Int  @db.UnsignedInt
-  user    User @relation(fields: [id_user], references: [id_user])
-
-  info_cart Info_Cart[]
-}
-
-model Info_Cart {
-  id_info_cart        Int              @id @default(autoincrement()) @db.UnsignedInt
-  id_cart             Int              @db.UnsignedInt
-  cart                Cart             @relation(fields: [id_cart], references: [id_cart])
+  id_cart             Int              @id @default(autoincrement()) @db.UnsignedInt
+  id_user             Int              @db.UnsignedInt
+  user                User             @relation(fields: [id_user], references: [id_user])
   id_schedule_product Int              @db.UnsignedInt
   schedule_poruduct   Schedule_Product @relation(fields: [id_schedule_product], references: [id_schedule_product])
+  product_name        String
+  city_name           String
 }
 
 enum Bill_Status {
@@ -167,14 +163,17 @@ enum Bill_Status {
 }
 
 model Bill {
-  id_bill     Int         @id @default(autoincrement()) @db.UnsignedInt
-  id_user     Int         @db.UnsignedInt
-  user        User        @relation(fields: [id_user], references: [id_user])
-  time        DateTime    @default(now())
-  id_discount Int         @db.UnsignedInt
-  discount    Discount    @relation(fields: [id_discount], references: [id_discount])
-  quantity    Int         @db.UnsignedSmallInt
-  status      Bill_Status @default(pending)
+  id_bill        Int         @id @default(autoincrement()) @db.UnsignedInt
+  id_user        Int         @db.UnsignedInt
+  user           User        @relation(fields: [id_user], references: [id_user])
+  id_supplier    Int         @db.UnsignedInt
+  supplier       User        @relation(name: "supplier", fields: [id_supplier], references: [id_user])
+  time           DateTime    @default(now())
+  id_discount    Int         @db.UnsignedInt
+  discount       Discount    @relation(fields: [id_discount], references: [id_discount])
+  discount_value Int
+  quantity       Int         @db.UnsignedSmallInt
+  status         Bill_Status @default(pending)
 
   info_bill Info_Bill[]
 }
@@ -185,6 +184,8 @@ model Info_Bill {
   bill                Bill             @relation(fields: [id_bill], references: [id_bill])
   id_schedule_product Int              @db.UnsignedInt
   schedule_product    Schedule_Product @relation(fields: [id_schedule_product], references: [id_schedule_product])
+  product_name        String
+  city_name           String
 }
 
 enum Rate_Status {
