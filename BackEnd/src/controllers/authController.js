@@ -5,13 +5,13 @@ import * as authHelper from '../helpers/authHelper';
 
 export const travellerSignUp = async (req, res, next) => {
     const __user = req.user;
-
-    if (__user.role !== "traveller" || __user.role) {
-        return res.status(422).json({
-            position: "Traveller role",
-            msg: "Invalid traveller role error for the system",
-        });
-    };
+    
+    // if (__user.role === "traveller" && !__user.role) {
+    //     return res.status(422).json({
+    //         position: "Traveller role",
+    //         msg: "Invalid traveller role error for the system",
+    //     });
+    // };
 
     if (!userService.creteUser(__user)) {
         return res.status(500).json({
@@ -26,12 +26,12 @@ export const travellerSignUp = async (req, res, next) => {
 export const supplierSignUp = async (req, res, next) => {
     const __user = req.user;
 
-    if (!__user.role.includes('supplier')) {
-        return res.status(422).json({
-            position: "Supplier role",
-            msg: "Invalid supplier role error for the system",
-        });
-    };
+    // if (!__user.role.includes('supplier')) {
+    //     return res.status(422).json({
+    //         position: "Supplier role",
+    //         msg: "Invalid supplier role error for the system",
+    //     });
+    // };
     
     const __info_supplier = {
         tax_id_number: req.body.tax_id_number,
