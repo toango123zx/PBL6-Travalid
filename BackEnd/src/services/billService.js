@@ -34,43 +34,66 @@ export const getDetailBill = async (id_bill, id_user) => {
         return await prisma.bill.findFirst({
             select: {
                 id_bill: true,
-                time: true,
-                quantity: true,
-                status: true,
-                discount: {
+                user: {
                     select: {
-                        value: true
+                        id_user: true,
+                        image: true,
+                        name: true,
+                        email: true,
+                        gender: true,
+                        date_of_birth: true,
+                        phone_number: true,
+                        address: true,
+                        status: true,
                     }
                 },
+                supplier: {
+                    select: {
+                        id_user: true,
+                        image: true,
+                        name: true,
+                        email: true,
+                        gender: true,
+                        date_of_birth: true,
+                        phone_number: true,
+                        address: true,
+                        status: true,
+                    }
+                },
+                time: true,
+                quantity: true,
+                discount_value: true,
+                status: true,
                 info_bill: {
                     select: {
-                        id_info_bill: true,
+                        product_name: true,
+                        city_name: true,
                         schedule_product: {
                             select: {
+                                id_schedule_product: true,
+                                id_product: true,
                                 start_time: true,
                                 end_time: true,
                                 price: true,
                                 status: true,
-                                product: {
-                                    select: {
-                                        name: true,
-                                        location: {
-                                            select: {
-                                                display_name: true,
-                                            }
-                                        }
-                                    }
-                                }
-                            },
-
+                            }
                         }
                     }
                 }
+
             },
             where: {
-                id_bill: id_bill,
-                id_user: id_user
-            },
+                OR: [
+                    {
+                        id_bill: Number(id_bill),
+                        id_user: Number(id_user)
+                    },
+                    {
+                        id_bill: id_bill,
+                        id_supplier: Number(id_user),
+                    }
+                ]
+            }
         });
     } catch (e) {
         return false;
