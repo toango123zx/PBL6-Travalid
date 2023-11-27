@@ -17,6 +17,20 @@ export const getPurchaseBills = async (req, res) => {
     });
 };
 
+export const getSellBills = async (req, res) => {
+    const __user = req.user;
+    const __bills = await billService.getBills(undefined, __user.id_user);
+    if (!__bills) {
+        return res.status(500).json({
+            position: "Pisma query bills",
+            msg: "Bills data query is unavailable due to server"
+        });
+    };
+    return res.status(200).json({
+        data: __bills,
+    });
+};
+
 export const getDetailBill = async (req, res) => {
     const __id_bill = Number(req.params.id);
     const __user = req.user;
