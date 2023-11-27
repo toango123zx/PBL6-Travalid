@@ -1,6 +1,19 @@
 const { prisma } = require('../config/prismaDatabase');
 
-export const getBills = async (id_user) => {
+export const getBills = async (id_user, id_supplier) => {
+    if (id_user && id_supplier) {
+        return false;
+    };
+    let __where;
+    if (id_user) {
+        __where = {
+            id_user: Number(id_user)
+        };
+    } else {
+        __where = {
+            id_supplier: Number(id_supplier)
+        };
+    };
     try {
         return await prisma.bill.findMany({
             select: {
@@ -9,13 +22,11 @@ export const getBills = async (id_user) => {
                 quantity: true,
                 status: true,
             },
-            where: {
-                id_user: Number(id_user)
-            }
-        })
+            where: __where
+        });
     } catch (e) {
         return false;
-    }
+    };
 };
 
 export const getDetailBill = async (id_bill, id_user) => {
@@ -23,43 +34,66 @@ export const getDetailBill = async (id_bill, id_user) => {
         return await prisma.bill.findFirst({
             select: {
                 id_bill: true,
-                time: true,
-                quantity: true,
-                status: true,
-                discount: {
+                user: {
                     select: {
-                        value: true
+                        id_user: true,
+                        image: true,
+                        name: true,
+                        email: true,
+                        gender: true,
+                        date_of_birth: true,
+                        phone_number: true,
+                        address: true,
+                        status: true,
                     }
                 },
+                supplier: {
+                    select: {
+                        id_user: true,
+                        image: true,
+                        name: true,
+                        email: true,
+                        gender: true,
+                        date_of_birth: true,
+                        phone_number: true,
+                        address: true,
+                        status: true,
+                    }
+                },
+                time: true,
+                quantity: true,
+                discount_value: true,
+                status: true,
                 info_bill: {
                     select: {
-                        id_info_bill: true,
+                        product_name: true,
+                        city_name: true,
                         schedule_product: {
                             select: {
+                                id_schedule_product: true,
+                                id_product: true,
                                 start_time: true,
                                 end_time: true,
                                 price: true,
                                 status: true,
-                                product: {
-                                    select: {
-                                        name: true,
-                                        location: {
-                                            select: {
-                                                display_name: true,
-                                            }
-                                        }
-                                    }
-                                }
-                            },
-
+                            }
                         }
                     }
                 }
+
             },
             where: {
-                id_bill: id_bill,
-                id_user: id_user
-            },
+                OR: [
+                    {
+                        id_bill: Number(id_bill),
+                        id_user: Number(id_user)
+                    },
+                    {
+                        id_bill: id_bill,
+                        id_supplier: Number(id_user),
+                    }
+                ]
+            }
         });
     } catch (e) {
         return false;
@@ -91,8 +125,15 @@ export const updateBillStatus = async (id_bill, id_user, status) => {
         await prisma.bill.update({
             where: {
                 id_bill: id_bill,
-                id_user: id_user,
-                status: __status
+                status: __status,
+                OR: [
+                    {
+                        id_user: Number(id_user)
+                    },
+                    {
+                        id_supplier: Number(id_user)
+                    }
+                ]
             },
             data: {
                 status: String(status)
@@ -138,7 +179,7 @@ export const getBill = async (id_user) => {
                 }
             },
             where: {
-                id_user: id_user,
+                id_user: Number(id_user),
             }
         });
     } catch (e) {
@@ -156,7 +197,6 @@ export const createBill = async (bill) => {
         });
         return true;
     } catch (e) {
-        console.log(e)
         return false;
     };
 };
