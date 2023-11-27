@@ -68,3 +68,17 @@ export const createCart = async (cart) => {
         return false;
     };
 };
+
+export const deleteCart = async (id_cart, id_user) => {
+    try {
+        await prisma.cart.delete({
+            where: {
+                id_cart: Number(id_cart),
+                id_user: Number(id_user)
+            }
+        });
+        return true;
+    } catch (e) {
+        return false;
+    };
+};

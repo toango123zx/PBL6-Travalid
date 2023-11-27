@@ -51,3 +51,15 @@ export const createCart = async (req, res) => {
 
     return res.sendStatus(200);
 };
+
+export const deleteCart = async (req, res) => {
+    const __user = req.user;
+    const __id_cart = Number(req.params.id);
+    if (!(await cartService.deleteCart(__id_cart, __user.id_user))) {
+        return res.status(403).json({
+            position: "Error: Delete cart id prisma",
+            msg: "The user does not have permission to make changes to this resource"
+        });
+    };
+    return res.sendStatus(200);
+};
