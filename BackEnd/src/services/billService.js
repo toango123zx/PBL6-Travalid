@@ -8,11 +8,11 @@ export const getBills = async (id_user, id_supplier) => {
     if (id_user) {
         __where = {
             id_user: Number(id_user)
-        }
+        };
     } else {
         __where = {
             id_supplier: Number(id_supplier)
-        }
+        };
     };
     try {
         return await prisma.bill.findMany({
@@ -23,10 +23,10 @@ export const getBills = async (id_user, id_supplier) => {
                 status: true,
             },
             where: __where
-        })
+        });
     } catch (e) {
         return false;
-    }
+    };
 };
 
 export const getDetailBill = async (id_bill, id_user) => {
@@ -125,8 +125,15 @@ export const updateBillStatus = async (id_bill, id_user, status) => {
         await prisma.bill.update({
             where: {
                 id_bill: id_bill,
-                id_user: id_user,
-                status: __status
+                status: __status,
+                OR: [
+                    {
+                        id_user: Number(id_user)
+                    },
+                    {
+                        id_supplier: Number(id_user)
+                    }
+                ]
             },
             data: {
                 status: String(status)
@@ -172,7 +179,7 @@ export const getBill = async (id_user) => {
                 }
             },
             where: {
-                id_user: id_user,
+                id_user: Number(id_user),
             }
         });
     } catch (e) {
@@ -190,7 +197,6 @@ export const createBill = async (bill) => {
         });
         return true;
     } catch (e) {
-        console.log(e)
         return false;
     };
 };
