@@ -96,7 +96,13 @@ export const getDetailDiscount = async (id_discount) => {
         return prisma.discount.findFirst({
             select: {
                 id_discount: true,
-                id_product: true,
+                product: {
+                    select: {
+                        id_product: true,
+                        name: true,
+                        city: true
+                    }
+                },
                 name: true,
                 description: true,
                 start_time: true,
