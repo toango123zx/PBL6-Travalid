@@ -77,22 +77,30 @@ model Location {
   product Product[]
 }
 
+enum Product_Status {
+  active
+  warning
+  inactive
+}
+
 model Product {
-  id_product     Int      @id @default(autoincrement()) @db.UnsignedInt
+  id_product     Int            @id @default(autoincrement()) @db.UnsignedInt
   name           String
-  id_user        Int      @db.UnsignedInt
-  user           User     @relation(fields: [id_user], references: [id_user])
+  id_user        Int            @db.UnsignedInt
+  user           User           @relation(fields: [id_user], references: [id_user])
   location_map   String
-  time           Float    @db.Float
-  quantity       Int      @db.UnsignedSmallInt
-  age            Int      @db.UnsignedSmallInt
-  count_complete Int      @default(0) @db.UnsignedInt
-  description    String   @db.LongText
-  count_rate     Int      @default(0) @db.UnsignedInt
-  avg_rate       Int      @default(0) @db.UnsignedInt
-  id_location    Int      @db.UnsignedInt
-  location       Location @relation(fields: [id_location], references: [id_location])
+  time           Float          @db.Float
+  quantity       Int            @db.UnsignedSmallInt
+  age            Int            @db.UnsignedSmallInt
+  count_complete Int            @default(0) @db.UnsignedInt
+  description    String         @db.LongText
+  count_rate     Int            @default(0) @db.UnsignedInt
+  avg_rate       Int            @default(0) @db.UnsignedInt
+  id_location    Int            @db.UnsignedInt
+  location       Location       @relation(fields: [id_location], references: [id_location])
+  image          String         @default("https://drive.google.com/file/d/14mT0WkfzPR1mJHfI0C6k4Um3WlEJSBDP/view?usp=sharing")
   city           String
+  status         Product_Status @default(active)
 
   schedule_product Schedule_Product[]
   discount         Discount[]
@@ -120,7 +128,7 @@ model Schedule_Product {
   info_bill Info_Bill[]
 }
 
-enum status_Discount {
+enum Discount_Status {
   active
   full
   cancel
@@ -140,7 +148,7 @@ model Discount {
   quantity    Int             @db.UnsignedSmallInt
   point       Int             @default(0) @db.UnsignedMediumInt
   applited    Int             @default(0) @db.UnsignedSmallInt
-  status      status_Discount @default(active)
+  status      Discount_Status @default(active)
 
   bill Bill[]
 }
@@ -204,10 +212,16 @@ model Rate {
   status     Rate_Status @default(presently)
 }
 
+enum Contact_Category {
+  report
+  chat
+}
+
 model Contact {
-  id_contact   Int  @id @default(autoincrement()) @db.UnsignedInt
-  id_user_call Int  @db.UnsignedInt
-  user_call    User @relation(fields: [id_user_call], references: [id_user], map: "user_call")
+  id_contact   Int              @id @default(autoincrement()) @db.UnsignedInt
+  id_user_call Int              @db.UnsignedInt
+  user_call    User             @relation(fields: [id_user_call], references: [id_user], map: "user_call")
+  category     Contact_Category @default(chat)
 
   id_info_contact Info_Contact[]
 }
