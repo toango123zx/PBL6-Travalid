@@ -1,0 +1,29 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "src/assets/fonts/Mogra Regular.ttf",
+      "sha1": "b3bc3a6cfa93d0f92fd5a22e7ded0a3f4f5ab6ff"
+    },
+    {
+      "path": "src/assets/fonts/Montserrat Bold.ttf",
+      "sha1": "c25b21eb9ba84224ca68a3a5f2bededa384b9137"
+    },
+    {
+      "path": "src/assets/fonts/Montserrat Medium.ttf",
+      "sha1": "b44e41281ac30afd7ac25fec1e61ea5e8136ff63"
+    },
+    {
+      "path": "src/assets/fonts/Montserrat Regular.ttf",
+      "sha1": "7d0e0d668871f2d497d84584a0c31b3a7d6c1cee"
+    },
+    {
+      "path": "src/assets/fonts/Montserrat SemiBold.ttf",
+      "sha1": "17d89db7e3170563bd31be2a6b648882bc030387"
+    },
+    {
+      "path": "src/assets/fonts/OleoScript Regular.ttf",
+      "sha1": "ab4a01f1970629a256a0b7fae61527179d929750"
+    }
+  ]
+}

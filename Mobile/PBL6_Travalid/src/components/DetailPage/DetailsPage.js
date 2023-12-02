@@ -1,0 +1,160 @@
+import React from "react";
+import {useState} from 'react';
+import{ View, Text, Image, StatusBar, ScrollView, TouchableOpacity, SafeAreaView, Modal} from 'react-native'
+import Svg, {Path} from 'react-native-svg';
+import {styleDetailsPage} from "../../themes/styleDetailsPage";
+import InfoPage from "./InfoPage";
+import RaitingsPage from "./RaitingsPage";
+import SupplierPage from "./SupplierPage";
+import Icon from 'react-native-vector-icons/Ionicons';
+import { useNavigation } from '@react-navigation/native';
+import  Calendar  from "react-native-calendars/src/calendar";
+import DateTimePicker from "../DateTimePicker";
+import BookingCartPage from "../CartPage/BookingCartPage";
+import {useDispatch} from 'react-redux'
+import {setSharedData} from '../../reducers/actions'
+const INFO = 'INFO';
+const RAITING = 'RAITING';
+const SUPPLIER = 'SUPPLIER';
+export default DetailsPage = ({route}) => {
+    const { attractionData } = route.params;
+    const [page, setPage] = useState('INFO');
+    const navigation = useNavigation();
+    const handleBackPress = () => {
+        // Thực hiện chuyển hướng về trang trước đó
+        navigation.goBack();
+      };
+
+    const [showModal, setShowModal] = useState (false);
+    const [showModalEnd, setShowModalEnd] = useState (false);
+    const [yearStart, setYearStart] = useState();
+    const [monthStart, setMonthStart] = useState();
+    const [dayStart, setDayStart] = useState();
+    const [hourStart, setHourStart] = useState();
+    const [minStart, setMinStart] = useState();
+    const [yearEnd, setYearEnd] = useState();
+    const [monthEnd, setMonthEnd] = useState();
+    const [dayEnd, setDayEnd] = useState();
+    const [hourEnd, setHourEnd] = useState();
+    const [minEnd, setMinEnd] = useState();
+    const dispatch = useDispatch();  
+
+    const dataToSend = {
+        id: attractionData.id,
+        name: attractionData.name,
+        location: attractionData.location,
+        yearStart: yearStart,
+        monthStart: monthStart,
+        dayStart: dayStart,
+        hourStart: hourStart,
+        minStart: minStart,
+        yearEnd: yearEnd,
+        monthEnd: monthEnd,
+        dayEnd: dayEnd,
+        hourEnd: hourEnd,
+        minEnd: minEnd
+    };
+    
+    const handlePress = () => {
+        console.log('Data to send:', dataToSend);
+        dispatch(setSharedData(dataToSend));
+      };
+    
+    return(
+        <SafeAreaView style = {{width: '100%', height: '100%', backgroundColor: '#FFF'}}>
+            
+            <StatusBar translucent backgroundColor="transparent" />
+            
+            <Image style = {{width: '100%', height: 329, marginBottom: 25}}source={require('../../assets/images/bgDetailsPage.png')} />
+            <View style={{ width: '100%', height: 42 , marginTop: 245.75 , position: 'absolute'}}>
+                <Svg height="100%" width="100%">
+                    <Path
+                    d="M0 62.5948C0 48.0822 0 40.8259 2.30577 34.7816C5.34372 26.8181 11.4044 20.0305 18.9745 16.1137C24.7201 13.1409 31.7845 12.339 45.9133 10.7351C162.309 -2.47789 244.571 -2.69258 365.403 10.8159C379.567 12.3994 386.65 13.1911 392.406 16.1601C399.993 20.0734 406.063 26.86 409.109 34.8347C411.42 40.8852 411.42 48.1559 411.42 62.6973V593.2C411.42 609.558 411.42 617.737 408.748 624.189C405.184 632.791 398.35 639.626 389.747 643.189C383.296 645.861 375.116 645.861 358.758 645.861H52.6618C36.3036 645.861 28.1245 645.861 21.6727 643.189C13.0702 639.626 6.23566 632.791 2.67243 624.189C0 617.737 0 609.558 0 593.2V62.5948Z" fill="#FFF"
+                    />
+                </Svg> 
+            </View>
+            <View style = {styleDetailsPage.viewTop}>
+                <TouchableOpacity style = {styleDetailsPage.btnChevron} onPress={handleBackPress} >
+                    <Icon name="chevron-back" color="#FFF" size={25}/>
+                </TouchableOpacity>
+                <Text style = {styleDetailsPage.textDetails}>Details</Text>
+                <TouchableOpacity style = {styleDetailsPage.btnTB}>
+                    <Icon name="notifications-outline" color="#4A4A4A" size={25}/>
+                </TouchableOpacity>
+            </View>
+            <View style = {styleDetailsPage.View}>
+                <View style = {styleDetailsPage.viewMenu}>
+                    <TouchableOpacity style={page === INFO ? [styleDetailsPage.viewBtnMenu, { backgroundColor: '#FFF' }] : styleDetailsPage.viewBtnMenu}
+                        onPress={() => {
+                            setPage(INFO);
+                        }}>
+                        {/* <Icon style = {styleDetailsPage.icon} name="information" color="#4A4A4A" size={25}/> */}
+                        <Text style={page === INFO ? [styleDetailsPage.text, { color: '#FF852C' }] : styleDetailsPage.text}>Info</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={page === RAITING ? [styleDetailsPage.viewBtnMenu, { backgroundColor: '#FFF' }] : styleDetailsPage.viewBtnMenu}
+                        onPress={() => {
+                            setPage(RAITING);
+                        }}>
+                        <Text style={page === RAITING ? [styleDetailsPage.text, { color: '#FF852C' }] : styleDetailsPage.text}>Ratings</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={page === SUPPLIER ? [styleDetailsPage.viewBtnMenu, { backgroundColor: '#FFF' }] : styleDetailsPage.viewBtnMenu}
+                        onPress={() => {
+                            setPage(SUPPLIER);
+                        }}>
+                        <Text style={page === SUPPLIER ? [styleDetailsPage.text, { color: '#FF852C' }] : styleDetailsPage.text}>Supplier</Text>
+                    </TouchableOpacity>
+                </View>
+                
+                    
+                
+            </View>
+            
+            {page === INFO ? <InfoPage attractionData={attractionData} /> : page === RAITING ? <RaitingsPage attractionData={attractionData} /> : page === SUPPLIER ? <SupplierPage /> : null}
+            <View style = {styleDetailsPage.viewAddTour}>
+                <View style = {{position: 'absolute', width: 90, height: 20, marginTop: 15, left: 95, borderLeftWidth: 1, borderRightWidth: 1, borderLeftColor: 'rgba(128, 128, 128, 0.6)', borderRightColor: 'rgba(128, 128, 128, 0.6)'}}></View>
+                <TouchableOpacity style = {styleDetailsPage.viewDateTime} onPress={() => setShowModal(true)}>
+                    <View style = {styleDetailsPage.viewTopDateTime}>
+                        <View style = {styleDetailsPage.btnCalendar}>
+                            <Icon name = 'calendar-outline' color = '#000' size = {15}/>
+                            <Text style = {styleDetailsPage.textStartEnd}> Start</Text>
+                        </View>
+                        <Text style = {styleDetailsPage.textTime}> {hourStart}:{minStart}</Text>
+                    </View>
+                    <View style = {styleDetailsPage.viewBotDateTime}>
+                        <Text style = {styleDetailsPage.textDate}>{dayStart}-{monthStart}-{yearStart}</Text>
+                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity style = {{...styleDetailsPage.viewDateTime, marginLeft: 10}} onPress={() => setShowModalEnd(true)}>
+                    <View style = {styleDetailsPage.viewTopDateTime}>
+                        <View style = {styleDetailsPage.btnCalendar}>
+                            <Icon name = 'calendar-outline' color = '#000' size = {15}/>
+                            <Text style = {styleDetailsPage.textStartEnd}> End</Text>
+                        </View>
+                        <Text style = {styleDetailsPage.textTime}>{hourEnd}:{minEnd}</Text>
+                    </View>
+                    <View style = {styleDetailsPage.viewBotDateTime}>
+                        <Text style = {styleDetailsPage.textDate}>{dayEnd}-{monthEnd}-{yearEnd}</Text>
+                    </View>
+                </TouchableOpacity>
+                <View style = {styleDetailsPage.viewPrice}>
+                    <View style = {styleDetailsPage.viewTopDateTime}>
+                    <Text style = {styleDetailsPage.textPrice}>Price</Text>
+                    </View>
+                    <View style = {styleDetailsPage.viewBotDateTime}>
+                    <Text style = {styleDetailsPage.textP}>165.000 VND</Text>
+                    </View>
+                    
+                </View>
+                <TouchableOpacity style = {styleDetailsPage.btnAdd} onPress={handlePress}>
+                    <Text style = {styleDetailsPage.textAdd}>Add</Text>
+                </TouchableOpacity>
+                <Modal visible = {showModal} animationType="slide" transparent={true}>
+                    <DateTimePicker setYear = {setYearStart} setMonth = {setMonthStart} setDay = {setDayStart} setHour={setHourStart} setMin={setMinStart} setShowModal={setShowModal}/>
+                </Modal>
+                <Modal visible = {showModalEnd} animationType="slide" transparent={true}>
+                    <DateTimePicker setYear = {setYearEnd} setMonth = {setMonthEnd} setDay = {setDayEnd} setHour={setHourEnd} setMin={setMinEnd} setShowModal={setShowModalEnd}/>
+                </Modal>
+            </View>
+        </SafeAreaView>
+    )
+}
