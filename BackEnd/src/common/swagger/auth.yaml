@@ -1,10 +1,3 @@
-openapi: "3.0.2"
-info:
-  title: Travalid API
-  version: "1.0.1"
-servers:
-  - url: http://localhost:3000
-
 tags:
   - name: Authentication
     description: API for user authentication
@@ -144,10 +137,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/error"
               example:
-                description: sdsa
-                value:
-                  position: username or email
-                  msg: already exist
+                position: username or email
+                msg: already exist
         "422":
           description: Error incorrect registration information in the specified syntax structure
           content:
@@ -228,10 +219,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/error"
               example:
-                description: sdsa
-                value:
-                  position: username or email or tax id number
-                  msg: already exist
+                position: username or email or tax id number
+                msg: already exist
         "422":
           description: Error incorrect registration information in the specified syntax structure
           content:
@@ -319,7 +308,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/error"
-              example:
+              examples:
+                Not sign in:
                   $ref: "#/components/examples/verifyToken401NotSignIn"
         "403":
           description: Error when user logs in but the token or refresh token has expired, or the user's role is not authorized to perform this action
@@ -346,10 +336,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/error"
               example:
-                  description: Error due to the information provided (username or email) already existing with a system account, need to change other information
-                  value:
-                    position: username or email
-                    msg: already exist
+                position: username or email
+                msg: already exist
         "422":
           description: Error incorrect registration information in the specified syntax structure
           content:
@@ -399,12 +387,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/error"
               example:
-                  description: Add error data
-                  value:
-                    position: insert prisma
-                    msg: Unable to add user table data to the database
-
-
+                position: insert prisma
+                msg: Unable to add user table data to the database
 
   /refresh-token:
     put:
@@ -457,8 +441,6 @@ paths:
                   value:
                     position: Incorrect refresh token
                     msg: Incorrect refresh token
-        
-
 
 components:
   schemas:
@@ -589,6 +571,19 @@ components:
       value:
         position: Incorrect token
         msg: Incorrect token
+    checkSupplierOrAdminRole403NotAccessible:
+      description: The error is due to no resource access role. The user must have the provider role ỏr administrative role to perform this task
+      value:
+        position: User role is not accessible
+        msg: Users need to be an administrator or website suppllier to access this resource
+    checkAdminRole403NotAccessible:
+      description: The error is due to not having permission to access the resource. The user must have administrative role to perform this task
+      value:
+        position: User role is not accessible
+        msg: Users need site administrator permissions to access this resource
 
-security:
-  - cookiesRefreshToen: []
+    checkSupplierRole403NotAccessible:
+      description: The error is due to no resource access role. The user must have the supplier role to perform this task
+      value:
+        position: User role is not accessible
+        msg: Users need permission from the website supplier to access this resource
