@@ -23,7 +23,7 @@ const options = {
       }
     ]
   },
-  apis: ['./src/common/swagger/*.yaml'], // files containing annotations as above
+  apis: ['./src/common/swagger/apiDocs.yaml'], // files containing annotations as above
 };
 const openapiSpecification = swaggerJsdoc(options);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification));
