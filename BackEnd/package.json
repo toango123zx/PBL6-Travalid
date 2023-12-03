@@ -7,7 +7,8 @@
     "beautiful": "lint-staged",
     "start": "nodemon --exec babel-node --inspect src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "insert-data-test": "node src/database/insert/index.js"
+    "insert-data-test": "node src/database/insert/index.js",
+    "create-swagger": "npx swagger-jsdoc -d src/common/swagger/definition.yaml \"src/common/swagger/!(definition).yaml\" -o src/common/swagger/apiDocs.yaml"
   },
   "author": "",
   "license": "ISC",
