@@ -47,10 +47,71 @@ export const getUsers = async () => {
             select: {
                 id_user: true,
                 username: true,
-                role: true,
                 name: true,
+                role: true,
                 phone_number: true,
                 status: true,
+            }
+        });
+    } catch (e) {
+        false;
+    };
+};
+
+export const getInfoUser = async (id_user, role) => {
+    let __user = {
+        id_user: true,
+        username: true,
+        role: true,
+        image: true,
+        name: true,
+        email: true,
+        gender: true,
+        date_of_birth: true,
+        phone_number: true,
+        address: true,
+        status: true,
+        info_supplier: {
+            select: {
+                tax_id_number: true,
+            }
+        }
+    };
+    switch (role) {
+        case "traveller": {
+            delete __user.info_supplier;
+            break;
+        };
+        case "admin": {
+            delete __user.info_supplier;
+            break;
+        };
+        case "travel_supplier": {
+            delete __user.gender;
+            break;
+        };
+        case "hotel_supplier": {
+            delete __user.gender;
+            break;
+        };
+        case "restaurant_supplier": {
+            delete __user.gender;
+            break;
+        };
+        case "transportation_supplier": {
+            delete __user.gender;
+            break;
+        };
+        default: {
+            return false
+        };
+    };
+    try {
+        return await prisma.user.findFirst({
+            select: __user,
+            where: {
+                id_user: Number(id_user),
+                role: String(role)
             }
         });
     } catch (e) {
