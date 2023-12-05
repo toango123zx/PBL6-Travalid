@@ -1,6 +1,6 @@
 const { prisma } = require('../config/prismaDatabase');
 
-export const    getUser = async (username, email, tax_id_number) => {
+export const getUser = async (username, email, tax_id_number) => {
     try {
         return await prisma.user.findFirst({
             select: {
@@ -36,6 +36,25 @@ export const    getUser = async (username, email, tax_id_number) => {
         });
     } catch (e) {
         return false;
+    };
+};
+
+export const getUsers = async () => {
+    try {
+        return await prisma.user.findMany({
+            take: 20,
+            skip: 1,
+            select: {
+                id_user: true,
+                username: true,
+                role: true,
+                name: true,
+                phone_number: true,
+                status: true,
+            }
+        });
+    } catch (e) {
+        false;
     };
 };
 
