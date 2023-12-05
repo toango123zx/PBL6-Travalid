@@ -1,0 +1,59 @@
+
+tags:
+  - name: product
+    description: Các API liên quan đến product
+paths:
+  /product : 
+    post:
+      tags:
+        - product
+      summary: thêm product
+      description: Add a new pet to the store
+      operationId: create Product
+      requestBody:
+        description: Thông tin product
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example : Núi Bà Nà1
+                id_user:
+                  type: number
+                  example : 3
+                location_map:
+                  type: string
+                  example : 123123
+                time:
+                  type: number
+                  example : 7.5
+                quantity:
+                  type: number
+                  example : 20
+                age:
+                  type: number
+                  example : 5
+                description:
+                  type: string
+                  example : Đây là chuyến du lịch
+                id_location:
+                  type: number
+                  example : 1
+        required: true
+      responses:
+        '200':
+          description: Successful create product
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    example : success
+
+        '405':
+          description: Invalid input
+ 

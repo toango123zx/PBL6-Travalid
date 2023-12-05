@@ -1,0 +1,589 @@
+tags:
+  - name: Authentication
+    description: API for user authentication
+paths:
+  /sign-in:
+    post:
+      tags:
+        - Authentication
+      summary: Sign in
+      description: Login for users who have registered accounts in the system
+      operationId: SignIn
+      requestBody:
+        description: User sign in information
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: admin
+                password:
+                  type: string
+                  example: admin
+      responses:
+        "200":
+          description: "Sign in successfully. reutrn body user information and token (access token); cookies: refresh token"
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjoxLCJ1c2Q.lIwlbNRpmv; Path=/; HttpOnly
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id_user:
+                        type: integer
+                        format: int64
+                        example: 1
+                      username:
+                        type: string
+                        example: admin
+                      name:
+                        type: string
+                        example: Ngô Văn Toàn
+                      date_of_birth:
+                        type: string
+                        format: date-time
+                        pattern: '^\d{4}-\d{2}-\d{2}$'
+                        example: 2002-12-30
+                      role:
+                        type: string
+                        enum:
+                          - admin
+                          - traveller
+                          - travel_supplier
+                          - hotel_supplier,
+                          - restaurant_supplier
+                          - transportation_supplier
+                        default: traveller
+                        example: admin
+                      status:
+                        type: string
+                        enum:
+                          - active
+                          - inactive
+                        default: active
+                        example: active
+                  token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjoxLCJ1c2.-hR5WJHf4Ea
+        "401":
+          description: Incorrect password error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  position:
+                    type: string
+                    example: password
+                  msg:
+                    type: string
+                    example: Invalid password
+        "404":
+          description: Username is incorrect or does not exist error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  position:
+                    type: string
+                    example: username
+                  msg:
+                    type: string
+                    example: username does not exist
+        "500":
+          description: Error processing logic in the backend server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  position:
+                    type: string
+                    example: Prisma query User
+                  msg:
+                    type: string
+                    example: Error from the server
+
+  /sign-up/traveller:
+    post:
+      tags:
+        - Authentication
+      summary: Sign up for traveller
+      description: Sign up a new account for travaller
+      operationId: signUpTraveller
+      requestBody:
+        description: Traveller sign up information
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/user"
+      responses:
+        "200":
+          description: Sign up successfully
+        "409":
+          description: Username information already exists and registration is not allowed. Please change your username or email information to something else
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+              example:
+                position: username or email
+                msg: already exist
+        "422":
+          description: Error incorrect registration information in the specified syntax structure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+              examples:
+                name:
+                  description: Format name error
+                  value:
+                    position: name
+                    msg: "Names that contain numbers or special characters"
+                email:
+                  description: Format email error
+                  value:
+                    position: email
+                    msg: "as sample: user1@gmail.com"
+                incorrect role:
+                  description: Incorrect user role error
+                  value:
+                    position: role
+                    msg: "Invalid role information"
+                Invalid traveller role:
+                  description: Error when traveler roles don't match, edit role to traveler
+                  value:
+                    position: Traveller role
+                    msg: Invalid traveller role error for the system
+                gender:
+                  description: Format gender error
+                  value:
+                    position: gender
+                    msg: "as sample: true or false or 1 or 0"
+                format date_of_birth:
+                  description: Format date of birth error
+                  value:
+                    position: date_of_birth
+                    msg: "Invalid date and as sample: yy-mm-dd"
+                value date_of_birth:
+                  description: Valid date of birth error (Greater than current date)
+                  value:
+                    position: date_of_birth
+                    msg: "date_of_birth greater than the current date"
+                phone_number:
+                  description: Fromat phone number error (must be complete and correct 13 numbers (each number can be from 0 to 9))
+                  value:
+                    position: phone number
+                    msg: "as sample: 0000000000"
+        "500":
+          description: Error processing logic in the backend server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+              example:
+                position: Prisma create Supplier
+                msg: Error from the
+
+  /sign-up/supplier:
+    post:
+      tags:
+        - Authentication
+      summary: Sign up for suppliers
+      description: Sign up a new account for supplier
+      operationId: signUpSupplier
+      requestBody:
+        description: Supplier sign up information
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/supplier"
+      responses:
+        "200":
+          description: Sign up Supplier successfully
+        "409":
+          description: Username or email or tax id information already exists and registration is not allowed. Please change your username or email or tax id information to something else
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+              example:
+                position: username or email or tax id number
+                msg: already exist
+        "422":
+          description: Error incorrect registration information in the specified syntax structure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+              examples:
+                name:
+                  description: Format name error
+                  value:
+                    position: name
+                    msg: "Names that contain numbers or special characters"
+                email:
+                  description: Format email error
+                  value:
+                    position: email
+                    msg: "as sample: user1@gmail.com"
+                role:
+                  description: Incorrect user role error
+                  value:
+                    position: role
+                    msg: "Invalid role information"
+                invalid supplier role:
+                  description: The error is due to the supplier's role not belonging to the system-specified travel service supplier, hotel supplier, restaurant supplier, or transportation supplier
+                  value:
+                    position: Supplier role
+                    msg: Invalid supplier role error for the system
+                gender:
+                  description: Format gender error
+                  value:
+                    position:
+                    msg: "as sample: true or false or 1 or 0"
+                format date_of_birth:
+                  description: Format date of birth error
+                  value:
+                    position: date_of_birth
+                    msg: "Invalid date and as sample: yy-mm-dd"
+                value date_of_birth:
+                  description: Valid date of birth error (Greater than current date)
+                  value:
+                    position: date_of_birth
+                    msg: "date_of_birth greater than the current date"
+                phone_number:
+                  description: Fromat phone number error (must be complete and correct 13 numbers (each number can be from 0 to 9))
+                  value:
+                    position: phone number
+                    msg: "as sample: 0000000000"
+                tax_id_number:
+                  description: Format tax id number error (tax_id_number is less than 13 numbers, each number is from 1 to 9)
+                  value:
+                    position: tax_id_number
+                    msg: Less than or equal to 13 characters
+        "500":
+          description: Error processing logic in the backend server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+              example:
+                position: Prisma create Supplier
+                msg: Error from the server
+
+  /sign-up/admin:
+    post:
+      tags:
+        - Authentication
+      summary: Sign up for admin
+      description: Use the administrator account to register a new administrator account
+      operationId: signUpAdmin
+      security:
+        - cookiesRefreshToen: []
+      parameters:
+        - in: header
+          name: token
+          schema:
+            type: string
+            example: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjoxLCJ1c2.-hR5WJHf4Ea
+          required: true
+      responses:
+        "200":
+          description: Sign up admin successfully
+        "401":
+          description: The error is because the user has not logged in to create a new account as an administrator
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+              examples:
+                Not sign in:
+                  $ref: "#/components/examples/verifyToken401NotSignIn"
+        "403":
+          description: Error when user logs in but the token or refresh token has expired, or the user's role is not authorized to perform this action
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+              examples:
+                token expired:
+                  $ref: "#/components/examples/verifyToken403TokenExpired"
+                token not initialized:
+                  $ref: "#/components/examples/verifyToken403TokenNotInitialized"
+                incorrect token:
+                  $ref: "#/components/examples/verifyToken403IncorrectToken"
+                role:
+                  description: The error is because the user role cannot perform this task
+                  value:
+                    position: The role of the creator
+                    msg: The user must have the administrator role to create an administrator account
+        "409":
+          description: The error is because the information provided already exists for a system account
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+              example:
+                position: username or email
+                msg: already exist
+        "422":
+          description: Error incorrect registration information in the specified syntax structure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+              examples:
+                name:
+                  description: Format name error
+                  value:
+                    position: name
+                    msg: "Names that contain numbers or special characters"
+                email:
+                  description: Format email error
+                  value:
+                    position: email
+                    msg: "as sample: user1@gmail.com"
+                incorrect role:
+                  description: Incorrect user role error
+                  value:
+                    position: role
+                    msg: "Invalid role information"
+                gender:
+                  description: Format gender error
+                  value:
+                    position: gender
+                    msg: "as sample: true or false or 1 or 0"
+                format date_of_birth:
+                  description: Format date of birth error
+                  value:
+                    position: date_of_birth
+                    msg: "Invalid date and as sample: yy-mm-dd"
+                value date_of_birth:
+                  description: Valid date of birth error (Greater than current date)
+                  value:
+                    position: date_of_birth
+                    msg: "date_of_birth greater than the current date"
+                phone_number:
+                  description: Fromat phone number error (must be complete and correct 13 numbers (each number can be from 0 to 9))
+                  value:
+                    position: phone number
+                    msg: "as sample: 0000000000"
+        "500":
+          description: Errors are handled by the backend
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+              example:
+                position: insert prisma
+                msg: Unable to add user table data to the database
+
+  /refresh-token:
+    put:
+      tags:
+        - Authentication
+      summary: refresh token (access token)
+      description: Used to reissue tokens to persist credentials (when the refresh token exists in a cookie). When receiving an access token, you must add the string "bearer" in front of the token before using it
+      operationId: refreshToken
+      security:
+        - cookiesRefreshToen: []
+      responses:
+        "200":
+          description: Re-provision the access token and refresh the token successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjoxLCJ1c2Vybm.02ZiIOa_hqIHu2BQt
+        "401":
+          description: Error when refresh token does not exist in cookie because login has not been performed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+              example:
+                position: refreshToken does not exist
+                msg: You're not authenticated
+        "403":
+          description: The refresh token in the cookie is incorrect. This error requires you to log in again to continue
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+              examples:
+                Token expired error:
+                  description: The refresh token is no longer valid, re-login is required
+                  value:
+                    position: Refresh token expire
+                    msg: Expired refresh token require a request to reissue the token
+                Token Not Initialized error:
+                  description: The existing Refresh code in the cookie does not exist in the system, you need to log in again
+                  value:
+                    position: refresh token does not exist
+                    msg: The user is not logged into the system
+                Incorrect refresh:
+                  description: Refresh existing tokens perform authentication incorrectly, need to log in again
+                  value:
+                    position: Incorrect refresh token
+                    msg: Incorrect refresh token
+
+components:
+  schemas:
+    user:
+      type: object
+      properties:
+        username:
+          type: string
+          example: traveller
+        password:
+          type: string
+          example: traveller
+        name:
+          type: string
+          example: Ngô Văn Toàn
+        email:
+          type: string
+          pattern: email
+          example: traveller@gmail.com
+        gender:
+          oneOf:
+            - type: boolean
+              enum:
+                - true
+                - false
+              example: true
+            - type: string
+              enum:
+                - 1
+                - 0
+              example: 1
+        date_of_birth:
+          type: string
+          format: date-time
+          pattern: '^\d{4}-\d{2}-\d{2}$'
+          example: 2002-12-30
+        phone_number:
+          type: string
+          pattern: "/^[0-9]{10}$/"
+          default: "0000000000"
+        address:
+          type: string
+          default: "no address"
+        role:
+          type: string
+          enum:
+            - admin
+            - traveller
+            - travel_supplier
+            - hotel_supplier,
+            - restaurant_supplier
+            - transportation_supplier
+          default: traveller
+          example: traveller
+        status:
+          type: string
+          enum:
+            - active
+            - inactive
+          default: active
+          example: active
+    supplier:
+      allOf:
+        - $ref: "#/components/schemas/user"
+        - type: object
+          required:
+            - username
+            - password
+            - email
+            - role
+            - tax_id_number
+          properties:
+            username:
+              type: string
+              example: supplier
+            password:
+              type: string
+              example: supplier
+            email:
+              type: string
+              pattern: "email"
+              example: travel_supplier@gmail.com
+            role:
+              type: string
+              enum:
+                - admin
+                - traveller
+                - travel_supplier
+                - hotel_supplier,
+                - restaurant_supplier
+                - transportation_supplier
+              example: travel_supplier
+            tax_id_number:
+              type: string
+              pattern: ^[0-9]{,13}$
+              example: "0000000000000"
+    error:
+      type: object
+      properties:
+        position:
+          type: string
+        msg:
+          type: string
+
+  securitySchemes:
+    cookiesRefreshToen:
+      type: apiKey
+      in: cookie
+      name: refreshToken
+  examples:
+    verifyToken401NotSignIn:
+      description: Error no token (header) or no refresh token (cookie) when account is not Signed in
+      value:
+        position: Token or refreshToken does not exist
+        msg: You're not
+    verifyToken403TokenExpired:
+      description: Error due to expired token, need to issue new token
+      value:
+        position: Token expire
+        msg: Expired token require a request to reissue the token
+    verifyToken403TokenNotInitialized:
+      description: Error refresh token (cookie) does not exist in the system because the user is not Signed in
+      value:
+        position: refresh token does not exist
+        msg: The user is not logged into the system
+    verifyToken403IncorrectToken:
+      description: Incorrect refresh token (cookie) error
+      value:
+        position: Incorrect token
+        msg: Incorrect token
+    checkSupplierOrAdminRole403NotAccessible:
+      description: The error is due to no resource access role. The user must have the provider role ỏr administrative role to perform this task
+      value:
+        position: User role is not accessible
+        msg: Users need to be an administrator or website suppllier to access this resource
+    checkAdminRole403NotAccessible:
+      description: The error is due to not having permission to access the resource. The user must have administrative role to perform this task
+      value:
+        position: User role is not accessible
+        msg: Users need site administrator permissions to access this resource
+
+    checkSupplierRole403NotAccessible:
+      description: The error is due to no resource access role. The user must have the supplier role to perform this task
+      value:
+        position: User role is not accessible
+        msg: Users need permission from the website supplier to access this resource

@@ -1,0 +1,332 @@
+tags:
+  - name: Discount
+    description: API for user discount
+paths:
+  /discount/all:
+    get:
+      tags:
+        - Discount
+      summary: Show all discounts for users
+      description: Display data information of all discount programs for users
+      operationId: showAllDiscounts
+      responses:
+        "200":
+          description: Displays successful discount data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/discount"
+        "404":
+          description: Displays successful discount data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+              example:
+                position: id user
+                msg: No discounts offered by this user were found
+  /discount:
+    get:
+      tags:
+        - Discount
+      summary: Show all supplier and admin discounts
+      description: Displays data information of all discount programs that the supplier or administrator has offered
+      operationId: showSupplierDiscounts
+      security:
+        - cookiesRefreshToen: []
+      parameters:
+        - in: header
+          name: token
+          schema:
+            type: string
+            example: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjoxLCJ1c2.-hR5WJHf4Ea
+          required: true
+      responses:
+        "200":
+          description: Displays successful discount data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/discount"
+        "401":
+          description: The error is because the user has not logged in to create a new account as an administrator
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+              examples:
+                Not sign in:
+                  $ref: "#/components/examples/verifyToken401NotSignIn"
+        "403":
+          description: Error when user logs in but the token or refresh token has expired, or the user's role is not authorized to perform this action
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+              examples:
+                token expired:
+                  $ref: "#/components/examples/verifyToken403TokenExpired"
+                token not initialized:
+                  $ref: "#/components/examples/verifyToken403TokenNotInitialized"
+                incorrect token:
+                  $ref: "#/components/examples/verifyToken403IncorrectToken"
+                Not accessible:
+                  $ref: "#/components/examples/checkSupplierOrAdminRole403NotAccessible"
+        "404":
+          description: No carrier or admin data discounts found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+                example:
+                  description: No carrier or admin data discounts found
+                  value:
+                    position: id user
+                    msg: No discounts offered by this user were found
+    post:
+      tags:
+        - Discount
+      summary: create new discount
+      description: User API provides or admin creates a new discount for a product
+      operationId: createDiscount
+      security:
+        - cookiesRefreshToen: []
+      parameters:
+        - in: header
+          name: token
+          schema:
+            type: string
+            example: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjoxLCJ1c2.-hR5WJHf4Ea
+          required: true
+      requestBody:
+        description: Create new discount information
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/discount-input"
+      responses:
+        "200":
+          description: Created new discount successfully
+        "401":
+          description: The error is because the user has not logged in to create a new account as an administrator
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+              examples:
+                Not sign in:
+                  $ref: "#/components/examples/verifyToken401NotSignIn"
+        "403":
+          description: Error when user logs in but the token or refresh token has expired, or the user's role is not authorized to perform this action
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+              examples:
+                token expired:
+                  $ref: "#/components/examples/verifyToken403TokenExpired"
+                token not initialized:
+                  $ref: "#/components/examples/verifyToken403TokenNotInitialized"
+                incorrect token:
+                  $ref: "#/components/examples/verifyToken403IncorrectToken"
+                Not accessible:
+                  $ref: "#/components/examples/checkSupplierOrAdminRole403NotAccessible"
+                Not have permission:
+                  description: Error You are not a product vendor or you must be an administrator to perform this task
+                  value:
+                    position: Id discount
+                    msg: The user does not have permission to update this resource
+        "422":
+          description: Error due to invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+              examples:
+                Invalid end_time:
+                  description: Error because the applied start time is greater than the end time and less than the current time
+                  value:
+                    position: Start time and end time
+                    msg: The start time must be less than the end time and the end time must be greater than the current time
+                Invalid value:
+                  description: The discount value is an invalid value (0 < value < 100)
+                  value:
+                    position: Discount value
+                    msg: The discount value must be greater than 0 and less than or equal
+                Invalid point:
+                  description: Invalid points for discount redemption (points > 0)
+                  value:
+                    position: discount point
+                    msg: Discount point must be greater than 0
+                Invalid quantity:
+                  description: Discount point must be greater than
+                  value:
+                    position: Quantity discounts
+                    msg: Quantity discount must be greater than 0
+        "500":
+          description: Errors are handled by the backend
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+              example:
+                position: Prisma create discount
+                msg: Error from the server
+
+  /discount/{id}:
+    get:
+      tags:
+        - Discount
+      summary: Show discount detail for users
+      description: sdfsad
+      operationId: showDiscountDetail
+      parameters:
+        - name: id
+          in: path
+          description: discount id to display information
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        "200":
+          description: dsfdsf
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/discount"
+        "404":
+          description: Username is incorrect or does not exist errorsdfksf
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+                example:
+                  position: id user
+                  msg: No discounts offered by this user were found
+    delete:
+      tags:
+        - Discount
+      summary: Delete discount
+      description: sdfsad
+      operationId: deleteDiscount
+      security:
+        - cookiesRefreshToen: []
+      parameters:
+        - in: header
+          name: token
+          schema:
+            type: string
+            example: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjoxLCJ1c2.-hR5WJHf4Ea
+          required: true
+        - name: id
+          in: path
+          description: discount id to display information
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        "200":
+          description: Created new discount successfully
+        "401":
+          description: The error is because the user has not logged in to create a new account as an administrator
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+              examples:
+                Not sign in:
+                  $ref: "#/components/examples/verifyToken401NotSignIn"
+        "403":
+          description: Error when user logs in but the token or refresh token has expired, or the user's role is not authorized to perform this action
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+              examples:
+                token expired:
+                  $ref: "#/components/examples/verifyToken403TokenExpired"
+                token not initialized:
+                  $ref: "#/components/examples/verifyToken403TokenNotInitialized"
+                incorrect token:
+                  $ref: "#/components/examples/verifyToken403IncorrectToken"
+                Not accessible:
+                  $ref: "#/components/examples/checkSupplierOrAdminRole403NotAccessible"
+                Not have permission:
+                  description: Error You are not a product vendor or you must be an administrator to perform this task
+                  value:
+                    position: Id discount
+                    msg: The user has no control over this resource
+        "500":
+          description: Errors are handled by the backend
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+              example:
+                position: Discount status
+                msg: "Error from the server: Invalid discount status"
+
+components:
+  schemas:
+    discount-input:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Xuan 2023
+        description:
+          type: string
+          example: no description
+        start_time:
+          type: string
+          format: date-time
+          example: 2023-11-25T00:00:00.000
+        end_time:
+          type: string
+          format: date-time
+          example: 2023-12-15T00:00:00.000Z
+        value:
+          type: integer
+          example: 56
+        quantity:
+          type: integer
+          example: 100
+        point:
+          type: integer
+          example: 0
+    discount:
+      allOf:
+        - type: object
+          properties:
+            id_discount:
+              type: integer
+              example: 3029
+            id_product:
+              type: integer
+              example: 1882
+            applited:
+              type: integer
+              example: 0
+            status:
+              type: string
+              enum:
+                - active
+                - full
+                - cancel
+              example: active
+            supplier:
+              type: string
+              enum:
+                - admin
+                - travel_supplier
+                - hotel_supplier,
+                - restaurant_supplier
+                - transportation_supplier
+              example: admin
+        - $ref: "#/components/schemas/discount-input"
