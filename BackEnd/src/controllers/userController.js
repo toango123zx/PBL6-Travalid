@@ -2,7 +2,7 @@ import * as userService from '../services/userService';
 
 export const getUser = async (req, res) => {
     const __id_user = Number(req.params.id)
-    const __role = (req.body.role);
+    const __role = String(req.body.role);
     const __user = await userService.getInfoUser(__id_user, __role);
     if (!__user) {
         return res.status(500).json({
@@ -10,6 +10,14 @@ export const getUser = async (req, res) => {
             msg: "The user's role does not match the id passed in"
         });
     };
+    return res.status(200).json({
+        data: __user
+    });
+};
+
+export const getMyProfile = async (req, res) => {
+    let __user = req.user;
+    __user = await userService.getInfoUser(__user.id_user, __user.role);
     return res.status(200).json({
         data: __user
     });
