@@ -61,6 +61,7 @@ export default HomePage = () => {
                         <Image style = {styleHomePage.image1} source={require('../assets/images/image1.png')}/>
                     </View>
                     <View style = {styleHomePage.viewLogo}>
+                        <Image source={require('../assets/images/Logo_Travalid.png')} style = {styleHomePage.logo}/>
                     </View>
                 </View>
 

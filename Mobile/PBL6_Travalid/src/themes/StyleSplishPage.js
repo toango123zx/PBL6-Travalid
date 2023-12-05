@@ -1,9 +1,11 @@
-import {StyleSheet, Dimensions} from 'react-native';
+import {StyleSheet, Dimensions, StatusBar} from 'react-native';
 const { width, height } = Dimensions.get('window');
+const statusBarHeight = StatusBar.currentHeight || 0;
 const styleSplishPage = StyleSheet.create({
     View: {
         width: width,
         height: height,
+        
     },
     ViewLogo: {
         width: '75%',
@@ -13,7 +15,8 @@ const styleSplishPage = StyleSheet.create({
         marginLeft: '12.5%',
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: '10%',
+        marginTop: 80,
+        
         marginBottom : '15%',
         position: 'absolute',
     },

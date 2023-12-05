@@ -122,13 +122,17 @@ export default RootComponent = function(){
     return(
       <Provider store ={store}>
         <NavigationContainer>
-          <Stack.Navigator screenOptions={{headerShown: false}} initialRouteName="Home">
+          <Stack.Navigator screenOptions={{headerShown: false}} initialRouteName="SplishPage">
             <Stack.Screen name='Home1' component={MyTabs}/>
+            <Stack.Screen name="SignInPage" component={SignInPage}/>
+            <Stack.Screen name="SignUpPage" component={SignUpPage}/>
+            <Stack.Screen name="SplishPage" component={SplishPage}/>
             <Stack.Screen name="DetailsPage" component={DetailsPage } />
             <Stack.Screen name="ProfileDetails" component={ProfileDetails}/>
             <Stack.Screen name="BookingCartPage" component={BookingCartPage} />
             <Stack.Screen name="PaymentPage" component={PaymentPage} />
             <Stack.Screen name="EditProfile" component={EditProfile} />
+
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>

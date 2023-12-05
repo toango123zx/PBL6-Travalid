@@ -12,12 +12,12 @@ const styleSignUpPage = StyleSheet.create({
         
     },
     viewTop: {
-        height: '27%',
+        height: '25%',
         width: '100%',
         borderWidth: 0
     },
     viewMid: {
-        height: '38%',
+        height: '40%',
         width: '100%',
         borderWidth: 0
     },
@@ -86,7 +86,7 @@ const styleMidSUPage = StyleSheet.create({
         height: 61.5,
         width: 367.5,
         marginLeft: (width - 367.5)/2,
-        marginTop: height*0.3*0.05,
+        
         marginBottom: height*0.3*0.05,
         backgroundColor: '#F7F7F9',
         borderRadius: 16,

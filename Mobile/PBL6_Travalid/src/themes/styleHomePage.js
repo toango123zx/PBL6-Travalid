@@ -59,7 +59,7 @@ export const styleHomePage =  StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 24,
-        backgroundColor : '#F7F7F9',
+        backgroundColor : '#FFF',
         elevation: 5
     },
     viewImage: {
@@ -75,7 +75,13 @@ export const styleHomePage =  StyleSheet.create({
         borderWidth: 0,
         position: 'absolute',
         borderRadius: 60,
-        backgroundColor: '#E9FF62'
+        backgroundColor: '#E9FF62',
+        elevation: 5
+    },
+    logo: {
+        width: 110,
+        height: 110,
+        
     },
     viewImageBg: {
         width: 330,
@@ -90,7 +96,10 @@ export const styleHomePage =  StyleSheet.create({
         borderWidth: 0,
         position: 'absolute',
         bottom: 0,
-        right: 0
+        right: 0,
+        borderRadius: 55,
+        
+        elevation: 5
     },
     imagebg: {
         width: 330,
