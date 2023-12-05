@@ -1,6 +1,6 @@
 const { prisma } = require('../config/prismaDatabase');
 
-export const createProduct = async (id_prodcut, id_user, role) => {
+export const createProduct = async (id_product, id_user, role) => {
     if (String(role) == "admin") {
         id_user = {
             not: -1
@@ -17,9 +17,9 @@ export const createProduct = async (id_prodcut, id_user, role) => {
                 id_product: true,
             },
             where: {
-                id_product: Number(id_prodcut),
+                id_product: Number(id_product),
                 id_user: id_user
-                
+
             }
         });
     } catch (e) {
@@ -28,14 +28,94 @@ export const createProduct = async (id_prodcut, id_user, role) => {
 };
 
 
-export const getProduct = async (id_prodcut) => {
+export const getProduct = async (id_product) => {
     try {
         return await prisma.product.findFirst({
             where: {
-                id_product: Number(id_prodcut),
+                id_product: Number(id_product),
             }
         });
     } catch (e) {
         return false;
     };
 };
+
+
+export const setStatusProduct = async (id_product, id_user, role, status) => {
+    let __status;
+    let product = {
+        id_product : id_product,
+        status : status
+    }
+    switch (String(status)) {
+        case 'active':
+            if(role === 'admin'){
+                __status = 'active';
+                product.status = 'warning'
+            }
+            if(role.includes('supplier')){
+                __status = 'active';
+                product.id_user = id_user;
+                product.status = 'waiting'
+            }
+            break;
+        case 'inactive':
+            if(role === 'admin'){
+                __status = 'inactive';
+                product.status = 'warning'
+            }
+            if(role.includes('supplier')){
+                __status = 'inactive';
+                product.id_user = id_user;
+                product.status = 'waiting'
+            }
+            break;
+
+        case 'waiting':
+            if(role.includes('supplier')){
+                __status = 'waiting';
+                product.id_user = id_user;
+                product.status = 'active'
+            }
+            break;
+
+        case 'warning':
+            if(role === 'admin'){
+                __status = 'warning';
+                product.status = 'active'
+            }
+            break;
+        default :
+            return false;
+
+    };
+    try {
+        return await prisma.product.update({
+            where: product,
+            data: {
+                status: __status
+            }
+        })
+
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export const getCurrentStatus = async (id_product) => {
+    try {
+        const current_status = await prisma.product.findUnique({
+            where: {
+                id_product: id_product
+            },
+            select: {
+                status: true
+            }
+        })
+        return current_status.status;
+    } catch (e) {
+        return false;
+    }
+
+}

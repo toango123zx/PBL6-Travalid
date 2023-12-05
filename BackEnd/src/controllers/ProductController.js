@@ -1,23 +1,92 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-
-export const show = async (req, res, next) => {
-    console.log("123")
-    res.send({
-        data: "show"
-    })
-}
+const { productCreateValidation } = require('../validation/authValidation');
+import * as envApp from '../config/envApp';
+import * as productHelper from '../helpers/productHelper';
+import * as productService from '../services/productService';
 export const getAllProduct = async (req, res, next) => {
     try {
-        const allProduct = await prisma.product.findMany();
-        res.status(200).send({
-            status: 'success',
-            msg: 'You have successfully.',
-            data: allProduct,
+        let page = parseInt(req.query.page, 10);
+        const limit = envApp.LimitGetProductTraveller;
+        if (page < 0 || !!page == false) page = 1; // set default page
+
+        let start = (page - 1) * limit;
+        console.log("page : ", page, "limit :  ", limit)
+        const allProduct = await prisma.product.findMany({
+            select: {
+                id_product: true,
+                name: true,
+                avg_rate: true,
+                count_complete: true,
+                city: true,
+                image: true
+            },
+            skip: start,
+            take: limit,
         });
+        if (!allProduct) {
+            return res.status(403).json({
+                position: "getAllProduct",
+                msg: "The user does not have permission to access this resource"
+            });
+        }
+        res.status(200).json({
+            status: 'success1123',
+            msg: 'You have successfully.',
+            data: allProduct
+        });
+
     } catch (err) {
         console.error('getAllProduct: ', err);
-        res.status(500).send({
+        res.status(500).json({
+            msg: 'Get internal server error in get all product',
+        });
+    }
+};
+
+export const getAllProductForSupplier = async (req, res, next) => {
+    try {
+        let page = parseInt(req.query.page, 10);
+        const limit = envApp.LimitGetProductTraveller;
+        if (page < 0 || !!page == false) page = 1; // set default page
+
+        let start = (page - 1) * limit;
+        console.log("page : ", page, "limit :  ", limit)
+        let allProduct = await prisma.product.findMany({
+            select: {
+                id_product: true,
+                name: true,
+                city: true,
+                time: true,
+                quantity: true,
+                location: {
+                    select : {
+                        display_name : true
+                    }
+                },
+                status: true,
+                avg_rate: true,
+                count_complete: true,
+            },
+            skip: start,
+            take: limit,
+        });
+        if (!allProduct) {
+            return res.status(403).json({
+                position: "getAllProduct",
+                msg: "The user does not have permission to access this resource"
+            });
+        }
+        allProduct = productHelper.formatProductFormDb(allProduct);
+        res.status(200).json({
+            status: 'success1123',
+            msg: 'You have successfully.',
+            data: allProduct
+        });
+
+    } catch (err) {
+        console.error('getAllProduct: ', err);
+        res.status(500).json({
             msg: 'Get internal server error in get all product',
         });
     }
@@ -25,25 +94,38 @@ export const getAllProduct = async (req, res, next) => {
 
 export const getProductById = async (req, res, next) => {
     try {
-        const userId = parseInt(req.query.userId);
+        const productId = parseInt(req.params.id);
+        if (productId < 0 || !!productId == false){
+            return res.status(404).send({
+                position : 'Product id',
+                msg : 'Product not found'
+            })
+        }
         const Product = await prisma.product.findUnique({
-            where: { id_product: userId }
+            where: { id_product: productId }
         });
-        res.status(200).send({
+        if (!Product) {
+            return res.status(403).json({
+                position: "Detailed Product id",
+                msg: "The user does not have permission to access this resource"
+            });
+        }
+        res.status(200).json({
             status: 'success',
             msg: 'You have successfully.',
             data: Product,
         });
     } catch (err) {
         console.error('getProductById: ', err);
-        res.status(500).send({
+        res.status(500).json({
             msg: 'Get internal server error in get product',
         });
     }
 };
 export const createProduct = async (req, res, next) => {
     try {
-        const { name, id_user, location_map, time, quantity, age, description, id_location } = req.body;
+        const id_user = req.user.id_user;
+        const { name, location_map, time, quantity, age, description, id_location, city } = req.body;
         const createProduct = await prisma.product.create({
             data: {
                 name: name,
@@ -54,16 +136,25 @@ export const createProduct = async (req, res, next) => {
                 age: age,
                 description: description,
                 id_location: id_location,
+                city: city
             }
         });
-        res.status(200).send({
+        if (!createProduct) {
+            if (__user.role === 'traveller') {
+                return res.status(403).json({
+                    position: "Role not allowed",
+                    msg: "The user does not have permission to update this resource"
+                })
+            }
+        }
+        res.status(201).json({
             status: 'success',
             msg: 'You have successfully.',
             data: createProduct,
         });
     } catch (err) {
         console.error('createProduct: ', err);
-        res.status(500).send({
+        res.status(500).json({
             msg: 'Get internal server error in get product',
         });
     }
@@ -71,31 +162,58 @@ export const createProduct = async (req, res, next) => {
 
 export const updateProduct = async (req, res, next) => {
     try {
-        const id_product = parseInt(req.query.id_product);
-        const { name, id_user, location_map, time, quantity, age, description, id_location } = req.body;
-        const updateProduct = await prisma.product.update({
-            where: {
-                id_product: id_product
+        console.log('updateProduct')
+        const id_product = parseInt(req.params.id);
+        const id_user = req.user.id_user;
+        console.log(id_user)
+        const { name, location_map, time, quantity, age, description, id_location, city } = req.body;
+        const listIdProduct = await prisma.product.findMany({
+            select: {
+                id_product: true
             },
-            data: {
-                name: name,
-                id_user: id_user,
-                location_map: location_map,
-                time: time,
-                quantity: quantity,
-                age: age,
-                description: description,
-                id_location: id_location,
-            }
-        });
-        res.status(200).send({
-            status: 'success',
-            msg: 'You have successfully.',
-            data: updateProduct,
-        });
+            where: {
+                id_user: id_user
+            },
+        })
+        if (listIdProduct.length === 0) {
+            return res.status(404).json({
+                position: "id product",
+                msg: "You have no products"
+            });
+        } else if (listIdProduct.some(item => item.id_product === id_product)) {
+            const updateProduct = await prisma.product.update({
+                where: {
+                    id_product: id_product,
+                    id_user: id_user,
+                },
+                data: {
+                    name: name,
+                    id_user: id_user,
+                    location_map: location_map,
+                    time: time,
+                    quantity: quantity,
+                    age: age,
+                    description: description,
+                    id_location: id_location,
+                    city: city
+                }
+            });
+
+            res.status(200).json({
+                status: 'success',
+                msg: 'You have successfully.',
+                data: updateProduct,
+            });
+        } else if (listIdProduct.some(item => item.id_product !== id_product)) {
+            return res.status(404).json({
+                position: "id product",
+                msg: "You don't have this product yet"
+            });
+        }
+
     } catch (err) {
         console.error('updateProduct: ', err);
-        res.status(500).send({
+        res.status(500).json({
             msg: 'Update Product error',
         });
     }
@@ -103,27 +221,28 @@ export const updateProduct = async (req, res, next) => {
 
 export const deleteProduct = async (req, res, next) => {
     try {
-        const id_product = parseInt(req.query.id_product);
-        const deleteRates = await prisma.rate.deleteMany({
-            where: {
-                id_product: id_product
-            }
-          });
-        const deleteProduct = await prisma.product.delete({
-            where: {
-                id_product: id_product
-            },
-        });
-        res.status(200).send({
-            status: 'success',
-            msg: 'You have successfully.',
-            data: deleteProduct,
-        });
-    } catch (err) {
-        console.error('deleteProduct: ', err);
-        res.status(500).send({
-            msg: 'Delete erorr',
+        const id_user = req.user.id_user;
+        const id_product = parseInt(req.params.id);
+        const role = req.user.role;
+        let dataProduct;
+        if(role === "admin") {
+         dataProduct = await productService.setStatusProduct(id_product , id_user, role, "warning");
+        console.log("role admin : " ,dataProduct);
+        } else if(role.includes("supplier")) {
+         dataProduct = await productService.setStatusProduct(id_product , id_user, role, "waiting");
+        console.log("role supplier : ", dataProduct);
+        } else {
+            return res.status(403).json({
+                position : "role user",
+                msg : "User does not have access rights"
+            })
+        }
+        res.json(dataProduct);
+    }
+    catch (err) {
+        console.error('Delete product: ', err);
+        res.status(500).json({
+            msg: 'Delete Product error',
         });
     }
 };
-

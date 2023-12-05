@@ -80,6 +80,7 @@ model Location {
 enum Product_Status {
   active
   warning
+  waiting
   inactive
 }
 
