@@ -1,6 +1,7 @@
 const express = require('express');
 
 import * as authController from '../controllers/authController';
+import { verifyToken } from '../helpers/authHelper';
 import * as authMiddleware from '../middlewares/authMiddleware';
 import * as authValidation from '../validation/authValidation';
 
@@ -11,5 +12,6 @@ authRouter.post('/sign-up/supplier', authValidation.supplierSignUpValidation, au
 authRouter.post('/sign-up/traveller', authValidation.travellerSignUpValidation, authValidation.checkDuplicateUser, authMiddleware.createUser,  authController.travellerSignUp);
 authRouter.post('/sign-in', authController.signIn);
 authRouter.put('/refresh-token', authController.refreshSignInToken);
+authRouter.post('/decode-jwt', authMiddleware.verifyToken, authController.decodeJWT)
 
 module.exports = authRouter;

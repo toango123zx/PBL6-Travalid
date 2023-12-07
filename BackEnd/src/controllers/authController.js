@@ -140,3 +140,9 @@ export const refreshSignInToken = (req, res, next) => {
         token: __token,
     });
 };
+
+export const decodeJWT = (req, res) => {
+    return res.status(200).json({
+        data: req.user
+    });
+};
