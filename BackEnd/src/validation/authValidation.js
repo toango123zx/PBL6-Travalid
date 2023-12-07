@@ -6,13 +6,55 @@ const userSchema = Joi.object({
     password: Joi.string().required(),
     name: Joi.string().pattern(/^[^\d~`!@#$%^&*()_+\-={[}\]|;:'",<.>?/]+$/).required(),
     email: Joi.string().email().required(),
-    gender: Joi.number().valid(0, 1, true , false).required(),
+    gender: Joi.number().valid(0, 1, true, false).required(),
     phone_number: Joi.string().length(10).pattern(/^[0-9]+$/).required(),
     address: Joi.string(),
     date_of_birth: Joi.date().max(new Date()).iso().required(),
     status: Joi.string()
 });
 
+const userUpdateSchema = Joi.object({
+    name: Joi.string()
+        .pattern(/^[^\d~`!@#$%^&*()_+\-={[}\]|;:'",<.>?/]+$/)
+        .label('name error')
+        .messages({
+            "date.base": "Name must be a string",
+            "string.pattern.base": "Names that contain numbers or special characters"
+        }),
+    email: Joi.string()
+        .email()
+        .label('email error')
+        .messages({
+            "date.base": "Email must be a string",
+            "string.email": "as sample: user1@gmail.com"
+        }),
+    gender: Joi.boolean()
+        .label("gender error")
+        .messages({
+            "boolean.base": "Gender must be true or false"
+        }),
+    phone_number: Joi.string()
+        .length(10).pattern(/^[0-9]+$/)
+        .label("phone_number error")
+        .messages({
+            "string.base": "Phone number must be a string of 10 numeric characters",
+            "string.length": "Phone number must have 10 characters",
+            "string.pattern.base": "Phone numbers contain only numbers"
+        }),
+    address: Joi.string()
+        .label("address error")
+        .messages({
+            "string.base": "Address must be a string",
+        }),
+    date_of_birth: Joi.date()
+        .max(new Date()).iso()
+        .label("date_of_birth error")
+        .messages({
+            "date.base": "Date_of_birth must be a valid date (maybe string format yy-mm-dd)",
+            "date.format": "Invalid date and as sample: yy-mm-dd",
+            "date.max": "Date_of_birth greater than the current date"
+        }),
+});
 
 const travellerSchema = userSchema.keys({
     role: Joi.string().valid('traveller')
@@ -27,36 +69,39 @@ const adminSchema = userSchema.keys({
     role: Joi.string().valid('admin').required()
 });
 
-
 export const travellerSignUpValidation = (req, res, next) => {
     try {
         const { error } = travellerSchema.validate(req.body);
         if (error) {
-            return res.status(400).send({
+            return res.status(422).send({
                 message: error.message
             });
-        }
-    }
-    catch (err) {
-        console.log(err);
-        res.status(500).send('Internal Server Error');
-    }
-    next();
-}
+        };
+    } catch (err) {
+        return res.status(500).send({
+            position: "Traveller admin sign up validation Error",
+            msg: "Error from the server",
+        });
+    };
 
+    next();
+};
 
 export const supplierSignUpValidation = (req, res, next) => {
     try {
         const { error } = supplierSchema.validate(req.body);
         if (error) {
-            return res.status(400).send({
+            return res.status(422).send({
                 message: error.message,
             });
-        }
+        };
     } catch (err) {
-        console.log(err);
-        res.status(500).send('Internal Server Error');
-    }
+        return res.status(500).send({
+            position: "Supplier sign up validation Error",
+            msg: "Error from the server",
+        });
+    };
+
     next();
 };
 
@@ -71,17 +116,39 @@ export const adminSignUpValidation = ((req, res, next) => {
     try {
         const { error } = adminSchema.validate(req.body);
         if (error) {
-            return res.status(400).send({
+            return res.status(422).send({
                 message: error.message,
             });
-        }
+        };
     } catch (err) {
-        console.log(err);
-        res.status(500).send('Internal Server Error');
-    }
-    next();
+        return res.status(500).send({
+            position: "Admin sign up validation Error",
+            msg: "Error from the server",
+        });
+    };
 
+    next();
 });
+
+export const userUpdateValidation = (req, res, next) => {
+    try {
+        const { error, value } = userUpdateSchema.validate(req.body);
+        if (error) {
+            return res.status(422).send({
+                position: error.details[0].context.label,
+                msg: error.stack,
+            });
+        };
+
+        req.updateInfoUser = value;
+    } catch (err) {
+        return res.status(500).send({
+            position: "userUpdateValidation function at updateUserValidation schema",
+            msg: "Error from the server",
+        });
+    };
+    next();
+};
 
 export const checkDuplicateUser = async (req, res, next) => {
     const __tax_id_number = !(req.body.tax_id_number) ? "" : req.body.tax_id_number.replace(/\s/g, '');

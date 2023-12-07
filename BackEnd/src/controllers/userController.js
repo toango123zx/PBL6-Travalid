@@ -36,3 +36,25 @@ export const getUsers = async (req, res) => {
         data: __users
     });
 };
+
+export const updateMyProfile = async (req, res) => {
+    const __user = req.user;
+    const __updateUserInfo = req.updateInfoUser;
+    if (!__user.email) {
+        const __emailUser = await userService.getUser(undefined, __updateUserInfo.email);
+        if (__emailUser && __emailUser.id_user !== __user.id_user) {
+            return res.status(409).json({
+                position: "email",
+                msg: "already exist",
+            });
+        };
+    };
+    if (!await userService.updateUser(__user.id_user, __updateUserInfo)) {
+        return res.status(500).json({
+            position: "prisma update user",
+            msg: "Erorr foramt information user"
+        });
+    };
+
+    return res.sendStatus(200);
+};
