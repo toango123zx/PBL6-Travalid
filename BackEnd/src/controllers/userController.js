@@ -1,4 +1,5 @@
 import * as userService from '../services/userService';
+import * as hash from '../helpers/hash';
 
 export const getUser = async (req, res) => {
     const __id_user = Number(req.params.id)
@@ -50,6 +51,32 @@ export const updateMyProfile = async (req, res) => {
         };
     };
     if (!await userService.updateUser(__user.id_user, __updateUserInfo)) {
+        return res.status(500).json({
+            position: "prisma update user",
+            msg: "Erorr foramt information user"
+        });
+    };
+
+    return res.sendStatus(200);
+};
+
+export const updateUserPassword = async (req, res) => {
+    const __user = await userService.getUser(req.user.username);
+
+    if (!(hash.comparePassword(__user.password, __user.salt, req.body.currentPassword))) {
+        return res.status(401).json({
+            position: "password",
+            msg: "Invalid password",
+        });
+    };
+
+    const { __salt, __hashedPassword } = hash.hashPassword(req.body.newPassword);
+    const __updateUserInfo = {
+        salt: __salt,
+        password: __hashedPassword
+    };
+
+    if (!(await userService.updateUser(__user.id_user, __updateUserInfo))) {
         return res.status(500).json({
             position: "prisma update user",
             msg: "Erorr foramt information user"

@@ -10,5 +10,6 @@ userRouter.get('/', authMiddleware.verifyToken, authMiddleware.checkAdminRole, u
 userRouter.get('/me', authMiddleware.verifyToken, userController.getMyProfile);
 userRouter.get('/:id', authMiddleware.verifyToken, authMiddleware.checkAdminRole, userController.getUser);
 userRouter.put('/', authMiddleware.verifyToken, authValidation.userUpdateValidation, userController.updateMyProfile);
+userRouter.patch('/password', authMiddleware.verifyToken, userController.updateUserPassword);
 
 module.exports = userRouter;
