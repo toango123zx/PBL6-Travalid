@@ -21,7 +21,7 @@ import A from './Attraction';
 import { NavigationContainer } from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import DiscountPage from './DiscountPage';
+import DiscountPage from './DiscountPage/DiscountPage';
 import BookingCartPage from './CartPage/BookingCartPage';
 import PaymentPage from './CartPage/PaymentPage';
 import EditProfile from './ProfilePage/EditProfile';
