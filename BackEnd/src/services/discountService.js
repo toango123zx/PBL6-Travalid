@@ -48,7 +48,7 @@ export const getAllDiscount = async () => {
     };
 };
 
-export const getDiscounts = async (id_user) => {
+export const getDiscounts = async (id_user , start , limit) => {
     try {
         return prisma.discount.findMany({
             select: {
@@ -72,6 +72,7 @@ export const getDiscounts = async (id_user) => {
             where: {
                 id_user: Number(id_user),
             },
+            
             orderBy: [
                 {
                     start_time: 'desc',
@@ -84,7 +85,10 @@ export const getDiscounts = async (id_user) => {
                 }, 
                 {
                     quantity: 'desc'
-                }]
+                }],
+                skip : start,
+                take : limit,
+                
         });
     } catch (e) {
         return false;

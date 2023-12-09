@@ -40,6 +40,67 @@ export const getProduct = async (id_product) => {
     };
 };
 
+export const getAllProductForSupplier = async (id_user,start,limit) => {
+    try {
+        
+        return await prisma.product.findMany({
+            where : {
+                id_user : id_user,
+            },
+            select: {
+                id_product: true,
+                name: true,
+                city: true,
+                time: true,
+                quantity: true,
+                location: {
+                    select : {
+                        display_name : true
+                    }
+                },
+                status: true,
+                avg_rate: true,
+                count_complete: true,
+            },
+            
+            skip: start,
+            take: limit,
+        });
+    }
+    catch (err) {
+        return false;
+    }
+}
+
+export const getAllScheduleForSupplier = async  (start,limit) => {
+    try {
+        
+        return await prisma.schedule_Product.findMany({
+            select: {
+                id_product: true,
+                name: true,
+                city: true,
+                time: true,
+                quantity: true,
+                location: {
+                    select : {
+                        display_name : true
+                    }
+                },
+                status: true,
+                avg_rate: true,
+                count_complete: true,
+            },
+            skip: start,
+            take: limit,
+        });
+    }
+    catch (err) {
+        return false;
+    }
+}
+
+
 
 export const setStatusProduct = async (id_product, id_user, role, status) => {
     let __status;

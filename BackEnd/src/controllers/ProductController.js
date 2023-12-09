@@ -4,6 +4,9 @@ const { productCreateValidation } = require('../validation/authValidation');
 import * as envApp from '../config/envApp';
 import * as productHelper from '../helpers/productHelper';
 import * as productService from '../services/productService';
+import * as scheduleProductService from '../services/scheduleProductService';
+import * as discountService from '../services/discountService';
+
 export const getAllProduct = async (req, res, next) => {
     try {
         let page = parseInt(req.query.page, 10);
@@ -44,6 +47,36 @@ export const getAllProduct = async (req, res, next) => {
     }
 };
 
+export const getAllProductService = async (req, res, next) => {
+    try {
+        let page = parseInt(req.query.page, 10);
+        const limit = envApp.LimitProductService;
+        let start = (page - 1) * limit;
+        if (page < 0 || !!page == false) page = 1; // set default page
+        const id_user = req.user.id_user;
+        const product = await productService.getAllProductForSupplier(id_user, start, limit);
+        const schedule = await scheduleProductService.getSchedulesProduct(undefined, id_user, 'travel_supplier', start, limit)
+        const discount = await discountService.getDiscounts(id_user, start, limit)
+        if (!product || !schedule || !discount) {
+            return res.status(403).json({
+                position: "getAllProduct",
+                msg: "The user does not have permission to access this resource"
+            });
+
+        }
+        return res.status(200).send({
+            data: {
+                product, schedule, discount
+            }
+        })
+    }
+    catch (err) {
+        return res.status(400).send({
+            error: err,
+        })
+    }
+}
+
 export const getAllProductForSupplier = async (req, res, next) => {
     try {
         let page = parseInt(req.query.page, 10);
@@ -52,25 +85,7 @@ export const getAllProductForSupplier = async (req, res, next) => {
 
         let start = (page - 1) * limit;
         console.log("page : ", page, "limit :  ", limit)
-        let allProduct = await prisma.product.findMany({
-            select: {
-                id_product: true,
-                name: true,
-                city: true,
-                time: true,
-                quantity: true,
-                location: {
-                    select : {
-                        display_name : true
-                    }
-                },
-                status: true,
-                avg_rate: true,
-                count_complete: true,
-            },
-            skip: start,
-            take: limit,
-        });
+        let allProduct = await productService.getAllProductForSupplier();
         if (!allProduct) {
             return res.status(403).json({
                 position: "getAllProduct",
@@ -79,9 +94,9 @@ export const getAllProductForSupplier = async (req, res, next) => {
         }
         allProduct = productHelper.formatProductFormDb(allProduct);
         res.status(200).json({
-            status: 'success1123',
+            status: 'success',
             msg: 'You have successfully.',
-            data: allProduct
+            data: { allProduct }
         });
 
     } catch (err) {
@@ -95,10 +110,10 @@ export const getAllProductForSupplier = async (req, res, next) => {
 export const getProductById = async (req, res, next) => {
     try {
         const productId = parseInt(req.params.id);
-        if (productId < 0 || !!productId == false){
+        if (productId < 0 || !!productId == false) {
             return res.status(404).send({
-                position : 'Product id',
-                msg : 'Product not found'
+                position: 'Product id',
+                msg: 'Product not found'
             })
         }
         const Product = await prisma.product.findUnique({
@@ -225,16 +240,26 @@ export const deleteProduct = async (req, res, next) => {
         const id_product = parseInt(req.params.id);
         const role = req.user.role;
         let dataProduct;
-        if(role === "admin") {
-         dataProduct = await productService.setStatusProduct(id_product , id_user, role, "warning");
-        console.log("role admin : " ,dataProduct);
-        } else if(role.includes("supplier")) {
-         dataProduct = await productService.setStatusProduct(id_product , id_user, role, "waiting");
-        console.log("role supplier : ", dataProduct);
+        if (role === "admin") {
+            dataProduct = await productService.setStatusProduct(id_product, id_user, role, "warning");
+            if (!dataProduct) {
+                return res.status(404).send({
+                    position: "status",
+                    msg: "status is already a warning, or must have an active status "
+                })
+            }
+        } else if (role.includes("supplier")) {
+            dataProduct = await productService.setStatusProduct(id_product, id_user, role, "waiting");
+            if (!dataProduct) {
+                return res.status(404).send({
+                    position: "status",
+                    msg: "status is already a waiting, or must have an active status "
+                })
+            }
         } else {
             return res.status(403).json({
-                position : "role user",
-                msg : "User does not have access rights"
+                position: "role user",
+                msg: "User does not have access rights"
             })
         }
         res.json(dataProduct);
