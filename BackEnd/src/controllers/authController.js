@@ -102,6 +102,7 @@ export const signIn = async (req, res, next) => {
 
 export const refreshSignInToken = (req, res, next) => {
     const __refreshToken = req.cookies.refreshToken;
+    console.log('--->>',  __refreshToken);
     if (!__refreshToken) {
         return res.status(401).json({
             position: "refreshToken does not exist",

@@ -3,9 +3,12 @@ const prisma = new PrismaClient();
 const { productCreateValidation } = require('../validation/authValidation');
 import * as envApp from '../config/envApp';
 import * as productHelper from '../helpers/productHelper';
+import * as scheduleHelper from '../helpers/scheduleHelper';
 import * as productService from '../services/productService';
 import * as scheduleProductService from '../services/scheduleProductService';
 import * as discountService from '../services/discountService';
+
+
 
 export const getAllProduct = async (req, res, next) => {
     try {
@@ -14,7 +17,6 @@ export const getAllProduct = async (req, res, next) => {
         if (page < 0 || !!page == false) page = 1; // set default page
 
         let start = (page - 1) * limit;
-        console.log("page : ", page, "limit :  ", limit)
         const allProduct = await prisma.product.findMany({
             select: {
                 id_product: true,
@@ -54,16 +56,23 @@ export const getAllProductService = async (req, res, next) => {
         let start = (page - 1) * limit;
         if (page < 0 || !!page == false) page = 1; // set default page
         const id_user = req.user.id_user;
-        const product = await productService.getAllProductForSupplier(id_user, start, limit);
-        const schedule = await scheduleProductService.getSchedulesProduct(undefined, id_user, 'travel_supplier', start, limit)
-        const discount = await discountService.getDiscounts(id_user, start, limit)
-        if (!product || !schedule || !discount) {
+        const products = await productService.getAllProductForSupplier(id_user, start, limit);
+        const schedules = await scheduleProductService.getSchedulesProduct(undefined, id_user, 'travel_supplier', start, limit)
+        const discounts = await discountService.getDiscounts(id_user, start, limit)
+        if (!products || !schedules || !discounts) {
             return res.status(403).json({
                 position: "getAllProduct",
                 msg: "The user does not have permission to access this resource"
             });
 
         }
+        let product = productHelper.formatProductFormDb(products);
+        let schedule = scheduleHelper.formatScheduleFormDb(schedules);
+        let discount = discounts.map((discount) => {
+            discount.supplier = discount.user.role;
+            delete discount.user;
+            return discount;
+        });
         return res.status(200).send({
             data: {
                 product, schedule, discount
@@ -81,11 +90,10 @@ export const getAllProductForSupplier = async (req, res, next) => {
     try {
         let page = parseInt(req.query.page, 10);
         const limit = envApp.LimitGetProductTraveller;
+        const id_user = req.user.id_user;
         if (page < 0 || !!page == false) page = 1; // set default page
-
         let start = (page - 1) * limit;
-        console.log("page : ", page, "limit :  ", limit)
-        let allProduct = await productService.getAllProductForSupplier();
+        let allProduct = await productService.getAllProductForSupplier(id_user, start, limit);
         if (!allProduct) {
             return res.status(403).json({
                 position: "getAllProduct",
@@ -177,10 +185,8 @@ export const createProduct = async (req, res, next) => {
 
 export const updateProduct = async (req, res, next) => {
     try {
-        console.log('updateProduct')
         const id_product = parseInt(req.params.id);
         const id_user = req.user.id_user;
-        console.log(id_user)
         const { name, location_map, time, quantity, age, description, id_location, city } = req.body;
         const listIdProduct = await prisma.product.findMany({
             select: {
@@ -234,22 +240,26 @@ export const updateProduct = async (req, res, next) => {
     }
 };
 
+
 export const deleteProduct = async (req, res, next) => {
     try {
+        let date = new Date();
         const id_user = req.user.id_user;
         const id_product = parseInt(req.params.id);
         const role = req.user.role;
+        const time = req.body.time;
         let dataProduct;
+        let time_delete = date.setHours(date.getHours() + time)
         if (role === "admin") {
-            dataProduct = await productService.setStatusProduct(id_product, id_user, role, "warning");
+            dataProduct = await productService.setStatusProduct(id_product, id_user, role, "warning" , time_delete);
             if (!dataProduct) {
                 return res.status(404).send({
                     position: "status",
-                    msg: "status is already a warning, or must have an active status "
+                    msg: "status is already a warning, or must have an active status"
                 })
             }
         } else if (role.includes("supplier")) {
-            dataProduct = await productService.setStatusProduct(id_product, id_user, role, "waiting");
+            dataProduct = await productService.setStatusProduct(id_product, id_user, role, "waiting" , time_delete);
             if (!dataProduct) {
                 return res.status(404).send({
                     position: "status",
@@ -271,3 +281,58 @@ export const deleteProduct = async (req, res, next) => {
         });
     }
 };
+// check nếu như time_hiện_tại < time_delete thì mới chạy
+export const activeProduct = async (req, res, next) => {
+    try {
+        const id_user = req.user.id_user;
+        const id_product = parseInt(req.params.id);
+        const role = req.user.role;
+        let dataProduct;
+        if (role === "admin") {
+            dataProduct = await productService.setStatusProduct(id_product, id_user, role, "active");
+            if (!dataProduct) {
+                return res.status(404).send({
+                    position: "status",
+                    msg: "status is already a active, or must have an active status "
+                })
+            }
+        } else if (role.includes("supplier")) {
+            dataProduct = await productService.setStatusProduct(id_product, id_user, role, "active");
+            if (!dataProduct) {
+                return res.status(404).send({
+                    position: "status",
+                    msg: "status is already a active, or must have an active status "
+                })
+            }
+        } else {
+            return res.status(403).json({
+                position: "role user",
+                msg: "User does not have access rights"
+            })
+        }
+        res.json(dataProduct);
+    }
+    catch (err) {
+        console.error('Delete product: ', err);
+        res.status(500).json({
+            msg: 'Delete Product error',
+        });
+    }
+}
+
+// check time_hiện_tại > time_delele thì xóa
+const inactiveProduct = async (req, res) => {
+    try {
+        const productsToUpdate = await productService.getProductsByStatus(['warning', 'waiting']);
+    } catch (error) {
+        res.status(500).json({
+            msg: 'updateStatusProduct error'
+        });
+    }
+}
+// biến dạng true false : product_xoa;;
+// khi tới giờ cron : get cái bảng inactive_product ra , và xử lí;;
+// xử lí xong : xem lại cái bảng mới lấy ra nếu hết thì thành fasle => dừng cron;
+// nếu còn thì => tiếp tục cron;;
+// khi người dùng sử dụng API xóa => nếu biến product_xoa là false thành true và cron.start() --- còn không thì cho qua
+

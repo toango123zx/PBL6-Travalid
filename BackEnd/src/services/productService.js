@@ -40,12 +40,12 @@ export const getProduct = async (id_product) => {
     };
 };
 
-export const getAllProductForSupplier = async (id_user,start,limit) => {
+export const getAllProductForSupplier = async (id_user, start, limit) => {
     try {
-        
+
         return await prisma.product.findMany({
-            where : {
-                id_user : id_user,
+            where: {
+                id_user: id_user,
             },
             select: {
                 id_product: true,
@@ -54,15 +54,15 @@ export const getAllProductForSupplier = async (id_user,start,limit) => {
                 time: true,
                 quantity: true,
                 location: {
-                    select : {
-                        display_name : true
+                    select: {
+                        display_name: true
                     }
                 },
                 status: true,
                 avg_rate: true,
                 count_complete: true,
             },
-            
+
             skip: start,
             take: limit,
         });
@@ -72,9 +72,9 @@ export const getAllProductForSupplier = async (id_user,start,limit) => {
     }
 }
 
-export const getAllScheduleForSupplier = async  (start,limit) => {
+export const getAllScheduleForSupplier = async (start, limit) => {
     try {
-        
+
         return await prisma.schedule_Product.findMany({
             select: {
                 id_product: true,
@@ -83,8 +83,8 @@ export const getAllScheduleForSupplier = async  (start,limit) => {
                 time: true,
                 quantity: true,
                 location: {
-                    select : {
-                        display_name : true
+                    select: {
+                        display_name: true
                     }
                 },
                 status: true,
@@ -102,65 +102,97 @@ export const getAllScheduleForSupplier = async  (start,limit) => {
 
 
 
-export const setStatusProduct = async (id_product, id_user, role, status) => {
+// set active
+// setStatusProduct(10 , 1, 'supp', 'active', undefined)
+
+// set inactive
+// setStatusProduct(10 , 1, 'supp', 'active', 24 tieng)
+
+export const setStatusProduct = async (id_product, id_user, role, status, inactive_at) => {
     let __status;
     let product = {
-        id_product : id_product,
-        status : status
+        id_product: id_product,
+        status: status
     }
+    
+    let newProduct = {
+        status: __status,
+    }
+
     switch (String(status)) {
         case 'active':
-            if(role === 'admin'){
-                __status = 'active';
+            if (role === 'admin') {
+                newProduct.status = 'active';
                 product.status = 'warning'
+                newProduct.inactive_product = {
+                    delete : {
+                        id_product : id_product
+                    }
+                }
             }
-            if(role.includes('supplier')){
-                __status = 'active';
+            if (role.includes('supplier')) {
+                newProduct.status = 'active';
                 product.id_user = id_user;
                 product.status = 'waiting'
+                newProduct.inactive_product = {
+                    delete : {
+                        id_product : id_product
+                    }
+                }
             }
             break;
         case 'inactive':
-            if(role === 'admin'){
+            if (role === 'admin') {
                 __status = 'inactive';
                 product.status = 'warning'
             }
-            if(role.includes('supplier')){
+            if (role.includes('supplier')) {
                 __status = 'inactive';
                 product.id_user = id_user;
                 product.status = 'waiting'
             }
             break;
 
+
+
         case 'waiting':
-            if(role.includes('supplier')){
+            if (role.includes('supplier')) {
                 __status = 'waiting';
                 product.id_user = id_user;
                 product.status = 'active'
+                newProduct.inactive_product = {
+                    create : {
+                        inactive_at: new Date(inactive_at)
+                    }
+                }
             }
             break;
 
         case 'warning':
-            if(role === 'admin'){
+            if (role === 'admin') {
                 __status = 'warning';
                 product.status = 'active'
+                newProduct.inactive_product = {
+                    create : {
+                        inactive_at: new Date(inactive_at)
+                    }
+                }
             }
             break;
-        default :
+        default:
             return false;
 
     };
     try {
+        
         return await prisma.product.update({
             where: product,
-            data: {
-                status: __status
-            }
+            data: newProduct
         })
 
 
     } catch (error) {
-        console.log(error)
+        return false;
     }
 }
 

@@ -108,6 +108,7 @@ model Product {
   schedule_product Schedule_Product[]
   discount         Discount[]
   rate             Rate[]
+  inactive_product Inactive_Product[]
 }
 
 enum Schedule_Product_Status {
@@ -129,6 +130,12 @@ model Schedule_Product {
 
   cart      Cart[]
   info_bill Info_Bill[]
+}
+
+model Inactive_Product {
+  id_product  Int      @id @db.UnsignedInt
+  product     Product  @relation(fields: [id_product], references: [id_product])
+  inactive_at DateTime
 }
 
 enum Discount_Status {

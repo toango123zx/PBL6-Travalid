@@ -1,8 +1,8 @@
 export const formatProductFormDb = (products) => {
     products = products.map((product) => {
         product = {
-            ... product,
-            ... product.location,
+            ...product,
+            ...product.location,
         };
         delete product.location;
         return product;
@@ -10,3 +10,4 @@ export const formatProductFormDb = (products) => {
 
     return products;
 };
+
