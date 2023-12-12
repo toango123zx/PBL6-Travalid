@@ -7,7 +7,7 @@ import * as scheduleHelper from '../helpers/scheduleHelper';
 import * as productService from '../services/productService';
 import * as scheduleProductService from '../services/scheduleProductService';
 import * as discountService from '../services/discountService';
-
+const cron = require('node-cron');
 
 
 export const getAllProduct = async (req, res, next) => {
@@ -283,6 +283,7 @@ export const updateProduct = async (req, res, next) => {
 
 export const deleteProduct = async (req, res, next) => {
     try {
+        console.log("-------------deleteProduct--------")
         let date = new Date();
         const id_user = req.user.id_user;
         const id_product = parseInt(req.params.id);
@@ -327,30 +328,39 @@ export const activeProduct = async (req, res, next) => {
         const id_user = req.user.id_user;
         const id_product = parseInt(req.params.id);
         const role = req.user.role;
-        let dataProduct;
-        if (role === "admin") {
-            dataProduct = await productService.setStatusProduct(id_product, id_user, role, "active");
-            if (!dataProduct) {
-                return res.status(404).send({
-                    position: "status",
-                    msg: "status is already a active, or must have an active status "
+        const inactive_product = await prisma.inactive_Product.findUnique({ where: { id_product: id_product } })
+        if (inactive_product) {
+            let dataProduct;
+            if (role === "admin") {
+                dataProduct = await productService.setStatusProduct(id_product, id_user, role, "active");
+                if (!dataProduct) {
+                    return res.status(404).send({
+                        position: "id product",
+                        msg: "status is already a active, or must have an active status  "
+                    })
+                }
+            } else if (role.includes("supplier")) {
+                dataProduct = await productService.setStatusProduct(id_product, id_user, role, "active");
+                if (!dataProduct) {
+                    return res.status(404).send({
+                        position: "id product",
+                        msg: "status is already a active, or must have an active status "
+                    })
+                }
+            } else {
+                return res.status(403).json({
+                    position: "role user",
+                    msg: "User does not have access rights"
                 })
             }
-        } else if (role.includes("supplier")) {
-            dataProduct = await productService.setStatusProduct(id_product, id_user, role, "active");
-            if (!dataProduct) {
-                return res.status(404).send({
-                    position: "status",
-                    msg: "status is already a active, or must have an active status "
-                })
-            }
+            return res.status(200).json(dataProduct);
         } else {
-            return res.status(403).json({
-                position: "role user",
-                msg: "User does not have access rights"
+            return res.status(409).json({
+                position: "product id",
+                msg: "Product is active"
             })
         }
-        res.json(dataProduct);
+
     }
     catch (err) {
         console.error('Delete product: ', err);
@@ -360,16 +370,73 @@ export const activeProduct = async (req, res, next) => {
     }
 }
 
-// check time_hiện_tại > time_delele thì xóa
-const inactiveProduct = async (req, res) => {
+// check time_hiện_tại > time_delete thì xóa
+export const inactiveProduct = async (req, res , next) => {
     try {
-        const productsToUpdate = await productService.getProductsByStatus(['warning', 'waiting']);
-    } catch (error) {
+        // let inactive_products = await prisma.inactive_Product.findMany({})
+
+        let delete_product = await prisma.inactive_Product.update({
+            where : {
+                inactive_at :{
+                    lte : new Date(),
+                } 
+            },
+            data : {
+                inactive_at : new Date()
+                
+            }
+             
+        })
+        return res.json({
+            data : delete_product
+        })
+        const id_user = req.user.id_user;
+        const id_product = parseInt(req.params.id);
+        const role = req.user.role;
+        const inactive_product = await prisma.inactive_Product.findUnique({ where: { id_product: id_product } })
+        if (inactive_product) {
+            let dataProduct;
+            if (role === "admin") {
+                dataProduct = await productService.setStatusProduct(id_product, id_user, role, "active");
+                if (!dataProduct) {
+                    return res.status(404).send({
+                        position: "id product",
+                        msg: "status is already a active, or must have an active status  "
+                    })
+                }
+            } else if (role.includes("supplier")) {
+                dataProduct = await productService.setStatusProduct(id_product, id_user, role, "active");
+                if (!dataProduct) {
+                    return res.status(404).send({
+                        position: "id product",
+                        msg: "status is already a active, or must have an active status "
+                    })
+                }
+            } else {
+                return res.status(403).json({
+                    position: "role user",
+                    msg: "User does not have access rights"
+                })
+            }
+            return res.status(200).json(dataProduct);
+        } else {
+            return res.status(409).json({
+                position: "product id",
+                msg: "Product is active"
+            })
+        }
+    }
+    catch (err) {
+        console.error('Delete product: ', err);
         res.status(500).json({
-            msg: 'updateStatusProduct error'
+            msg: 'Delete Product error',
         });
     }
 }
+
+cron.schedule('0 */3 * * *', inactiveProduct);
+
+
 // biến dạng true false : product_xoa;;
 // khi tới giờ cron : get cái bảng inactive_product ra , và xử lí;;
 // xử lí xong : xem lại cái bảng mới lấy ra nếu hết thì thành fasle => dừng cron;

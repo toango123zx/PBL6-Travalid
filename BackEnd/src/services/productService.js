@@ -157,9 +157,9 @@ export const setStatusProduct = async (id_product, id_user, role, status, inacti
 
         case 'waiting':
             if (role.includes('supplier')) {
-                __status = 'waiting';
                 product.id_user = id_user;
-                product.status = 'active'
+                product.status = 'active';
+                newProduct.status = 'waiting'
                 newProduct.inactive_product = {
                     create : {
                         inactive_at: new Date(inactive_at)
@@ -170,8 +170,8 @@ export const setStatusProduct = async (id_product, id_user, role, status, inacti
 
         case 'warning':
             if (role === 'admin') {
-                __status = 'warning';
-                product.status = 'active'
+                product.status = 'active';
+                newProduct.status = 'warning'
                 newProduct.inactive_product = {
                     create : {
                         inactive_at: new Date(inactive_at)
