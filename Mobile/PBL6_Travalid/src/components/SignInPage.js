@@ -14,6 +14,22 @@ export default SignInPage = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [accessToken, setAccessToken] = useState('')
+    const [ipAddress, setIpAddress] = useState(null);
+    // useEffect(() => {
+    //     const getIpAddress = async () => {
+    //       try {
+    //         const response = await fetch('https://api.ipify.org?format=json');
+    //         const data = await response.json();
+    //         const clientIpAddress = data.ip;
+    //         setIpAddress(clientIpAddress);
+    //         console.log(ipAddress)
+    //       } catch (error) {
+    //         console.error('Lỗi khi lấy địa chỉ IP:', error.message);
+    //       }
+    //     };
+    
+    //     getIpAddress();
+    //   }, []);
     const navigation = useNavigation();
     // const login =  () => {
     //     console.log(email)
@@ -45,50 +61,50 @@ export default SignInPage = () => {
     //     .finally(()=>console.log('aa'))
     // }
     const login = async () => {
-        // try {
-        //     console.log('email', email)
-        //     const res = await authApi.login({
-        //         username: email,
-        //         password: password
-        //     })
-        //     console.log(res)
-        //     console.log('password', password)
-        // } catch (error) {
-        //     console.log(error)
-        // }
-    //     fetch('http://10.0.2.2:8000/discount/all')
+        try {
+            console.log('email', email)
+            const res = await authApi.login({
+                username: email,
+                password: password
+            })
+            navigation.navigate('Home1')
+            
+        } catch (error) {
+            console.log("Login faild")
+        }
+    //     fetch('https://sendbulker.com/discount/all')
     //   .then(response => response.json())
     //   .then(json => console.log(json))
-    const data = {
-        method: 'POST',
-        body : JSON.stringify({
-            username: String(email),
-            password: String(password)
-        }),
-        headers: {
-            //'Cache-Control': 'no-cache',
-            //Pragma: 'no-cache',
-            //Expires: 0,
-            //Accept: 'application/json',
-            'Content-Type': 'application/json',
+    // const data = {
+    //     method: 'POST',
+    //     body : JSON.stringify({
+    //         username: String(email),
+    //         password: String(password)
+    //     }),
+    //     headers: {
+    //         'Cache-Control': 'no-cache',
+    //         Pragma: 'no-cache',
+    //         Expires: 0,
+    //         Accept: 'application/json',
+    //         'Content-Type': 'application/json',
             
-        },
-    }
-        fetch('http://10.0.2.2:8000/sign-in', data)
-        .then((response) => 
-        {
-            return Promise.all([response.status, response.json()])
-        }
-        //response.json()
-        )
-        .then(([status, json]) => {
-            status == 200 ? navigation.navigate('Home1') : console.log("Login faild")
-            setAccessToken(json.token)
-            //console.log(accessToken)
-            //console.log(json.token)
+    //     },
+    // }
+    //     fetch('http://10.0.2.2:8000/sign-in', data)
+    //     .then((response) => 
+    //     {
+    //         return Promise.all([response.status, response.json()])
+    //     }
+    //     //response.json()
+    //     )
+    //     .then(([status, json]) => {
+    //         status == 200 ? navigation.navigate('Home1') : console.log("Login faild")
+    //         setAccessToken(json.token)
+    //         //console.log(accessToken)
+    //         //console.log(json.token)
             
-        })
-        .catch((err)=>{console.log(err)})
+    //     })
+    //     .catch((err)=>{console.log(err)})
         
     }
     return(
@@ -133,8 +149,9 @@ const Mid = ({setEmail, setPassword, email, password}) => {
         <View style = {styleMidSIPage.View}>
             <View style = {styleMidSIPage.viewUserName}>
             <TextInput
-                    autoCapitalize={false}
+                    
                     placeholder={'E-mail'}
+                    placeholderTextColor={'#7D848D'}
                     style={styleMidSIPage.textInputUserName}
                     onChangeText={setEmail}
                     value={email}
@@ -142,11 +159,12 @@ const Mid = ({setEmail, setPassword, email, password}) => {
             </View>
             <View style = {styleMidSIPage.viewPassword}>
                 <TextInput 
-                    autoCapitalize={false} placeholder={'Password'} style={styleMidSIPage.textInputPass}
+                    placeholder={'Password'} style={styleMidSIPage.textInputPass}
+                    placeholderTextColor={'#7D848D'}
                     secureTextEntry={pwdHidden? true : false}
                     onChangeText={setPassword}
                     value={password}/>
-                <TouchableOpacity  
+                <TouchableOpacity   
                     onPress={() => setPwdHidden(!pwdHidden)} 
                     style = {styleMidSIPage.touchHiddenPass}>
                     <Image style = {styleMidSIPage.imageHiddenPass} source={require('../assets/images/eye.png')}/>

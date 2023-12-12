@@ -1,11 +1,28 @@
 import React from "react";
+import { useEffect, useState } from "react"; 'react'
 import {Image, ScrollView, Text, TouchableOpacity, View, SafeAreaView, StatusBar} from 'react-native'
 import { styleHomePage, styleTopDestination, styleService } from "../themes/styleHomePage";
 import Icon from 'react-native-vector-icons/Ionicons'
-
-import Attraction from "./Attraction";
+import authApi from "../API/auth";
+import Attraction from "./Product";
 const statusBarHeight = StatusBar.currentHeight || 0;
+
 export default HomePage = () => {
+    const [productData, setProductData] = useState([])
+    useEffect(()=>{
+
+        const getAllProduct = async () => {
+            try {
+                const res = await authApi.getProduct()
+                setProductData(res.data.data)
+                
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        
+        getAllProduct();
+    },[])
     const attractionData = [
         {
             id: 1,
@@ -70,8 +87,8 @@ export default HomePage = () => {
                     <TouchableOpacity><Text style = {styleTopDestination.textViewAll}>View all</Text></TouchableOpacity>
                 </View>
                 <View style = {styleTopDestination.ViewDes}>
-                    {attractionData.map((attractionData) => (
-                        <AttractionComponent key={attractionData.id} attractionData={attractionData} />
+                    {productData.map((productData) => (
+                        <AttractionComponent key={productData.id_product} productData={productData} />
                     ))}
                 </View>
                 

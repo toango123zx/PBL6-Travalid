@@ -1,5 +1,5 @@
 import React from "react";
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import{ View, Text, Image, StatusBar, ScrollView, TouchableOpacity, SafeAreaView, Modal} from 'react-native'
 import Svg, {Path} from 'react-native-svg';
 import {styleDetailsPage} from "../../themes/styleDetailsPage";
@@ -13,18 +13,33 @@ import DateTimePicker from "../DateTimePicker";
 import BookingCartPage from "../CartPage/BookingCartPage";
 import {useDispatch} from 'react-redux'
 import {setSharedData} from '../../reducers/actions'
+import authApi from "../../API/auth";
 const INFO = 'INFO';
 const RAITING = 'RAITING';
 const SUPPLIER = 'SUPPLIER';
 export default DetailsPage = ({route}) => {
-    const { attractionData } = route.params;
+    const { id } = route.params;
     const [page, setPage] = useState('INFO');
+    const [product, setProduct] = useState([])
     const navigation = useNavigation();
     const handleBackPress = () => {
         // Thực hiện chuyển hướng về trang trước đó
         navigation.goBack();
       };
+    useEffect(()=>{
 
+        const getDetailProduct = async () => {
+            try {
+                const res = await authApi.getDetailProduct(id)
+                setProduct(res.data.data)
+                console.log(product)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        
+        getDetailProduct();
+    },[])
     const [showModal, setShowModal] = useState (false);
     const [showModalEnd, setShowModalEnd] = useState (false);
     const [yearStart, setYearStart] = useState();
@@ -39,26 +54,26 @@ export default DetailsPage = ({route}) => {
     const [minEnd, setMinEnd] = useState();
     const dispatch = useDispatch();  
 
-    const dataToSend = {
-        id: attractionData.id,
-        name: attractionData.name,
-        location: attractionData.location,
-        yearStart: yearStart,
-        monthStart: monthStart,
-        dayStart: dayStart,
-        hourStart: hourStart,
-        minStart: minStart,
-        yearEnd: yearEnd,
-        monthEnd: monthEnd,
-        dayEnd: dayEnd,
-        hourEnd: hourEnd,
-        minEnd: minEnd
-    };
+    // const dataToSend = {
+    //     id: product.id_product,
+    //     name: product.name,
+    //     location: product.location,
+    //     yearStart: yearStart,
+    //     monthStart: monthStart,
+    //     dayStart: dayStart,
+    //     hourStart: hourStart,
+    //     minStart: minStart,
+    //     yearEnd: yearEnd,
+    //     monthEnd: monthEnd,
+    //     dayEnd: dayEnd,
+    //     hourEnd: hourEnd,
+    //     minEnd: minEnd
+    // };
     
-    const handlePress = () => {
-        console.log('Data to send:', dataToSend);
-        dispatch(setSharedData(dataToSend));
-      };
+    // const handlePress = () => {
+    //     console.log('Data to send:', dataToSend);
+    //     dispatch(setSharedData(dataToSend));
+    //   };
     
     return(
         <SafeAreaView style = {{width: '100%', height: '100%', backgroundColor: '#FFF'}}>
@@ -109,7 +124,7 @@ export default DetailsPage = ({route}) => {
                 
             </View>
             
-            {page === INFO ? <InfoPage attractionData={attractionData} /> : page === RAITING ? <RaitingsPage attractionData={attractionData} /> : page === SUPPLIER ? <SupplierPage /> : null}
+            {page === INFO ? <InfoPage product={product} /> : page === RAITING ? <RaitingsPage product={product} /> : page === SUPPLIER ? <SupplierPage /> : null}
             <View style = {styleDetailsPage.viewAddTour}>
                 <View style = {{position: 'absolute', width: 90, height: 20, marginTop: 15, left: 95, borderLeftWidth: 1, borderRightWidth: 1, borderLeftColor: 'rgba(128, 128, 128, 0.6)', borderRightColor: 'rgba(128, 128, 128, 0.6)'}}></View>
                 <TouchableOpacity style = {styleDetailsPage.viewDateTime} onPress={() => setShowModal(true)}>
@@ -145,7 +160,7 @@ export default DetailsPage = ({route}) => {
                     </View>
                     
                 </View>
-                <TouchableOpacity style = {styleDetailsPage.btnAdd} onPress={handlePress}>
+                <TouchableOpacity style = {styleDetailsPage.btnAdd} >
                     <Text style = {styleDetailsPage.textAdd}>Add</Text>
                 </TouchableOpacity>
                 <Modal visible = {showModal} animationType="slide" transparent={true}>

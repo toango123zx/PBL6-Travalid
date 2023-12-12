@@ -1,67 +1,41 @@
 import React from "react";
-import {useState} from "react";
-import AttractionComponent from "./Attraction";
+import {useState, useEffect} from "react";
+import AttractionComponent from "./Product";
 import {View, Text, TextInput, TouchableOpacity, Modal, FlatList, Image, ScrollView, SafeAreaView, StatusBar} from 'react-native'
 import { styleAttractionPage } from "../themes/styleAttractionPage";
+import authApi from "../API/auth";
 export default AttractionPage = () => {
     const [place, setPlace] = useState(placeData);
     const [minPrice, setMinPrice] = useState('');
     const [maxPrice, setMaxPrice] = useState('');
     const [modalVisible, setModalVisible] = useState(false)
+    const [productData, setProductData] = useState([])
     const handlePlaceClick = () => {
         setModalVisible(true);
       };
       const handleCloseModal = () => {
         setModalVisible(false);
       };
+    useEffect(()=>{
 
+        const getAllProduct = async () => {
+            try {
+                const res = await authApi.getProduct()
+                setProductData(res.data.data)
+                console.log(productData[1].name)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        console.log("-----------------------------------------------------")
+        getAllProduct();
+    },[])
     const placeData = [
         { id: 1, name: 'Place 1' },
         { id: 2, name: 'Place 2' },
         { id: 3, name: 'Place 3' },
     ]
-    const attractionData = [
-        {
-            id: 1,
-            name: 'Ngu Hanh Son',
-            location: 'Da Nang',
-            rate: 4.6,
-            price: '120.000'
-        },
-        {
-            id: 2,
-            
-            name: 'Than Tai Waterfall',
-            location: 'Da Nang',
-            rate: 4.2,
-            price: '100.000'
-        },
-        {
-            id: 3,
-           
-            name: 'Phu Quoc Island',
-            location: 'Phu Quoc',
-            rate: 4.8,
-            price: '240.000'
-        },
-        {
-            id: 4,
-            
-            name: 'Son Tra Peninsula',
-            location: 'Da Nang',
-            rate: 4.7,
-            price: '50.000'
-        },
-        {
-            id: 5,
-            
-            name: 'Ngu Hanh Son',
-            location: 'Da Nang',
-            rate: 4.6,
-            price: '190.000'
-        }
-
-    ]
+    
     return(
         <SafeAreaView style = {styleAttractionPage.View}>
             <StatusBar translucent backgroundColor="transparent" />
@@ -130,8 +104,8 @@ export default AttractionPage = () => {
             </View>
             <ScrollView style = {{marginTop: 20}}>
                 <View style = {styleAttractionPage.viewAttractions}>
-                    {attractionData.map((attractionData) => (
-                        <AttractionComponent key={attractionData.id} attractionData={attractionData} />
+                    {productData.map((productData) => (
+                        <AttractionComponent key={productData.id_product} productData={productData} />
                     ))}
                 </View>                    
             </ScrollView>

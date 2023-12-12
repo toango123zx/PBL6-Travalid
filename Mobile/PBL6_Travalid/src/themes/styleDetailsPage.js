@@ -206,7 +206,8 @@ export const styleInfoPage = StyleSheet.create({
         width: 380,
         height: 270,
         borderWidth: 0,
-        marginLeft: (width-380)/2
+        marginLeft: (width-380)/2,
+        marginBottom: 50,
         
     },
     textDes: {

@@ -145,6 +145,69 @@ const styleMidSUPage = StyleSheet.create({
         marginLeft: (height*0.3*0.25)/2-12
     },
 
+    // Drop down supplier
+    dropdown: {
+        width: 367.5,
+        height: 61.5,
+        borderWidth: 0,
+        backgroundColor: '#F7F7F9',
+        borderRadius: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginLeft: (width - 367.5)/2,
+        marginTop: height*0.3*0.05,
+    },
+    icon: {
+        marginRight: 0,
+    },
+    placeholderStyle: {
+        color: '#7D848D',
+        fontFamily: 'Montserrat Regular',
+        fontSize: 16,
+        marginLeft: (height*0.3*0.25)/2-12 + 4,
+        
+    },
+    selectedTextStyle: {
+        color: '#1B1E28',
+        fontFamily: 'Montserrat Regular',
+        fontSize: 16,
+        marginLeft: (height*0.3*0.25)/2-12 + 4
+    },
+    iconStyle: {
+        width: 20,
+        height: 20,
+        marginRight : 18,
+    },
+    inputSearchStyle: {
+        height: 23,
+        fontSize: 16,
+        fontFamily: 'Montserrat SemiBold',
+    },
+    itemDropStyle: {
+        color: '#1B1E28',
+        fontFamily: 'Montserrat Regular',
+        fontSize: 16,
+        padding: 0,
+        position: 'absolute',
+        textAlign: 'center',
+        left: (height*0.3*0.25)/2-12 + 3,
+       
+
+    },
+    itemsStyle: {
+        height: 30,
+        justifyContent: 'center',
+         borderRadius: 17.5,
+        
+       
+        
+    },
+    dropStyle: {
+        borderRadius: 16,
+        backgroundColor: '#F7F7F9'
+    }
+
+
 })
 const styleBotSUPage = StyleSheet.create({
     View: {
@@ -206,10 +269,14 @@ const styleBotSUPage = StyleSheet.create({
         borderWidth: 0
     },
     button: {
-        width: 44,
-        height: 44,
+        width: 50,
+        height: 50,
         marginLeft: '2.5%',
-        marginRight: '2.5%'
+        marginRight: '2.5%',
+        borderWidth: 0,
+        borderRadius: 25,
+        alignItems: 'center',
+        justifyContent: 'center'
     }
 })
 export {styleBotSUPage,styleMidSUPage,styleSignUpPage,styleTopSUPage}

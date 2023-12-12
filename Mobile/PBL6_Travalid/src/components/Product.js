@@ -5,27 +5,30 @@ const windowDimensions = Dimensions.get('window');
 import {styleAttraction} from "../themes/styleAttractionPage";
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
-export default AttractionComponent = ({attractionData}) => {
+export default AttractionComponent = ({productData}) => {
     const navigation = useNavigation(); // Sử dụng hook navigation
     
     const handlePress = () => {
-      navigation.navigate('DetailsPage',{attractionData});
+        const id = productData.id_product
+      navigation.navigate('DetailsPage',{id});
     };
     return(
         <TouchableOpacity onPress={handlePress} style = {styleAttraction.View}>
             <View style = {styleAttraction.viewPicture}>
-                
+                <Image style = {styleAttraction.image} source={{
+                    uri: productData.image
+                    }}/>
             </View>
             <View style = {styleAttraction.viewName}>
-                <Text style = {styleAttraction.name} >{attractionData.name}</Text>
+                <Text style = {styleAttraction.name} >{productData.name}</Text>
             </View>
             <View style = {styleAttraction.viewLocation}>
                 <Icon name="location-outline" color="#6F757C" size={16}/>
-                <Text style = {styleAttraction.location}> {attractionData.location}</Text>
+                <Text style = {styleAttraction.location}> {productData.city}</Text>
             </View>
             <View style = {styleAttraction.viewRate}> 
                 <Icon name="star" color="#FFD336" size={16}/>
-                <Text style = {styleAttraction.rate}> {attractionData.rate} </Text>
+                <Text style = {styleAttraction.rate}> {productData.avg_rate} </Text>
             </View>
             {/* <View style = {styleAttraction.viewPrice}>
                 <Text style = {styleAttraction.price}>{attractionData.price}</Text>

@@ -132,12 +132,14 @@ const styleMidSIPage = StyleSheet.create({
         color: '#1B1E28',
         fontFamily: 'Montserrat Regular',
         fontSize: 16,
+        
         marginLeft: (height*0.3*0.25)/2-12
     },
     textInputPass: {
         color: '#1B1E28',
         fontFamily: 'Montserrat Regular',
         fontSize: 16,
+        width: 380,
         marginLeft: (height*0.3*0.25)/2-12
     },
 

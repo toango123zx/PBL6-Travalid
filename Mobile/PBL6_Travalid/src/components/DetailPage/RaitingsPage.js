@@ -10,7 +10,7 @@ import { styleRaittingsPage } from "../../themes/styleDetailsPage";
 import Icon from 'react-native-vector-icons/Ionicons'
 import { Dropdown } from 'react-native-element-dropdown';
 import RaittingComponent from "../Raitting";
-export default RaitingsPage = ({attractionData}) => {
+export default RaitingsPage = ({product}) => {
     const [value, setValue] = useState('Latest');
     const data = [
         { label: 'Latest', value: '1' },
@@ -19,8 +19,8 @@ export default RaitingsPage = ({attractionData}) => {
     ];
     const iconStar = [];
 
-    for (let i = 0; i < attractionData.rate; i++) {
-        if (i<attractionData.rate - 1){
+    for (let i = 0; i < product.avg_rate; i++) {
+        if (i<product.avg_rate - 1){
             iconStar.push(<Icon key={i} name={"star"} size={15} color="#FFC633" />);
         } else iconStar.push(<Icon key={i} name={"star-half-outline"} size={15} color="#FFC633" />);
     }
@@ -29,14 +29,14 @@ export default RaitingsPage = ({attractionData}) => {
             id: 1,
             name: 'Thuan Nguyen',
             cmt: '10 điểm không có nhưng.',
-            rate: 4.6,
+            avg_rate: 4.6,
             date: '25/08/2023'
         },
         {
             id: 2,
             name: 'Van Toan',
             cmt: '10 điểm không có nhưng.',
-            rate: 3.6,
+            avg_rate: 3.6,
             date: '21/09/2023'
         },
     ]
@@ -48,7 +48,7 @@ export default RaitingsPage = ({attractionData}) => {
                         <Text style = {styleRaittingsPage.textPR}>Product Ratings</Text>
                     </View>
                     <View style = {styleRaittingsPage.viewTextRaitting}>
-                        <Text style = {styleRaittingsPage.textRaitings}>{attractionData.rate}</Text>
+                        <Text style = {styleRaittingsPage.textRaitings}>{product.avg_rate}</Text>
                     </View >
                     <View style = {styleRaittingsPage.viewIconStar}>
                         {iconStar}
@@ -56,7 +56,7 @@ export default RaitingsPage = ({attractionData}) => {
                 </View> 
                 <View style = {styleRaittingsPage.viewRight}>
                     <TouchableOpacity style = {styleRaittingsPage.btnReview}>
-                        <Text style = {styleRaittingsPage.textReview}>Rate</Text>
+                        <Text style = {styleRaittingsPage.textReview}>avg_rate</Text>
                     </TouchableOpacity>
                     <Dropdown
                         style={styleRaittingsPage.dropdown}

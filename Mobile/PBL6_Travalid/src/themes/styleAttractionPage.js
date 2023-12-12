@@ -17,8 +17,12 @@ export const styleAttraction = StyleSheet.create({
         height: 136,    
         marginLeft: 12.5,
         marginTop: 12.5,
-        backgroundColor: '#000',
+        
         borderRadius: 17.5,
+    },
+    image: {
+        width: 150,
+        height: 136
     },
     viewName: {
         width: 160,
@@ -53,9 +57,7 @@ export const styleAttraction = StyleSheet.create({
         marginLeft: 10,
         justifyContent: 'center'
     },
-    image: {
-
-    },
+    
     name: {
         color: '#1B1E28',
         fontSize: 13.165,

@@ -5,37 +5,43 @@ import {
     TouchableOpacity,
     StyleSheet
 } from 'react-native'
-
+import {useEffect} from 'react'
 import Icon from 'react-native-vector-icons/Ionicons'
 import Icon1 from 'react-native-vector-icons/MaterialCommunityIcons'
 
-export default DiscountsComp = ({data}) => {
+export default DiscountsComp = ({discountData}) => {
+    const endTime = new Date (discountData.end_time);
+    const supplier = discountData.supplier;
+    useEffect (()=>{
+        console.log(endTime)
+    },[])
+    
     return(
         <View style = {style.View}>
             <View style = {style.viewLeft}>
                 <View style = {style.viewName}>
-                    <Text style = {style.textName}>Lunar new year</Text>
+                    <Text numberOfLines={1} ellipsizeMode="tail" style = {style.textName}>{discountData.name}</Text>
                 </View>
                 <View style = {style.viewTime}>
                     <Text style = {style.textValidFrom}>Valid from 
                     </Text>
-                    <Text style = {style.textTime}> 1:00, 06/10/2023</Text>
+                    <Text style = {style.textTime}> {endTime.getUTCHours()}:{endTime.getUTCMinutes()}, {endTime.getUTCDate()}/{endTime.getMonth() + 1}/{endTime.getUTCFullYear()}</Text>
                 </View>
                 <View style = {style.viewPoint}>
                     <Icon name= 'server' color ='rgba(255, 213, 33, 1)' size ={17}/>
-                    <Text style = {style.textPoints}> Point: 23</Text>
+                    <Text style = {style.textPoints}> {discountData.point}</Text>
                 </View>
                 <View style = {style.view}>
                     <Icon1 name= 'check-decagram-outline' color ='rgba(1, 171, 49, 1)' size ={18}/>
-                    <Text style = {style.text1}> 15 code left</Text>
+                    <Text style = {style.text1}> {discountData.quantity} code left</Text>
                 </View>
             </View>
             <View style = {style.viewRight}>
-                <View style = {style.view1}>
-                    
+                <View style = {supplier === 'travel_supplier' ? style.view1 : [style.view1 , {backgroundColor: '#0055AA'}]}>
+                    {supplier === 'travel_supplier' ? <Text style ={style.textSupplier}>SUPPLIER</Text> : <Text style ={style.textSupplier}>TRAVALID</Text>}
                 </View>
                 <View style = {style.viewQuantity}>
-                    <Text style = {style.textQuantity}>-35% Price</Text>
+                    <Text style = {style.textQuantity}>-{discountData.value}% Price</Text>
                 </View>
                 <View style = {style.viewBtnViewDetails}>
                     <TouchableOpacity style = {style.btnViewDetails}>
@@ -69,7 +75,8 @@ const style = StyleSheet.create({
     ,textName: {
         color: '#000',
         fontSize: 16,
-        fontFamily: 'Montserrat Bold'
+        fontFamily: 'Montserrat Bold',
+        flexWrap: 'wrap'
     }
     ,viewTime: {
         width: 250,
@@ -132,7 +139,14 @@ const style = StyleSheet.create({
         height: 30,
         borderRadius: 10,
         backgroundColor: 'rgba(255, 107, 0, 1)',
-        marginTop: 10
+        marginTop: 10,
+        justifyContent: 'center',
+        alignItems: 'center'
+    }
+    ,textSupplier: {
+        fontFamily: 'OleoScript Regular',
+        fontSize: 14,
+        color: '#FFF'
     }
     ,viewQuantity: {
         width: 94,

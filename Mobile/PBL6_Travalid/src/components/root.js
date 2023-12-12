@@ -13,11 +13,11 @@ import DetailsPage from './DetailPage/DetailsPage';
 import ProfilePage from './ProfilePage/ProfilePage';
 import SplishPage from './SplishPage'
 import SignInPage from './SignInPage';
-import SignUpPage from './SignUpPage';
+import SignUpPage from './SignUp/SignUpPage';
 import ProfileDetails from './ProfilePage/ProfileDetails';
 import AttractionsPage from './AttractionsPage';
 import HomePage from './HomePage';
-import A from './Attraction';
+import A from './Product';
 import { NavigationContainer } from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -25,6 +25,7 @@ import DiscountPage from './DiscountPage/DiscountPage';
 import BookingCartPage from './CartPage/BookingCartPage';
 import PaymentPage from './CartPage/PaymentPage';
 import EditProfile from './ProfilePage/EditProfile';
+import InfoPageSU from './SignUp/InfoPage';
 import {Provider} from 'react-redux'
 import store from '../reducers/store';
 import Icon from 'react-native-vector-icons/Ionicons'
@@ -122,7 +123,7 @@ export default RootComponent = function(){
     return(
       <Provider store ={store}>
         <NavigationContainer>
-          <Stack.Navigator screenOptions={{headerShown: false}} initialRouteName="SplishPage">
+          <Stack.Navigator screenOptions={{headerShown: false}} initialRouteName="Home1">
             <Stack.Screen name='Home1' component={MyTabs}/>
             <Stack.Screen name="SignInPage" component={SignInPage}/>
             <Stack.Screen name="SignUpPage" component={SignUpPage}/>
@@ -132,7 +133,7 @@ export default RootComponent = function(){
             <Stack.Screen name="BookingCartPage" component={BookingCartPage} />
             <Stack.Screen name="PaymentPage" component={PaymentPage} />
             <Stack.Screen name="EditProfile" component={EditProfile} />
-
+            <Stack.Screen name="InfoPageSU" component={InfoPageSU} />
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>

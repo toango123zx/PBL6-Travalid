@@ -82,8 +82,8 @@ const styleSplishPage = StyleSheet.create({
         fontSize: 20
     },
     Background:{
-        width: '100%',
-        height: '100%'
+        width: width,
+        height: height+statusBarHeight
     },
     Image1: {
 
