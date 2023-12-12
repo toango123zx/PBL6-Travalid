@@ -125,7 +125,44 @@ export const getProductById = async (req, res, next) => {
             })
         }
         const Product = await prisma.product.findUnique({
-            where: { id_product: productId }
+            where: { id_product: productId },
+            select: {
+                id_product: true,
+                name: true,
+                description: true,
+                city: true,
+                location: true,
+                time: true,
+                quantity: true,
+                count_complete: true,
+                location_map: true,
+                image: true,
+                user: {
+                    select: {
+                        id_user: true,
+                        name: true,
+                        email: true,
+                        phone_number: true,
+                        address: true,
+                        info_supplier: {
+                            select: {
+                                tax_id_number: true,
+                            }
+                        }
+
+                    }
+                },
+                schedule_product: {
+                    select: {
+                        id_schedule_product: true,
+                        start_time: true,
+                        end_time: true,
+                        price: true,
+                        booked: true,
+                        status: true
+                    }
+                }
+            }
         });
         if (!Product) {
             return res.status(403).json({
@@ -133,10 +170,13 @@ export const getProductById = async (req, res, next) => {
                 msg: "The user does not have permission to access this resource"
             });
         }
+        const product = productHelper.formatProductFromDb(Product);
+        product.image_description = [];
+
         res.status(200).json({
             status: 'success',
             msg: 'You have successfully.',
-            data: Product,
+            data: product,
         });
     } catch (err) {
         console.error('getProductById: ', err);
@@ -251,7 +291,7 @@ export const deleteProduct = async (req, res, next) => {
         let dataProduct;
         let time_delete = date.setHours(date.getHours() + time)
         if (role === "admin") {
-            dataProduct = await productService.setStatusProduct(id_product, id_user, role, "warning" , time_delete);
+            dataProduct = await productService.setStatusProduct(id_product, id_user, role, "warning", time_delete);
             if (!dataProduct) {
                 return res.status(404).send({
                     position: "status",
@@ -259,7 +299,7 @@ export const deleteProduct = async (req, res, next) => {
                 })
             }
         } else if (role.includes("supplier")) {
-            dataProduct = await productService.setStatusProduct(id_product, id_user, role, "waiting" , time_delete);
+            dataProduct = await productService.setStatusProduct(id_product, id_user, role, "waiting", time_delete);
             if (!dataProduct) {
                 return res.status(404).send({
                     position: "status",
