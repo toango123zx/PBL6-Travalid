@@ -288,7 +288,7 @@ export const deleteProduct = async (req, res, next) => {
         const id_user = req.user.id_user;
         const id_product = parseInt(req.params.id);
         const role = req.user.role;
-        const time = req.body.time;
+        const time = parseInt(req.body.time);
         let dataProduct;
         let time_delete = date.setHours(date.getHours() + time)
         if (role === "admin") {
@@ -371,74 +371,30 @@ export const activeProduct = async (req, res, next) => {
 }
 
 // check time_hiện_tại > time_delete thì xóa
-export const inactiveProduct = async (req, res , next) => {
-    try {
-        // let inactive_products = await prisma.inactive_Product.findMany({})
+const inactiveProduct = async (req, res) => {
+        let id_products = await productService.getIdProductsInactive();
+        const id_product_delete = id_products.map(item => item.id_product);
+        if (id_product_delete.length > 0) {
+            let id_schedule_products = await productService.getIdScheduleProductsByIdProduct(id_product_delete)
+            const id_schedule_product_delete = id_schedule_products.map(item => item.id_schedule_product);
+            let id_bills = await productService.getIdBillsByIdScheduleProduct(id_schedule_product_delete);
+            const id_bill_cancel = id_bills.map(item => item.id_bill);
+            let cancel_bills = await productService.cancelBillsByBillId(id_bill_cancel);
+            let inactive_schedules = await productService.inactiveScheduleProductsByIdProduct(id_product_delete);
+            let cancel_discounts = await productService.cancelDiscountsByIdProduct(id_product_delete);
+            let inactive_products = await productService.inactiveProductsByIdProduct(id_product_delete);
+            let delete_inactive_products = await productService.deleteInactiveProductsByIdProduct(id_product_delete)
 
-        let delete_product = await prisma.inactive_Product.update({
-            where : {
-                inactive_at :{
-                    lte : new Date(),
-                } 
-            },
-            data : {
-                inactive_at : new Date()
-                
-            }
-             
-        })
-        return res.json({
-            data : delete_product
-        })
-        const id_user = req.user.id_user;
-        const id_product = parseInt(req.params.id);
-        const role = req.user.role;
-        const inactive_product = await prisma.inactive_Product.findUnique({ where: { id_product: id_product } })
-        if (inactive_product) {
-            let dataProduct;
-            if (role === "admin") {
-                dataProduct = await productService.setStatusProduct(id_product, id_user, role, "active");
-                if (!dataProduct) {
-                    return res.status(404).send({
-                        position: "id product",
-                        msg: "status is already a active, or must have an active status  "
-                    })
-                }
-            } else if (role.includes("supplier")) {
-                dataProduct = await productService.setStatusProduct(id_product, id_user, role, "active");
-                if (!dataProduct) {
-                    return res.status(404).send({
-                        position: "id product",
-                        msg: "status is already a active, or must have an active status "
-                    })
-                }
-            } else {
-                return res.status(403).json({
-                    position: "role user",
-                    msg: "User does not have access rights"
-                })
-            }
-            return res.status(200).json(dataProduct);
+            console.log("Success inactive products");
         } else {
-            return res.status(409).json({
-                position: "product id",
-                msg: "Product is active"
-            })
+            console.log("There are no products to delete")
         }
     }
-    catch (err) {
-        console.error('Delete product: ', err);
-        res.status(500).json({
-            msg: 'Delete Product error',
-        });
-    }
-}
 
-cron.schedule('0 */3 * * *', inactiveProduct);
+    cron.schedule('0 */3 * * *', inactiveProduct);// run 3 hours each time
 
 
-// biến dạng true false : product_xoa;;
-// khi tới giờ cron : get cái bảng inactive_product ra , và xử lí;;
+
 // xử lí xong : xem lại cái bảng mới lấy ra nếu hết thì thành fasle => dừng cron;
 // nếu còn thì => tiếp tục cron;;
 // khi người dùng sử dụng API xóa => nếu biến product_xoa là false thành true và cron.start() --- còn không thì cho qua

@@ -114,7 +114,7 @@ export const setStatusProduct = async (id_product, id_user, role, status, inacti
         id_product: id_product,
         status: status
     }
-    
+
     let newProduct = {
         status: __status,
     }
@@ -125,8 +125,8 @@ export const setStatusProduct = async (id_product, id_user, role, status, inacti
                 newProduct.status = 'active';
                 product.status = 'warning'
                 newProduct.inactive_product = {
-                    delete : {
-                        id_product : id_product
+                    delete: {
+                        id_product: id_product
                     }
                 }
             }
@@ -135,8 +135,8 @@ export const setStatusProduct = async (id_product, id_user, role, status, inacti
                 product.id_user = id_user;
                 product.status = 'waiting'
                 newProduct.inactive_product = {
-                    delete : {
-                        id_product : id_product
+                    delete: {
+                        id_product: id_product
                     }
                 }
             }
@@ -161,7 +161,7 @@ export const setStatusProduct = async (id_product, id_user, role, status, inacti
                 product.status = 'active';
                 newProduct.status = 'waiting'
                 newProduct.inactive_product = {
-                    create : {
+                    create: {
                         inactive_at: new Date(inactive_at)
                     }
                 }
@@ -173,7 +173,7 @@ export const setStatusProduct = async (id_product, id_user, role, status, inacti
                 product.status = 'active';
                 newProduct.status = 'warning'
                 newProduct.inactive_product = {
-                    create : {
+                    create: {
                         inactive_at: new Date(inactive_at)
                     }
                 }
@@ -184,7 +184,7 @@ export const setStatusProduct = async (id_product, id_user, role, status, inacti
 
     };
     try {
-        
+
         return await prisma.product.update({
             where: product,
             data: newProduct
@@ -212,3 +212,149 @@ export const getCurrentStatus = async (id_product) => {
     }
 
 }
+
+export const getIdProductsInactive = async () => {
+
+    try {
+        return await prisma.inactive_Product.findMany({
+            where: {
+                inactive_at: {
+                    lte: new Date(),
+                }
+            },
+            select: {
+                id_product: true,
+            }
+        })
+    } catch (error) {
+        return false;
+    }
+}
+
+export const getIdScheduleProductsByIdProduct = async (id_product) => {
+
+    try {
+        return await prisma.schedule_Product.findMany({
+            where: {
+                id_product: {
+                    in: id_product
+                },
+                start_time: {
+                    lte: new Date(),
+                }
+            },
+            select: {
+                id_schedule_product: true,
+            }
+        })
+    } catch (error) {
+        return false;
+    }
+}
+
+export const getIdBillsByIdScheduleProduct = async (id_schedule_product) => {
+
+    try {
+        return await prisma.info_Bill.findMany({
+            where: {
+                id_schedule_product: {
+                    in: id_schedule_product
+                }
+            },
+            select: {
+                id_bill: true,
+            }
+        })
+    } catch (error) {
+        return false;
+    }
+}
+
+export const cancelBillsByBillId = async (id_bill_cancel) => {
+    try {
+        return await prisma.bill.updateMany({
+            where: {
+                status: {
+                    in: ['pending', 'paided']
+                },
+                id_bill: {
+                    in: id_bill_cancel
+                }
+            },
+            data: {
+                status: 'cancel'
+            }
+        })
+    } catch (error) {
+        return false;
+    }
+}
+
+export const inactiveScheduleProductsByIdProduct = async (id_product) => {
+    try {
+        return await prisma.schedule_Product.updateMany({
+            where: {
+                id_product: {
+                    in: id_product
+                },
+            },
+            data: {
+                status: 'inactive'
+            }
+        })
+    } catch (error) {
+        return false;
+    }
+}
+
+export const cancelDiscountsByIdProduct = async (id_product) => {
+    try {
+        return await prisma.discount.updateMany({
+            where: {
+                id_product: {
+                    in: id_product
+                },
+            },
+            data: {
+                status: 'cancel'
+            }
+        })
+    } catch (error) {
+        return false;
+    }
+}
+
+
+export const inactiveProductsByIdProduct = async (id_product) => {
+    try {
+        return await prisma.product.updateMany({
+            where: {
+                id_product: {
+                    in: id_product
+                }
+            },
+            data: {
+                status: 'inactive'
+            }
+        })
+    } catch (error) {
+        return false;
+    }
+}
+
+export const deleteInactiveProductsByIdProduct = async (id_product) => {
+    try {
+        return await prisma.inactive_Product.deleteMany({
+            where: {
+                id_product: {
+                    in: id_product
+                }
+            }
+        })
+    } catch (error) {
+        return false;
+    }
+}
+
+
+

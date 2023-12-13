@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-import * as controller from '../controllers/ProductController';
+import * as controller from '../controllers/productController';
 import * as authMiddleware from '../middlewares/authMiddleware';
 import * as Role from '../common/constants';
 
