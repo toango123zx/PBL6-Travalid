@@ -99,6 +99,12 @@ export const updateUserPassword = async (req, res) => {
 
 export const updateUserImage = async (req, res) => {
     const __user = req.user;
+    if (!req.file || !req.file.mimetype.includes("image")) {
+        return res.status(404).json({
+            position: "no user image error",
+            msg: "There are currently no user image found to perform this function"
+        })
+    }
     const __imageData = req.file.buffer;
     if (__user.image !== envApp.defaultUserImage) {
         const __desertRef = firebase.ref(firebase.storage, __user.image);
@@ -113,7 +119,6 @@ export const updateUserImage = async (req, res) => {
     };
     const __uploadUserImage = firebase.uploadBytesResumable(firebase.ref(firebase.storage, __filePath), __imageData, __metadata);
 
-    // Listen for state changes, errors, and completion of the upload.
     __uploadUserImage.on('state_changed',
         (snapshot) => {
             switch (snapshot.state) {
