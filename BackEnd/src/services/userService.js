@@ -25,6 +25,7 @@ export const getUser = async (username, email, tax_id_number) => {
                 username: true,
                 password: true,
                 name: true,
+                image: true,
                 date_of_birth: true,
                 salt: true,
                 role: true,
@@ -153,13 +154,12 @@ export const createSupplier = async (user, info_Supplier) => {
 
 export const updateUser = async (id_user, user) => {
     try {
-        await prisma.user.update({
+        return await prisma.user.update({
             where: {
                 id_user: Number(id_user),
             },
             data: user,
         });
-        return true;
     } catch (e) {
         return false;
     };
