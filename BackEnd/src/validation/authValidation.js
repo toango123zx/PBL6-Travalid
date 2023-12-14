@@ -173,3 +173,19 @@ export const checkDuplicateUser = async (req, res, next) => {
 
     next();
 };
+
+
+export const productCreateValidate = data => {
+    const productSchema = Joi.object({
+        id_user: Joi.number().strict().required(),
+        name: Joi.string().pattern(/^[^\d~`!@#$%^&*()_+\-={[}\]|;:'",<.>?/]+$/).required(),
+        location_map: Joi.string().required(),
+        time: Joi.number().strict().required(),
+        quantity: Joi.number().strict().required(),
+        age: Joi.number().strict().required(),
+        description: Joi.string().pattern(/^[^\d~`!@#$%^&*()_+\-={[}\]|;:'",<.>?/]+$/).required(),
+        id_location: Joi.number().strict().required(),
+        city: Joi.string().pattern(/^[^\d~`!@#$%^&*()_+\-={[}\]|;:'",<.>?/]+$/).required(),
+    });
+    return productSchema.validate(data)
+}

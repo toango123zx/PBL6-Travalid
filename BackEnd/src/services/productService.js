@@ -1,5 +1,5 @@
 const { prisma } = require('../config/prismaDatabase');
-
+import * as envApp from '../config/envApp';
 export const createProduct = async (id_product, id_user, role) => {
     if (String(role) == "admin") {
         id_user = {
@@ -39,6 +39,118 @@ export const getProduct = async (id_product) => {
         return false;
     };
 };
+
+export const getAllProducts = async (page) => {
+    try {
+        const limit = envApp.LimitGetProductTraveller;
+        let start = (page - 1) * limit;
+        return await prisma.product.findMany({
+            select: {
+                id_product: true,
+                name: true,
+                avg_rate: true,
+                count_complete: true,
+                city: true,
+                image: true
+            },
+            skip: start,
+            take: limit,
+        });
+    } catch (error) {
+        return false;
+    }
+};
+
+export const getProductById = async (productId) => {
+    try {
+        return await prisma.product.findUnique({
+            where: { id_product: productId },
+            select: {
+                id_product: true,
+                name: true,
+                description: true,
+                city: true,
+                location: true,
+                time: true,
+                quantity: true,
+                count_complete: true,
+                location_map: true,
+                image: true,
+                user: {
+                    select: {
+                        id_user: true,
+                        name: true,
+                        email: true,
+                        phone_number: true,
+                        address: true,
+                        info_supplier: {
+                            select: {
+                                tax_id_number: true,
+                            }
+                        }
+
+                    }
+                },
+                schedule_product: {
+                    select: {
+                        id_schedule_product: true,
+                        start_time: true,
+                        end_time: true,
+                        price: true,
+                        booked: true,
+                        status: true
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        return false;
+    }
+};
+
+
+export const create_Product = async (product) => {
+    try {
+        return await prisma.product.create({
+            data: product
+        });
+    } catch (error) {
+        return false;
+    }
+}
+
+export const updateProduct = async (id_product, product) => {
+    try {
+        return await prisma.product.update({
+            where: {
+                id_product: id_product,
+            },
+            data: product
+        });
+    } catch (error) {
+        return false;
+    }
+}
+
+
+
+export const getIdProductsByIdUser = async (id_user) => {
+    try {
+        return await prisma.product.findMany({
+            select: {
+                id_product: true
+            },
+            where: {
+                id_user: id_user
+            },
+        })
+    } catch (error) {
+        return false;
+    }
+}
+
+
+
 
 export const getAllProductForSupplier = async (id_user, start, limit) => {
     try {
@@ -101,12 +213,6 @@ export const getAllScheduleForSupplier = async (start, limit) => {
 }
 
 
-
-// set active
-// setStatusProduct(10 , 1, 'supp', 'active', undefined)
-
-// set inactive
-// setStatusProduct(10 , 1, 'supp', 'active', 24 tieng)
 
 export const setStatusProduct = async (id_product, id_user, role, status, inactive_at) => {
     let __status;

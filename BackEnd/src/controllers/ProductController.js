@@ -1,6 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const { productCreateValidation } = require('../validation/authValidation');
+const { productCreateValidate } = require('../validation/authValidation');
 import * as envApp from '../config/envApp';
 import * as productHelper from '../helpers/productHelper';
 import * as scheduleHelper from '../helpers/scheduleHelper';
@@ -12,23 +12,8 @@ const cron = require('node-cron');
 
 export const getAllProduct = async (req, res, next) => {
     try {
-        let page = parseInt(req.query.page, 10);
-        const limit = envApp.LimitGetProductTraveller;
-        if (page < 0 || !!page == false) page = 1; // set default page
-
-        let start = (page - 1) * limit;
-        const allProduct = await prisma.product.findMany({
-            select: {
-                id_product: true,
-                name: true,
-                avg_rate: true,
-                count_complete: true,
-                city: true,
-                image: true
-            },
-            skip: start,
-            take: limit,
-        });
+        let page = parseInt(req.query.page, 10) || 1;
+        const allProduct = await productService.getAllProducts(page);
         if (!allProduct) {
             return res.status(403).json({
                 position: "getAllProduct",
@@ -36,7 +21,7 @@ export const getAllProduct = async (req, res, next) => {
             });
         }
         res.status(200).json({
-            status: 'success1123',
+            status: 'success',
             msg: 'You have successfully.',
             data: allProduct
         });
@@ -66,7 +51,7 @@ export const getAllProductService = async (req, res, next) => {
             });
 
         }
-        let product = productHelper.formatProductFormDb(products);
+        let product = productHelper.formatProductsFromDb(products);
         let schedule = scheduleHelper.formatScheduleFormDb(schedules);
         let discount = discounts.map((discount) => {
             discount.supplier = discount.user.role;
@@ -118,52 +103,13 @@ export const getAllProductForSupplier = async (req, res, next) => {
 export const getProductById = async (req, res, next) => {
     try {
         const productId = parseInt(req.params.id);
-        if (productId < 0 || !!productId == false) {
-            return res.status(404).send({
+        if (isNaN(productId) || productId < 0) {
+            return res.status(400).json({
                 position: 'Product id',
-                msg: 'Product not found'
-            })
+                msg: 'Invalid product id format'
+            });
         }
-        const Product = await prisma.product.findUnique({
-            where: { id_product: productId },
-            select: {
-                id_product: true,
-                name: true,
-                description: true,
-                city: true,
-                location: true,
-                time: true,
-                quantity: true,
-                count_complete: true,
-                location_map: true,
-                image: true,
-                user: {
-                    select: {
-                        id_user: true,
-                        name: true,
-                        email: true,
-                        phone_number: true,
-                        address: true,
-                        info_supplier: {
-                            select: {
-                                tax_id_number: true,
-                            }
-                        }
-
-                    }
-                },
-                schedule_product: {
-                    select: {
-                        id_schedule_product: true,
-                        start_time: true,
-                        end_time: true,
-                        price: true,
-                        booked: true,
-                        status: true
-                    }
-                }
-            }
-        });
+        const Product = await productService.getProductById(productId);
         if (!Product) {
             return res.status(403).json({
                 position: "Detailed Product id",
@@ -187,80 +133,82 @@ export const getProductById = async (req, res, next) => {
 };
 export const createProduct = async (req, res, next) => {
     try {
+        const __user = req.user;
         const id_user = req.user.id_user;
         const { name, location_map, time, quantity, age, description, id_location, city } = req.body;
-        const createProduct = await prisma.product.create({
-            data: {
-                name: name,
-                id_user: id_user,
-                location_map: location_map,
-                time: time,
-                quantity: quantity,
-                age: age,
-                description: description,
-                id_location: id_location,
-                city: city
-            }
-        });
+        let product = {
+            name: name,
+            id_user: id_user,
+            location_map: location_map,
+            time: time,
+            quantity: quantity,
+            age: age,
+            description: description,
+            id_location: id_location,
+            city: city
+        }
+        const {error} = productCreateValidate(product);
+        if(error){
+            return res.status(400).json({
+                msg : error.details[0].message
+            })
+        }
+        const createProduct = await productService.create_Product(product);
         if (!createProduct) {
-            if (__user.role === 'traveller') {
+            if (__user.role === 'traveller' || __user.role === 'admin') {
                 return res.status(403).json({
                     position: "Role not allowed",
                     msg: "The user does not have permission to update this resource"
                 })
             }
+            else {
+                return res.status(500).json({
+                    position: "Create product failed",
+                    msg: "Product registration unsuccessful"
+                });
+            }
+            
         }
-        res.status(201).json({
+        return res.status(201).json({
             status: 'success',
             msg: 'You have successfully.',
             data: createProduct,
         });
     } catch (err) {
         console.error('createProduct: ', err);
-        res.status(500).json({
+        return res.status(500).json({
             msg: 'Get internal server error in get product',
         });
     }
 };
+
 
 export const updateProduct = async (req, res, next) => {
     try {
         const id_product = parseInt(req.params.id);
         const id_user = req.user.id_user;
         const { name, location_map, time, quantity, age, description, id_location, city } = req.body;
-        const listIdProduct = await prisma.product.findMany({
-            select: {
-                id_product: true
-            },
-            where: {
-                id_user: id_user
-            },
-        })
+        const product = {
+            name: name,
+            id_user: id_user,
+            location_map: location_map,
+            time: time,
+            quantity: quantity,
+            age: age,
+            description: description,
+            id_location: id_location,
+            city: city
+        }
+        const listIdProduct = await productService.getIdProductsByIdUser(id_user)
         if (listIdProduct.length === 0) {
             return res.status(404).json({
                 position: "id product",
                 msg: "You have no products"
             });
         } else if (listIdProduct.some(item => item.id_product === id_product)) {
-            const updateProduct = await prisma.product.update({
-                where: {
-                    id_product: id_product,
-                    id_user: id_user,
-                },
-                data: {
-                    name: name,
-                    id_user: id_user,
-                    location_map: location_map,
-                    time: time,
-                    quantity: quantity,
-                    age: age,
-                    description: description,
-                    id_location: id_location,
-                    city: city
-                }
-            });
-
-            res.status(200).json({
+            console.log(id_product);
+            const updateProduct = await productService.updateProduct(id_product,product)
+            return res.status(200).json({
                 status: 'success',
                 msg: 'You have successfully.',
                 data: updateProduct,
@@ -283,7 +231,6 @@ export const updateProduct = async (req, res, next) => {
 
 export const deleteProduct = async (req, res, next) => {
     try {
-        console.log("-------------deleteProduct--------")
         let date = new Date();
         const id_user = req.user.id_user;
         const id_product = parseInt(req.params.id);
@@ -322,7 +269,7 @@ export const deleteProduct = async (req, res, next) => {
         });
     }
 };
-// check nếu như time_hiện_tại < time_delete thì mới chạy
+
 export const activeProduct = async (req, res, next) => {
     try {
         const id_user = req.user.id_user;
@@ -370,7 +317,7 @@ export const activeProduct = async (req, res, next) => {
     }
 }
 
-// check time_hiện_tại > time_delete thì xóa
+
 const inactiveProduct = async (req, res) => {
         let id_products = await productService.getIdProductsInactive();
         const id_product_delete = id_products.map(item => item.id_product);
@@ -391,11 +338,7 @@ const inactiveProduct = async (req, res) => {
         }
     }
 
-    cron.schedule('0 */3 * * *', inactiveProduct);// run 3 hours each time
 
+cron.schedule('0 */3 * * *', inactiveProduct);// run 3 hours each time
 
-
-// xử lí xong : xem lại cái bảng mới lấy ra nếu hết thì thành fasle => dừng cron;
-// nếu còn thì => tiếp tục cron;;
-// khi người dùng sử dụng API xóa => nếu biến product_xoa là false thành true và cron.start() --- còn không thì cho qua
 

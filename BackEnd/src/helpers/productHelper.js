@@ -1,4 +1,4 @@
-export const formatProductFormDb = (products) => {
+export const formatProductsFromDb = (products) => {
     products = products.map((product) => {
         product = {
             ...product,
