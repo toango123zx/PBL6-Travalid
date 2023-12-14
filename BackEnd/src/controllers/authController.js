@@ -13,7 +13,7 @@ export const travellerSignUp = async (req, res, next) => {
     //     });
     // };
 
-    if (!userService.creteUser(__user)) {
+    if (!(await userService.creteUser(__user))) {
         return res.status(500).json({
             position: "insert prisma",
             msg: "Unable to add user table data to the database",
@@ -51,7 +51,7 @@ export const supplierSignUp = async (req, res, next) => {
 export const adminSignUp = async (req, res, next) => {
     const __user = req.user;
 
-    if (!userService.creteUser(__user)) {
+    if (!(await userService.creteUser(__user))) {
         return res.status(500).json({
             position: "insert prisma",
             msg: "Unable to add user table data to the database",
