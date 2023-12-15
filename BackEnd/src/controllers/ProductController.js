@@ -32,7 +32,8 @@ async function inactiveProduct() {
 
 export const getAllProduct = async (req, res, next) => {
     try { 
-        let page = parseInt(req.query.page, 10) || 1;
+        let page = parseInt(req.query.page, 10);
+        if (page < 0 || !!page == false) page = 1;
         const allProduct = await productService.getAllProducts(page);
         if (!allProduct) {
             return res.status(403).json({
@@ -56,9 +57,9 @@ export const getAllProduct = async (req, res, next) => {
 export const getAllProductService = async (req, res, next) => {
     try {
         let page = parseInt(req.query.page, 10);
+        if (page < 0 || !!page == false) page = 1; // set default page
         const limit = envApp.LimitProductService;
         let start = (page - 1) * limit;
-        if (page < 0 || !!page == false) page = 1; // set default page
         const id_user = req.user.id_user;
         const products = await productService.getAllProductForSupplier(id_user, start, limit);
         const schedules = await scheduleProductService.getSchedulesProduct(undefined, id_user, 'travel_supplier', start, limit)
@@ -92,9 +93,9 @@ export const getAllProductService = async (req, res, next) => {
 export const getAllProductForSupplier = async (req, res, next) => {
     try {
         let page = parseInt(req.query.page, 10);
+        if (page < 0 || !!page == false) page = 1; // set default page
         const limit = envApp.LimitGetProductTraveller;
         const id_user = req.user.id_user;
-        if (page < 0 || !!page == false) page = 1; // set default page
         let start = (page - 1) * limit;
         let allProduct = await productService.getAllProductForSupplier(id_user, start, limit);
         if (!allProduct) {
