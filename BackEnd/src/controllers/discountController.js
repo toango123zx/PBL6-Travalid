@@ -70,10 +70,10 @@ export const createDiscount = async (req, res) => {
         point: Number(req.body.point),
         quantity: Number(req.body.quantity)
     };
-    const __product = await productService.getProduct(__discount.id_product);
+    const __product = await productService.getProductById(__discount.id_product);
 
     if (!__product) {
-        if (!(__user.role === 'admin' || __discount.id_user !== __product.id_user)) {
+        if (!(__user.role === 'admin' || __discount.id_user !== __product.user.id_user)) {
             return res.status(403).json({
                 position: "Id discount",
                 msg: "The user does not have permission to update this resource"

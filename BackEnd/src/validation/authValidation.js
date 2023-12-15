@@ -174,7 +174,6 @@ export const checkDuplicateUser = async (req, res, next) => {
     next();
 };
 
-
 export const productCreateValidate = data => {
     const productSchema = Joi.object({
         id_user: Joi.number().strict().required(),
@@ -188,4 +187,24 @@ export const productCreateValidate = data => {
         city: Joi.string().pattern(/^[^\d~`!@#$%^&*()_+\-={[}\]|;:'",<.>?/]+$/).required(),
     });
     return productSchema.validate(data)
+}
+
+export const productUpdateValidate = data => {
+    const productSchema = Joi.object({
+        id_user: Joi.number().strict(),
+        name: Joi.string().pattern(/^[^\d~`!@#$%^&*()_+\-={[}\]|;:'",<.>?/]+$/),
+        location_map: Joi.string(),
+        time: Joi.number().strict(),
+        quantity: Joi.number().strict(),
+        age: Joi.number().strict(),
+        description: Joi.string().pattern(/^[^\d~`!@#$%^&*()_+\-={[}\]|;:'",<.>?/]+$/),
+        id_location: Joi.number().strict(),
+        city: Joi.string().pattern(/^[^\d~`!@#$%^&*()_+\-={[}\]|;:'",<.>?/]+$/),
+    });
+    return productSchema.validate(data)
+}
+
+export const productDeleteValidate = data => {
+    const time = Joi.number().required()
+    return time.validate(data)
 }

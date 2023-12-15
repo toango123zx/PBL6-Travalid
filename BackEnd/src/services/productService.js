@@ -1,44 +1,5 @@
 const { prisma } = require('../config/prismaDatabase');
 import * as envApp from '../config/envApp';
-export const createProduct = async (id_product, id_user, role) => {
-    if (String(role) == "admin") {
-        id_user = {
-            not: -1
-        };
-    } else {
-        if (!String(role).includes("supplier")) {
-            return false;
-        };
-        id_user = Number(id_user);
-    };
-    try {
-        return await prisma.product.findFirst({
-            select: {
-                id_product: true,
-            },
-            where: {
-                id_product: Number(id_product),
-                id_user: id_user
-
-            }
-        });
-    } catch (e) {
-        return false;
-    };
-};
-
-
-export const getProduct = async (id_product) => {
-    try {
-        return await prisma.product.findFirst({
-            where: {
-                id_product: Number(id_product),
-            }
-        });
-    } catch (e) {
-        return false;
-    };
-};
 
 export const getAllProducts = async (page) => {
     try {
@@ -63,14 +24,18 @@ export const getAllProducts = async (page) => {
 
 export const getProductById = async (productId) => {
     try {
-        return await prisma.product.findUnique({
+        return await prisma.product.findFirst({
             where: { id_product: productId },
             select: {
                 id_product: true,
                 name: true,
                 description: true,
                 city: true,
-                location: true,
+                location: {
+                    select : {
+                        display_name : true,
+                    }
+                },
                 time: true,
                 quantity: true,
                 count_complete: true,
@@ -88,7 +53,6 @@ export const getProductById = async (productId) => {
                                 tax_id_number: true,
                             }
                         }
-
                     }
                 },
                 schedule_product: {
@@ -107,7 +71,6 @@ export const getProductById = async (productId) => {
         return false;
     }
 };
-
 
 export const create_Product = async (product) => {
     try {
@@ -132,8 +95,6 @@ export const updateProduct = async (id_product, product) => {
     }
 }
 
-
-
 export const getIdProductsByIdUser = async (id_user) => {
     try {
         return await prisma.product.findMany({
@@ -148,9 +109,6 @@ export const getIdProductsByIdUser = async (id_user) => {
         return false;
     }
 }
-
-
-
 
 export const getAllProductForSupplier = async (id_user, start, limit) => {
     try {
@@ -186,7 +144,6 @@ export const getAllProductForSupplier = async (id_user, start, limit) => {
 
 export const getAllScheduleForSupplier = async (start, limit) => {
     try {
-
         return await prisma.schedule_Product.findMany({
             select: {
                 id_product: true,
@@ -211,8 +168,6 @@ export const getAllScheduleForSupplier = async (start, limit) => {
         return false;
     }
 }
-
-
 
 export const setStatusProduct = async (id_product, id_user, role, status, inactive_at) => {
     let __status;
@@ -258,9 +213,6 @@ export const setStatusProduct = async (id_product, id_user, role, status, inacti
                 product.status = 'waiting'
             }
             break;
-
-
-
         case 'waiting':
             if (role.includes('supplier')) {
                 product.id_user = id_user;
@@ -273,7 +225,6 @@ export const setStatusProduct = async (id_product, id_user, role, status, inacti
                 }
             }
             break;
-
         case 'warning':
             if (role === 'admin') {
                 product.status = 'active';
@@ -287,16 +238,12 @@ export const setStatusProduct = async (id_product, id_user, role, status, inacti
             break;
         default:
             return false;
-
     };
     try {
-
         return await prisma.product.update({
             where: product,
             data: newProduct
         })
-
-
     } catch (error) {
         return false;
     }
@@ -320,7 +267,6 @@ export const getCurrentStatus = async (id_product) => {
 }
 
 export const getIdProductsInactive = async () => {
-
     try {
         return await prisma.inactive_Product.findMany({
             where: {
@@ -338,7 +284,6 @@ export const getIdProductsInactive = async () => {
 }
 
 export const getIdScheduleProductsByIdProduct = async (id_product) => {
-
     try {
         return await prisma.schedule_Product.findMany({
             where: {
@@ -359,7 +304,6 @@ export const getIdScheduleProductsByIdProduct = async (id_product) => {
 }
 
 export const getIdBillsByIdScheduleProduct = async (id_schedule_product) => {
-
     try {
         return await prisma.info_Bill.findMany({
             where: {
@@ -462,5 +406,10 @@ export const deleteInactiveProductsByIdProduct = async (id_product) => {
     }
 }
 
-
-
+export const getInactiveProductsByIdProduct = async (id_product) => {
+    try {
+        return await prisma.inactive_Product.findUnique({ where: { id_product: id_product } })
+    } catch (error) {
+        return false;
+    }
+}

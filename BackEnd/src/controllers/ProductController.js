@@ -1,17 +1,37 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
-const { productCreateValidate } = require('../validation/authValidation');
+const cron = require('node-cron');
+const { productCreateValidate, productUpdateValidate, productDeleteValidate} = require('../validation/authValidation');
+
 import * as envApp from '../config/envApp';
 import * as productHelper from '../helpers/productHelper';
 import * as scheduleHelper from '../helpers/scheduleHelper';
 import * as productService from '../services/productService';
 import * as scheduleProductService from '../services/scheduleProductService';
 import * as discountService from '../services/discountService';
-const cron = require('node-cron');
 
+cron.schedule('0 */3 * * *', inactiveProduct);// run 3 hours each time
+
+async function inactiveProduct() {
+    let id_products = await productService.getIdProductsInactive();
+    const id_product_delete = id_products.map(item => item.id_product);
+    if (id_product_delete.length > 0) {
+        let id_schedule_products = await productService.getIdScheduleProductsByIdProduct(id_product_delete)
+        const id_schedule_product_delete = id_schedule_products.map(item => item.id_schedule_product);
+        let id_bills = await productService.getIdBillsByIdScheduleProduct(id_schedule_product_delete);
+        const id_bill_cancel = id_bills.map(item => item.id_bill);
+        let cancel_bills = await productService.cancelBillsByBillId(id_bill_cancel);
+        let inactive_schedules = await productService.inactiveScheduleProductsByIdProduct(id_product_delete);
+        let cancel_discounts = await productService.cancelDiscountsByIdProduct(id_product_delete);
+        let inactive_products = await productService.inactiveProductsByIdProduct(id_product_delete);
+        let delete_inactive_products = await productService.deleteInactiveProductsByIdProduct(id_product_delete)
+
+        console.log("Success inactive products");
+    } else {
+        console.log("There are no products to delete")
+    }
+}
 
 export const getAllProduct = async (req, res, next) => {
-    try {
+    try { 
         let page = parseInt(req.query.page, 10) || 1;
         const allProduct = await productService.getAllProducts(page);
         if (!allProduct) {
@@ -27,7 +47,6 @@ export const getAllProduct = async (req, res, next) => {
         });
 
     } catch (err) {
-        console.error('getAllProduct: ', err);
         res.status(500).json({
             msg: 'Get internal server error in get all product',
         });
@@ -49,7 +68,6 @@ export const getAllProductService = async (req, res, next) => {
                 position: "getAllProduct",
                 msg: "The user does not have permission to access this resource"
             });
-
         }
         let product = productHelper.formatProductsFromDb(products);
         let schedule = scheduleHelper.formatScheduleFormDb(schedules);
@@ -85,7 +103,7 @@ export const getAllProductForSupplier = async (req, res, next) => {
                 msg: "The user does not have permission to access this resource"
             });
         }
-        allProduct = productHelper.formatProductFormDb(allProduct);
+        allProduct = productHelper.formatProductsFromDb(allProduct);
         res.status(200).json({
             status: 'success',
             msg: 'You have successfully.',
@@ -93,7 +111,6 @@ export const getAllProductForSupplier = async (req, res, next) => {
         });
 
     } catch (err) {
-        console.error('getAllProduct: ', err);
         res.status(500).json({
             msg: 'Get internal server error in get all product',
         });
@@ -111,9 +128,9 @@ export const getProductById = async (req, res, next) => {
         }
         const Product = await productService.getProductById(productId);
         if (!Product) {
-            return res.status(403).json({
-                position: "Detailed Product id",
-                msg: "The user does not have permission to access this resource"
+            return res.status(404).json({
+                position: "Product id",
+                msg: "Product does not exist"
             });
         }
         const product = productHelper.formatProductFromDb(Product);
@@ -125,7 +142,6 @@ export const getProductById = async (req, res, next) => {
             data: product,
         });
     } catch (err) {
-        console.error('getProductById: ', err);
         res.status(500).json({
             msg: 'Get internal server error in get product',
         });
@@ -147,10 +163,10 @@ export const createProduct = async (req, res, next) => {
             id_location: id_location,
             city: city
         }
-        const {error} = productCreateValidate(product);
-        if(error){
+        const { error } = productCreateValidate(product);
+        if (error) {
             return res.status(400).json({
-                msg : error.details[0].message
+                msg: error.details[0].message
             })
         }
         const createProduct = await productService.create_Product(product);
@@ -167,21 +183,14 @@ export const createProduct = async (req, res, next) => {
                     msg: "Product registration unsuccessful"
                 });
             }
-            
         }
-        return res.status(201).json({
-            status: 'success',
-            msg: 'You have successfully.',
-            data: createProduct,
-        });
+        return res.sendStatus(200)
     } catch (err) {
-        console.error('createProduct: ', err);
         return res.status(500).json({
             msg: 'Get internal server error in get product',
         });
     }
 };
-
 
 export const updateProduct = async (req, res, next) => {
     try {
@@ -198,6 +207,12 @@ export const updateProduct = async (req, res, next) => {
             description: description,
             id_location: id_location,
             city: city
+        };
+        const { error } = productUpdateValidate(product);
+        if (error) {
+            return res.status(400).json({
+                msg: error.details[0].message
+            })
         }
         const listIdProduct = await productService.getIdProductsByIdUser(id_user)
         if (listIdProduct.length === 0) {
@@ -206,28 +221,20 @@ export const updateProduct = async (req, res, next) => {
                 msg: "You have no products"
             });
         } else if (listIdProduct.some(item => item.id_product === id_product)) {
-            console.log(id_product);
-            const updateProduct = await productService.updateProduct(id_product,product)
-            return res.status(200).json({
-                status: 'success',
-                msg: 'You have successfully.',
-                data: updateProduct,
-            });
+            const updateProduct = await productService.updateProduct(id_product, product)
+            return res.sendStatus(200)
         } else if (listIdProduct.some(item => item.id_product !== id_product)) {
             return res.status(404).json({
                 position: "id product",
                 msg: "You don't have this product yet"
             });
         }
-
     } catch (err) {
-        console.error('updateProduct: ', err);
         res.status(500).json({
             msg: 'Update Product error',
         });
     }
 };
-
 
 export const deleteProduct = async (req, res, next) => {
     try {
@@ -235,13 +242,21 @@ export const deleteProduct = async (req, res, next) => {
         const id_user = req.user.id_user;
         const id_product = parseInt(req.params.id);
         const role = req.user.role;
-        const time = parseInt(req.body.time);
+        const time = Number(req.body.time);
+        console.log("time ", time);
+        const { error } = productDeleteValidate(time);
+        if (error) {
+            return res.status(400).json({
+                msg: error.details[0].message
+            })
+        }
         let dataProduct;
         let time_delete = date.setHours(date.getHours() + time)
+
         if (role === "admin") {
             dataProduct = await productService.setStatusProduct(id_product, id_user, role, "warning", time_delete);
             if (!dataProduct) {
-                return res.status(404).send({
+                return res.status(409).json({
                     position: "status",
                     msg: "status is already a warning, or must have an active status"
                 })
@@ -249,7 +264,7 @@ export const deleteProduct = async (req, res, next) => {
         } else if (role.includes("supplier")) {
             dataProduct = await productService.setStatusProduct(id_product, id_user, role, "waiting", time_delete);
             if (!dataProduct) {
-                return res.status(404).send({
+                return res.status(409).json({
                     position: "status",
                     msg: "status is already a waiting, or must have an active status "
                 })
@@ -260,10 +275,9 @@ export const deleteProduct = async (req, res, next) => {
                 msg: "User does not have access rights"
             })
         }
-        res.json(dataProduct);
+        return res.sendStatus(200)
     }
     catch (err) {
-        console.error('Delete product: ', err);
         res.status(500).json({
             msg: 'Delete Product error',
         });
@@ -275,70 +289,26 @@ export const activeProduct = async (req, res, next) => {
         const id_user = req.user.id_user;
         const id_product = parseInt(req.params.id);
         const role = req.user.role;
-        const inactive_product = await prisma.inactive_Product.findUnique({ where: { id_product: id_product } })
+        const inactive_product = await productService.getInactiveProductsByIdProduct(id_product);
         if (inactive_product) {
-            let dataProduct;
-            if (role === "admin") {
-                dataProduct = await productService.setStatusProduct(id_product, id_user, role, "active");
+            const dataProduct = await productService.setStatusProduct(id_product, id_user, role, "active");
                 if (!dataProduct) {
-                    return res.status(404).send({
-                        position: "id product",
-                        msg: "status is already a active, or must have an active status  "
+                    return res.status(403).json({
+                        position: "user role",
+                        msg: "The user does not have sufficient rights to perform this task"
                     })
                 }
-            } else if (role.includes("supplier")) {
-                dataProduct = await productService.setStatusProduct(id_product, id_user, role, "active");
-                if (!dataProduct) {
-                    return res.status(404).send({
-                        position: "id product",
-                        msg: "status is already a active, or must have an active status "
-                    })
-                }
-            } else {
-                return res.status(403).json({
-                    position: "role user",
-                    msg: "User does not have access rights"
-                })
-            }
-            return res.status(200).json(dataProduct);
+            return res.sendStatus(200)
         } else {
             return res.status(409).json({
                 position: "product id",
                 msg: "Product is active"
             })
         }
-
     }
     catch (err) {
-        console.error('Delete product: ', err);
         res.status(500).json({
             msg: 'Delete Product error',
         });
     }
 }
-
-
-const inactiveProduct = async (req, res) => {
-        let id_products = await productService.getIdProductsInactive();
-        const id_product_delete = id_products.map(item => item.id_product);
-        if (id_product_delete.length > 0) {
-            let id_schedule_products = await productService.getIdScheduleProductsByIdProduct(id_product_delete)
-            const id_schedule_product_delete = id_schedule_products.map(item => item.id_schedule_product);
-            let id_bills = await productService.getIdBillsByIdScheduleProduct(id_schedule_product_delete);
-            const id_bill_cancel = id_bills.map(item => item.id_bill);
-            let cancel_bills = await productService.cancelBillsByBillId(id_bill_cancel);
-            let inactive_schedules = await productService.inactiveScheduleProductsByIdProduct(id_product_delete);
-            let cancel_discounts = await productService.cancelDiscountsByIdProduct(id_product_delete);
-            let inactive_products = await productService.inactiveProductsByIdProduct(id_product_delete);
-            let delete_inactive_products = await productService.deleteInactiveProductsByIdProduct(id_product_delete)
-
-            console.log("Success inactive products");
-        } else {
-            console.log("There are no products to delete")
-        }
-    }
-
-
-cron.schedule('0 */3 * * *', inactiveProduct);// run 3 hours each time
-
-
