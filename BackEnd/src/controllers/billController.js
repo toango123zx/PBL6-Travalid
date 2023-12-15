@@ -88,8 +88,10 @@ export const createBill = async (req, res) => {
         quantity: Number(req.body.quantity),
         info_bill: []
     };
-    const __schedules_product = await scheduleProductService.getSchedulesProduct(__id_schedules_product);
+    console.log(__id_schedules_product);
 
+    const __schedules_product = await scheduleProductService.getSchedulesProduct(__id_schedules_product, __user.id_user, "traveller");
+    console.log(__schedules_product);
     if (__id_schedules_product.length &&__schedules_product.length !== __id_schedules_product.length) {
         return res.status(409).json({
             position: "id_schedules_products",

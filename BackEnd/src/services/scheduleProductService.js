@@ -32,7 +32,7 @@ export const getSchedulesProductByDiscounts = async (id_schedules_product, id_di
     }
 };
 
-export const getScheduleProduct = async(id_schedules_product) => {
+export const getScheduleProduct = async (id_schedules_product) => {
     try {
         return prisma.schedule_Product.findFirst({
             select: {
@@ -69,9 +69,37 @@ export const getScheduleProduct = async(id_schedules_product) => {
     };
 };
 
-export const getSchedulesProduct = async(id_schedules_product) => {
+export const getSchedulesProduct = async (id_schedules_product, id_user, role, start, limit) => {
+    let whereGetScheduleProduct;
+    switch (role) {
+        case 'traveller': {
+            console.log(1)
+            whereGetScheduleProduct = {
+                id_schedule_product: {
+                    in: id_schedules_product,
+                },
+                start_time: {
+                    gt: new Date()
+                },
+                status: 'active',
+            }
+            break;
+        }
+        case 'travel_supplier': {
+            whereGetScheduleProduct = {
+                product: {
+                    id_user: Number(id_user)
+                }
+            }
+            break;
+        }
+        default: {
+            console.log(2)
+            return false;
+        }
+    }
     try {
-        return prisma.schedule_Product.findMany({
+        return await prisma.schedule_Product.findMany({
             select: {
                 id_schedule_product: true,
                 id_product: true,
@@ -90,20 +118,16 @@ export const getSchedulesProduct = async(id_schedules_product) => {
                     }
                 }
             },
-            where: {
-                id_schedule_product: {
-                    in: id_schedules_product,
-                },
-                start_time: {
-                    gt: new Date()
-                },
-                status: 'active',
-            },
+            where: whereGetScheduleProduct,
             orderBy: {
                 start_time: 'asc'
-            }
+            },
+            skip: start,
+            take: limit,
         });
+
     } catch (e) {
+        console.log(e);
         return false;
     };
 };

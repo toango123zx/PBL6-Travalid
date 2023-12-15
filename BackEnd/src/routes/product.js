@@ -1,16 +1,18 @@
 const express = require('express');
 const router = express.Router();
 
-import * as controller from '../controllers/ProductController';
-import { checkRole } from '../middlewares/CheckRole';
-import  * as Role from '../common/constants';
+import * as controller from '../controllers/productController';
+import * as authMiddleware from '../middlewares/authMiddleware';
+import * as Role from '../common/constants';
 
-router.get('/',checkRole(Role.role) ,controller.show);
-router.get('/getAllProduct',controller.getAllProduct);
-router.get('/getProductById',controller.getProductById);
-router.post('/createProduct',controller.createProduct);
-router.put('/updateProduct',controller.updateProduct);
-router.delete('/deleteProduct',controller.deleteProduct);
+router.get('/', controller.getAllProduct);
+router.get('/supplier', authMiddleware.verifyToken, authMiddleware.checkSupplierRole, controller.getAllProductForSupplier);
+router.get('/supplier/products', authMiddleware.verifyToken, authMiddleware.checkSupplierRole, controller.getAllProductService);
+router.post('/', authMiddleware.verifyToken, authMiddleware.checkSupplierRole, controller.createProduct);
+router.get('/:id', controller.getProductById);
+router.put('/:id', authMiddleware.verifyToken, authMiddleware.checkSupplierOrAdminRole, controller.updateProduct);
+router.delete('/:id', authMiddleware.verifyToken, authMiddleware.checkSupplierOrAdminRole, controller.deleteProduct);
+router.patch('/:id', authMiddleware.verifyToken, authMiddleware.checkSupplierOrAdminRole, controller.activeProduct);
 
 
 module.exports = router;
