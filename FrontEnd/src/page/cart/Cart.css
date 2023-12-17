@@ -1,0 +1,16 @@
+.cart-page {
+  font-family: 'Montserrat', cursive;
+}
+.cart-page-title {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translate(-50%, -50%);
+  font-size: 32px;
+  letter-spacing: 6px;
+  color: rgb(251 146 60);
+  font-weight: 900;
+}
+.cart-list {
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}

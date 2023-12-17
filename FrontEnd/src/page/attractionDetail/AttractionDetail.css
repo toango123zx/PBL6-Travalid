@@ -1,0 +1,31 @@
+.attraction-detai-page {
+  font-family: 'Montserrat', cursive;
+}
+.attraction-detail-filter {
+  width: 80%;
+  position: absolute;
+  bottom: 0;
+  background-color: rgb(241 245 249);
+  border-top-right-radius: 20px;
+  border-top-left-radius: 20px;
+  border-bottom: 1px solid rgb(241 245 249);
+  overflow: hidden;
+}
+.attraction-detail-filter-title {
+  font-size: 30px;
+  font-weight: 600;
+  text-align: center;
+}
+.attraction-detail-header {
+  font-size: 126px;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: bold;
+  letter-spacing: 14px;
+}
+.attraction-detail-slogan {
+  position: absolute;
+  font-size: 52px;
+  font-weight: 900;
+  letter-spacing: 8px;
+  color: rgb(251 146 60);
+}

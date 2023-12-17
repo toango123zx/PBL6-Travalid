@@ -1,0 +1,15 @@
+.footer-brand {
+  font-family: 'Oleo Script', cursive;
+  font-size: 28px;
+}
+.footer-title {
+  font-family: 'Poppins', cursive;
+  font-size: 18px;
+  font-weight: 500;
+}
+.footer-item {
+  margin-top: 16px;
+}
+.footer-item li {
+  margin-top: 8px;
+}

@@ -1,0 +1,15 @@
+.attraction-card-image {
+  width: 100%;
+  height: 250px;
+  border-radius: 0.5rem /* 8px */;
+  overflow: hidden;
+}
+.attraction-card-image img {
+  object-fit: cover;
+  height: 100%;
+  width: 100%;
+}
+.attraction-card:hover img {
+  transition: transform 0.3s;
+  transform: scale(1.2);
+}
