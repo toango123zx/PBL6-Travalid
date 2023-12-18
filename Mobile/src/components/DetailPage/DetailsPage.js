@@ -1,6 +1,6 @@
 import React from "react";
 import {useState, useEffect} from 'react';
-import{ View, Text, Image, StatusBar, ScrollView, TouchableOpacity, SafeAreaView, Modal} from 'react-native'
+import{ View, Text, Image, StatusBar, ScrollView, TouchableOpacity, SafeAreaView, Modal,Alert} from 'react-native'
 import Svg, {Path} from 'react-native-svg';
 import {styleDetailsPage} from "../../themes/styleDetailsPage";
 import InfoPage from "./InfoPage";
@@ -14,6 +14,7 @@ import BookingCartPage from "../CartPage/BookingCartPage";
 import {useDispatch} from 'react-redux'
 import {setSharedData} from '../../reducers/actions'
 import authApi from "../../API/auth";
+import moment from 'moment'
 const INFO = 'INFO';
 const RAITING = 'RAITING';
 const SUPPLIER = 'SUPPLIER';
@@ -27,7 +28,9 @@ export default DetailsPage = ({route}) => {
         navigation.goBack();
       };
     useEffect(()=>{
-
+        
+        
+        console.log("ngay ket thuc: "+dayEnd+"-"+monthEnd+"-"+yearEnd)
         const getDetailProduct = async () => {
             try {
                 const res = await authApi.getDetailProduct(id)
@@ -42,38 +45,63 @@ export default DetailsPage = ({route}) => {
     },[])
     const [showModal, setShowModal] = useState (false);
     const [showModalEnd, setShowModalEnd] = useState (false);
-    const [yearStart, setYearStart] = useState();
-    const [monthStart, setMonthStart] = useState();
-    const [dayStart, setDayStart] = useState();
-    const [hourStart, setHourStart] = useState();
-    const [minStart, setMinStart] = useState();
-    const [yearEnd, setYearEnd] = useState();
-    const [monthEnd, setMonthEnd] = useState();
-    const [dayEnd, setDayEnd] = useState();
-    const [hourEnd, setHourEnd] = useState();
-    const [minEnd, setMinEnd] = useState();
+    const [yearStart, setYearStart] = useState(null);
+    const [monthStart, setMonthStart] = useState(null);
+    const [dayStart, setDayStart] = useState(null);
+    const [hourStart, setHourStart] = useState(null);
+    const [minStart, setMinStart] = useState(null);
+    const [yearEnd, setYearEnd] = useState(null);
+    const [monthEnd, setMonthEnd] = useState(null);
+    const [dayEnd, setDayEnd] = useState(null);
+    const [hourEnd, setHourEnd] = useState(null);
+    const [minEnd, setMinEnd] = useState(null);
     const dispatch = useDispatch();  
 
-    // const dataToSend = {
-    //     id: product.id_product,
-    //     name: product.name,
-    //     location: product.location,
-    //     yearStart: yearStart,
-    //     monthStart: monthStart,
-    //     dayStart: dayStart,
-    //     hourStart: hourStart,
-    //     minStart: minStart,
-    //     yearEnd: yearEnd,
-    //     monthEnd: monthEnd,
-    //     dayEnd: dayEnd,
-    //     hourEnd: hourEnd,
-    //     minEnd: minEnd
-    // };
+    const dataToSend = {
+        id: product.id_product,
+        name: product.name,
+        location: product.location,
+        yearStart: yearStart,
+        monthStart: monthStart,
+        dayStart: dayStart,
+        hourStart: hourStart,
+        minStart: minStart,
+        yearEnd: yearEnd,
+        monthEnd: monthEnd,
+        dayEnd: dayEnd,
+        hourEnd: hourEnd,
+        minEnd: minEnd
+    };
     
-    // const handlePress = () => {
-    //     console.log('Data to send:', dataToSend);
-    //     dispatch(setSharedData(dataToSend));
-    //   };
+    const handlePress = () => {
+        if (yearStart !== null &&
+            monthStart !== null &&
+            dayStart !== null &&
+            hourStart !== null &&
+            minStart !== null &&
+            yearEnd !== null &&
+            monthEnd !== null &&
+            dayEnd !== null &&
+            hourEnd !== null &&
+            minEnd !== null) {
+                const startDate = new Date(yearStart, monthStart -1 , dayStart, hourStart, minStart)
+                const endDate = new Date(yearEnd, monthEnd -1, dayEnd, hourEnd, minEnd)
+                if (startDate && endDate) {
+                    const startMoment = moment(startDate);
+                    const endMoment = moment(endDate);
+              
+                    if (startMoment.isBefore(endMoment)) {
+                        dispatch(setSharedData(dataToSend));
+                    } else {
+                        Alert.alert("Vui long nhap thoi gian bat dau truoc thoi gian ket thuc")
+                    }
+                }
+            
+        } else {
+            Alert.alert("Chua dien day du du lieu")
+        }
+       
+      };
     
     return(
         <SafeAreaView style = {{width: '100%', height: '100%', backgroundColor: '#FFF'}}>
@@ -160,7 +188,7 @@ export default DetailsPage = ({route}) => {
                     </View>
                     
                 </View>
-                <TouchableOpacity style = {styleDetailsPage.btnAdd} >
+                <TouchableOpacity style = {styleDetailsPage.btnAdd} onPress={handlePress} >
                     <Text style = {styleDetailsPage.textAdd}>Add</Text>
                 </TouchableOpacity>
                 <Modal visible = {showModal} animationType="slide" transparent={true}>

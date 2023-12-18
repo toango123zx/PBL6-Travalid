@@ -22,7 +22,7 @@ export default AttractionPage = () => {
             try {
                 const res = await authApi.getProduct()
                 setProductData(res.data.data)
-                console.log(productData[1].name)
+                
             } catch (error) {
                 console.log(error)
             }
@@ -35,7 +35,14 @@ export default AttractionPage = () => {
         { id: 2, name: 'Place 2' },
         { id: 3, name: 'Place 3' },
     ]
-    
+    const productData1 = [
+        {
+            name: 'Trung',
+            avg_rate: 3,
+            city: 'Hue',
+            image: 'https://dfstudio-d420.kxcdn.com/wordpress/wp-content/uploads/2019/06/digital_camera_photo-1080x675.jpg'
+        }
+    ]
     return(
         <SafeAreaView style = {styleAttractionPage.View}>
             <StatusBar translucent backgroundColor="transparent" />

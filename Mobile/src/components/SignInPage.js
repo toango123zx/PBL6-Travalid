@@ -71,6 +71,7 @@ export default SignInPage = () => {
             
         } catch (error) {
             console.log("Login faild")
+            console.log(error)
         }
     //     fetch('https://sendbulker.com/discount/all')
     //   .then(response => response.json())
