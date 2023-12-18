@@ -8,8 +8,10 @@ import RaitingsPage from "./RaitingsPage";
 import SupplierPage from "./SupplierPage";
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect } from "@react-navigation/native";
 import  Calendar  from "react-native-calendars/src/calendar";
 import DateTimePicker from "../DateTimePicker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import BookingCartPage from "../CartPage/BookingCartPage";
 import {useDispatch} from 'react-redux'
 import {setSharedData} from '../../reducers/actions'
@@ -27,6 +29,22 @@ export default DetailsPage = ({route}) => {
         // Thực hiện chuyển hướng về trang trước đó
         navigation.goBack();
       };
+    const [navigate, setNavigate] = useState(false);
+    useFocusEffect(
+        React.useCallback(() => {
+          const checkUserToken = async () => {
+            try {
+              const token = await AsyncStorage.getItem('userToken');
+              setNavigate(!!token);
+              //console.log(token);
+            } catch (error) {
+              console.error('Lỗi khi kiểm tra userToken:', error);
+            }
+          };
+    
+          checkUserToken();
+        }, [])
+      );
     useEffect(()=>{
         
         
@@ -60,6 +78,8 @@ export default DetailsPage = ({route}) => {
     const dataToSend = {
         id: product.id_product,
         name: product.name,
+        city: product.city,
+        image: product.image,
         location: product.location,
         yearStart: yearStart,
         monthStart: monthStart,
@@ -70,7 +90,8 @@ export default DetailsPage = ({route}) => {
         monthEnd: monthEnd,
         dayEnd: dayEnd,
         hourEnd: hourEnd,
-        minEnd: minEnd
+        minEnd: minEnd,
+       
     };
     
     const handlePress = () => {
@@ -91,7 +112,9 @@ export default DetailsPage = ({route}) => {
                     const endMoment = moment(endDate);
               
                     if (startMoment.isBefore(endMoment)) {
+                         
                         dispatch(setSharedData(dataToSend));
+                        if(navigate===false) navigation.navigate('SignInPage')
                     } else {
                         Alert.alert("Vui long nhap thoi gian bat dau truoc thoi gian ket thuc")
                     }

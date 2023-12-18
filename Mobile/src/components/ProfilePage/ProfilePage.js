@@ -11,6 +11,7 @@ import{
 import {styleProfilePage} from "../../themes/styleProfilePage";
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 export default ProfilePage = () =>{
     const navigation = useNavigation(); // Sử dụng hook navigation
 
@@ -66,7 +67,14 @@ export default ProfilePage = () =>{
                 </TouchableOpacity>
             </View>
             <View style = {styleProfilePage.viewBtnLogout}> 
-                <TouchableOpacity style = {styleProfilePage.BtnLogout}> 
+                <TouchableOpacity style = {styleProfilePage.BtnLogout} onPress={async () => {
+                        try {
+                        await AsyncStorage.removeItem('userToken');
+                        navigation.navigate('SplishPage');
+                        } catch (error) {
+                        console.error('Lỗi khi xóa userToken:', error);
+                        }
+                    }}> 
                     <Text style = {styleProfilePage.textLogout}>Log out</Text>
                     <Icon style = {styleProfilePage.iconLogout} name="log-out-outline" color="#FFF" size={25}/>
                 </TouchableOpacity>

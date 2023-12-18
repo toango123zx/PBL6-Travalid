@@ -22,7 +22,7 @@ export default SplishPage = () => {
                     <Text style = {styleSplishPage.Text}>Available products</Text>
             </View>
             <View style = {styleSplishPage.View1}>
-                <TouchableOpacity style = {styleSplishPage.TouchableOpacity} onPress={()=>{navigation.navigate('SignInPage')}}>
+                <TouchableOpacity style = {styleSplishPage.TouchableOpacity} onPress={()=>{navigation.navigate('Home1')}}>
                     <Text style = {styleSplishPage.Text1}>Let'go</Text>
                     {/* <Image style = {styleSplishPage.Image1} source={require('../assets/images/arrow.png')}/> */}
                 </TouchableOpacity>
