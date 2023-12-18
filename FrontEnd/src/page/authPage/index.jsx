@@ -8,7 +8,6 @@ import Logo from '../../assets/icon-location.png';
 import './AuthPage.css';
 import { useContext } from 'react';
 import { APP_CONTEXT } from '../../App';
-import Cookies from 'js-cookie';
 import LoadingPage from '../loading';
 
 const AuthPage = () => {
@@ -70,13 +69,11 @@ const AuthPage = () => {
     try {
       context.setIsLoading(true);
       const response = await authAPI.login({ username: data.username, password: data.password });
-      console.log(response);
-      if (response.status === 200) {
+      if (response.token) {
         navigate('/');
-        context.setUser(response.data.data);
-        localStorage.setItem('TRAVALID_TOKEN', response.data.token);
+        context.setUser(response.data);
+        localStorage.setItem('TRAVALID_TOKEN', response.token);
         toast.success('Login successfully !');
-        Cookies.set('refreshToken', `refreshToken=${response.data.refreshToken}`);
       } else {
         toast.error('Email or Password is wrong!');
       }

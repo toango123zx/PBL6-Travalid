@@ -1,11 +1,11 @@
 import axios from 'axios';
 const axiosClient = axios.create({
-  //baseURL: 'https://21cc5c37629bcdc8cac694eef7cce288.serveo.net',
+  baseURL: 'https://1e0c4f902497ad4f231621f2b110957e.serveo.net',
   // baseURL: 'https://sendbulker.com/',
-  baseURL: 'http://localhost:8080',
   headers: {
     'Content-Type': 'application/json',
   },
+  // withCredentials: true, // Add this line
 });
 
 // Interceptors
@@ -14,9 +14,10 @@ axiosClient.interceptors.request.use(
   function (config) {
     // Do something before request is sent
     const token = localStorage.getItem('TRAVALID_TOKEN');
-    if (token) {
-      config.headers['Authorization'] = 'Bearer ' + token;
-    }
+    config.headers.token = 'Bearer ' + token;
+    // if (token) {
+    //   config.headers['Authorization'] = 'Bearer ' + token;
+    // }
 
     return config;
   },

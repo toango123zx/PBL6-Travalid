@@ -59,7 +59,7 @@ const SaleDetail = ({ className }) => {
                 <h4 className="font-semibold text-xl">{saleDetailData?.name}</h4>
                 {saleDetailData?.supplier && (
                   <div className="px-4 py-1 bg-orange-400 text-white font-semibold rounded-md">
-                    {saleDetailData?.supplier.split('_')[1].toUpperCase()}
+                    {saleDetailData?.supplier.toUpperCase()}
                   </div>
                 )}
               </div>

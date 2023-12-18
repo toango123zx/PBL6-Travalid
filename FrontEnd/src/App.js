@@ -27,7 +27,9 @@ function App() {
   const fetchUser = useCallback(async () => {
     try {
       const res = await authAPI.me();
-      console.log('me', res);
+      if (res.data) {
+        setUser(res.data);
+      }
     } catch (err) {
       console.log(err);
     }

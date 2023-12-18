@@ -1,37 +1,30 @@
-import React from 'react';
-import { Space, Table, Tag } from 'antd';
-import { dataSource } from '../../constant';
+import React, { useMemo } from 'react';
+import { Table } from 'antd';
+import moment from 'moment';
 const { Column } = Table;
 
-const TableManage = () => (
-  <Table dataSource={dataSource}>
-    <Column title="First Name" dataIndex="firstName" key="firstName" />
-    <Column title="Last Name" dataIndex="lastName" key="lastName" />
-    <Column title="Age" dataIndex="age" key="age" />
-    <Column title="Address" dataIndex="address" key="address" />
-    <Column
-      title="Tags"
-      dataIndex="tags"
-      key="tags"
-      render={(tags) => (
-        <>
-          {tags.map((tag) => (
-            <Tag color="blue" key={tag}>
-              {tag}
-            </Tag>
-          ))}
-        </>
-      )}
-    />
-    <Column
-      title="Action"
-      key="action"
-      render={(_, record) => (
-        <Space size="middle">
-          <button>Edit</button>
-        </Space>
-      )}
-    />
-  </Table>
-);
+const TableManage = ({ dataSource }) => {
+  const renderTable = useMemo(() => {
+    const keys = Object.keys(dataSource[0]);
+    if (keys.length > 0) {
+      return keys.map((key) => {
+        if (key === 'start_time' || key === 'end_time') {
+          return (
+            <Column
+              title={key}
+              dataIndex={key}
+              key={key}
+              render={(item) => {
+                const formattedDate = moment(item).format('HH:mm DD/MM/YYYY');
+                return <>{formattedDate}</>;
+              }}
+            />
+          );
+        }
+        return <Column title={key} dataIndex={key} key={key} />;
+      });
+    }
+  }, [dataSource]);
+  return <Table dataSource={dataSource}>{renderTable}</Table>;
+};
 export default TableManage;

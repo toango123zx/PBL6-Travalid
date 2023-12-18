@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { AiTwotoneStar } from 'react-icons/ai';
 import { IoInformationCircleOutline } from 'react-icons/io5';
@@ -13,7 +13,9 @@ import AttractionDetail from '../../assets/attration-dettail.png';
 import { attractionArray, optionFilterAttraction } from '../../constant';
 import { AttractionItem, Rating } from '../../components';
 import { Modal } from 'antd';
+import productAPI from '../../api/productAPI';
 import './AttractionDetail.css';
+import { APP_CONTEXT } from '../../App';
 
 const serviceValue = {
   name: 'Lorem Comp.',
@@ -40,10 +42,10 @@ const options = [
   },
 ];
 const AtractionDetailPage = () => {
+  const context = useContext(APP_CONTEXT);
   const { id } = useParams();
   const [content, setContent] = useState(options[0]);
-
-  const index = attractionArray.findIndex((item) => item.id === +id);
+  const [productDetail, setProductDetail] = useState();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const showModal = () => {
@@ -56,31 +58,19 @@ const AtractionDetailPage = () => {
     setIsModalOpen(false);
   };
   const renderContent = useMemo(() => {
-    if (index !== -1) {
-      const {
-        name,
-        star,
-        price,
-        description,
-        destination,
-        departure,
-        departureTime,
-        returnTime,
-        notIncluded,
-        included,
-        galleryDescription,
-        galleryImages,
-      } = attractionArray[index];
-      const starsArray = [];
-      for (let i = 0; i < star; i++) {
-        starsArray.push(<AiTwotoneStar key={i} className="text-yellow-400" />);
-      }
+    const { star, departureTime, returnTime, notIncluded, included, galleryDescription, galleryImages } =
+      attractionArray[0];
+    const starsArray = [];
+    for (let i = 0; i < star; i++) {
+      starsArray.push(<AiTwotoneStar key={i} className="text-yellow-400" />);
+    }
+    if (productDetail) {
       if (content.value === 'information') {
         return (
           <>
             <div className="flex justify-between mt-6">
               <div>
-                <h4 className="text-xl font-semibold">{name}</h4>
+                <h4 className="text-xl font-semibold">{productDetail.name}</h4>
                 <div className="flex items-center">
                   {starsArray}
                   <span className="ml-2">(2.3k review)</span>
@@ -88,18 +78,18 @@ const AtractionDetailPage = () => {
               </div>
               <div>
                 <h4 className="text-lg font-semibold">
-                  <span className="text-orange-400">VND {price} </span> <span> / Per Couple</span>
+                  <span className="text-orange-400">VND 165.000 </span> <span> / Per Couple</span>
                 </h4>
               </div>
             </div>
-            <p className="mt-6">{description}</p>
+            <p className="mt-6">{productDetail.description}</p>
             <div className="flex mt-4">
               <h5 className="text-lg font-bold text-orange-500 w-1/4">Destination</h5>
-              <h5 className="w-3/4">{destination}</h5>
+              <h5 className="w-3/4">{productDetail.city}</h5>
             </div>
             <div className="flex mt-4">
               <h5 className="text-lg font-bold text-orange-500 w-1/4">Departure</h5>
-              <h5 className="w-3/4">{departure}</h5>
+              <h5 className="w-3/4">{productDetail.departure}</h5>
             </div>
             <div className="flex mt-4">
               <h5 className="text-lg font-bold text-orange-500 w-1/4">Departure Time</h5>
@@ -159,10 +149,9 @@ const AtractionDetailPage = () => {
               </div>
             </div>
             <div className="mb-6">
-              <AttractionItem />
-              <AttractionItem />
-              <AttractionItem />
-              <AttractionItem />
+              {productDetail.schedule_product.map((item, index) => {
+                return <AttractionItem attractionItemData={item} key={index} />;
+              })}
             </div>
           </>
         );
@@ -230,92 +219,107 @@ const AtractionDetailPage = () => {
           <div>
             <h2 className="font-semibold text-xl mt-6">Providing This Service</h2>
             <div className="mt-2">
-              {Object.keys(serviceValue).map((item, index) => {
-                return (
-                  <div className="flex font-semibold mb-4" key={index}>
-                    <h5 className="w-4/12 text-orange-400">
-                      {item.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, (str) => str.toUpperCase())}:{' '}
-                    </h5>
-                    <h5 className="w-8/12">{serviceValue[item]}</h5>
-                  </div>
-                );
+              {Object.keys(productDetail.supplier)?.map((item, index) => {
+                if (serviceValue[item]) {
+                  return (
+                    <div className="flex font-semibold mb-4" key={index}>
+                      <h5 className="w-4/12 text-orange-400">
+                        {item.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, (str) => str.toUpperCase())}:{' '}
+                      </h5>
+                      <h5 className="w-8/12">{serviceValue[item]}</h5>
+                    </div>
+                  );
+                } else {
+                  return null;
+                }
               })}
             </div>
           </div>
         );
       }
     }
-  }, [content.value, index, isModalOpen]);
+  }, [content.value, isModalOpen, productDetail]);
   useEffect(() => {
+    const fetchData = async () => {
+      context.setIsLoading(true);
+      try {
+        const res = await productAPI.getProductDetail(id);
+        if (res.data) {
+          setProductDetail(res.data);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+      context.setIsLoading(false);
+    };
+    fetchData();
     window.scrollTo(0, 0);
-  }, []);
-  if (index !== -1) {
-    return (
-      <div className="attraction-detai-page relative overflow-hidden">
-        <div
-          className="fixed bg-white shadow-full rounded-xl bottom-8 w-[800px]  left-[50%]  mx-auto h-[60px] z-50 flex justify-around"
-          style={{ transform: 'translateX(-50%)' }}
-        >
-          <div className="flex items-center pl-2">
-            <IoCalendarOutline fontSize={28} />
-            <div className="ml-2 flex-1 pr-2 border-r">
-              <h4>Start Date</h4>
-              <p className="font-semibold">7:30 Jan 6, 2024</p>
-            </div>
-          </div>
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
-          <div className="flex items-center pl-2">
-            <IoCalendarOutline fontSize={28} />
-            <div className="ml-2 flex-1 pr-2 border-r">
-              <h4>Start Date</h4>
-              <p className="font-semibold">7:30 Jan 6, 2024</p>
-            </div>
-          </div>
-          <div className="flex items-center">
-            <div>
-              <h4>Price</h4>
-              <p className="font-semibold text-orange-400"> VND 165.000</p>
-            </div>
-          </div>
-          <div className="flex items-center px-2">
-            <button className="bg-orange-400 hover:bg-orange-500 text-white font-semibold px-6 py-2 rounded-lg">
-              Add to cart
-            </button>
+  return (
+    <div className="attraction-detai-page relative overflow-hidden">
+      <div
+        className="fixed bg-white shadow-full rounded-xl bottom-8 w-[800px]  left-[50%]  mx-auto h-[60px] z-50 flex justify-around"
+        style={{ transform: 'translateX(-50%)' }}
+      >
+        <div className="flex items-center pl-2">
+          <IoCalendarOutline fontSize={28} />
+          <div className="ml-2 flex-1 pr-2 border-r">
+            <h4>Start Date</h4>
+            <p className="font-semibold">7:30 Jan 6, 2024</p>
           </div>
         </div>
-        <div
-          className="h-[520px] overflow-hidden flex bg-bottom bg-cover items-center justify-center relative"
-          style={{ background: `url(${AttractionDetail})` }}
-        >
-          <h1 className="attraction-detail-header">LANDSCAPES</h1>
-          <h6 className="attraction-detail-slogan">Discover</h6>
-          <div className="attraction-detail-filter">
-            <div className="flex justify-between">
-              {options.map((option, index) => {
-                return (
-                  <div
-                    className={`w-1/3 flex items-center justify-center px-8 py-6 ${
-                      content.value === option.value ? 'bg-white text-orange-400' : ''
-                    } ${index < 2 ? 'border-r border-white' : ''}`}
-                    key={index}
-                    onClick={() => setContent(option)}
-                  >
-                    <div className="flex  items-center font-semibold">
-                      {option.icon}
-                      <span className="ml-2">{option.label}</span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+
+        <div className="flex items-center pl-2">
+          <IoCalendarOutline fontSize={28} />
+          <div className="ml-2 flex-1 pr-2 border-r">
+            <h4>Start Date</h4>
+            <p className="font-semibold">7:30 Jan 6, 2024</p>
           </div>
         </div>
-        <div className="shadow-2xl px-4 py-2 rounded-b-lg">{renderContent}</div>
+        <div className="flex items-center">
+          <div>
+            <h4>Price</h4>
+            <p className="font-semibold text-orange-400"> VND 165.000</p>
+          </div>
+        </div>
+        <div className="flex items-center px-2">
+          <button className="bg-orange-400 hover:bg-orange-500 text-white font-semibold px-6 py-2 rounded-lg">
+            Add to cart
+          </button>
+        </div>
       </div>
-    );
-  } else {
-    return <div>NOT FOUND</div>;
-  }
+      <div
+        className="h-[520px] overflow-hidden flex bg-bottom bg-cover items-center justify-center relative"
+        style={{ background: `url(${AttractionDetail})` }}
+      >
+        <h1 className="attraction-detail-header">LANDSCAPES</h1>
+        <h6 className="attraction-detail-slogan">Discover</h6>
+        <div className="attraction-detail-filter">
+          <div className="flex justify-between">
+            {options.map((option, index) => {
+              return (
+                <div
+                  className={`w-1/3 flex items-center justify-center px-8 py-6 hover:bg-white ${
+                    content.value === option.value ? 'bg-white text-orange-400' : ''
+                  } ${index < 2 ? 'border-r border-white' : ''}`}
+                  key={index}
+                  onClick={() => setContent(option)}
+                >
+                  <div className="flex  items-center font-semibold">
+                    {option.icon}
+                    <span className="ml-2">{option.label}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+      <div className="shadow-2xl px-4 py-2 rounded-b-lg">{renderContent}</div>
+    </div>
+  );
 };
 
 export default AtractionDetailPage;

@@ -96,7 +96,6 @@ const AvatarPopover = () => {
 
   const content = useMemo(() => {
     let options;
-    console.log(context.user);
     const handleLogout = () => {
       context.setUser(null);
       localStorage.setItem('TRAVALID_TOKEN', '');

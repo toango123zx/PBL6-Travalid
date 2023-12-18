@@ -11,7 +11,7 @@ const SaleCard = ({ className, saleData }) => {
         <h4 className="font-semibold text-xl">{saleData.name}</h4>
         {saleData?.supplier && (
           <div className="px-4 py-1 bg-orange-400 text-white font-semibold rounded-md">
-            {saleData?.supplier.split('_')[1].toUpperCase()}
+            {saleData?.supplier.toUpperCase()}
           </div>
         )}
       </div>
