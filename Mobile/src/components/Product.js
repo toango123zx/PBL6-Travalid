@@ -15,7 +15,7 @@ export default AttractionComponent = ({productData}) => {
     return(
         <TouchableOpacity onPress={handlePress} style = {styleAttraction.View}>
             <View style = {styleAttraction.viewPicture}>
-                <Image style = {styleAttraction.image} source={{
+                <Image style = {{...styleAttraction.image, borderRadius: 10}} source={{
                     uri: productData.image
                     }}/>
             </View>

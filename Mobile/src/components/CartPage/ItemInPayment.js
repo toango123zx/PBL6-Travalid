@@ -13,25 +13,13 @@ import {
 import Icon from 'react-native-vector-icons/AntDesign'
 import Icon1 from 'react-native-vector-icons/Ionicons'
 const { width, height } = Dimensions.get('window');
-export default ItemInCart = ({data, onDelete, onAddtoPayment, onRemoveInPayment}) => {
-    const [select, setSelect] = useState(false)
-    const handleDelete = () => {
-        // Gọi hàm onDelete và truyền data để xóa mục khỏi danh sách
-        onDelete(data);
-    };
+export default ItemInCart = ({data}) => {
+    
+   
     return(
         <View style = {style.View}>
             <View style = {style.viewTop}>
-                <View style = {style.viewCheckBox}>
-                    
-                    <TouchableOpacity style = {style.viewBtnCheck} onPress={()=>{setSelect(!select)
-                        select=== false ? onAddtoPayment(data): onRemoveInPayment(data) }}>
-                        <View style = {select === true ? [style.viewInCheckBox, { backgroundColor: '#FF6B00' }] : style.viewInCheckBox}>
-
-                        </View>
-                    </TouchableOpacity>
-                    
-                </View>
+                
                 <View style = {style.viewImage}>
                     <Image style = {{width: 90, height: 80}} source={{
                         uri: data.image
@@ -49,11 +37,7 @@ export default ItemInCart = ({data, onDelete, onAddtoPayment, onRemoveInPayment}
                         <Text style = {style.textPrice}>VND 165000</Text>
                     </View>
                 </View>
-                <View style = {style.viewBtnDelete}>
-                    <TouchableOpacity style = {style.btnDelete}onPress={handleDelete}>
-                        <Icon  name = 'close' size = {23} color = '#000'/>
-                    </TouchableOpacity>
-                </View>
+                
             </View>
             <View style = {style.viewBottom}>
                 <Text style = {style.text}>{data.dayStart}/{data.monthStart}/{data.yearStart}, {data.hourStart}:{data.minStart}  to  {data.dayEnd}/{data.monthEnd}/{data.yearEnd}, {data.hourEnd}:{data.minEnd}</Text>

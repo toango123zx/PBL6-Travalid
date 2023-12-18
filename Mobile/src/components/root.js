@@ -1,12 +1,14 @@
-import React from 'react' ;
+import React, { useEffect, useState } from 'react' ;
 
 import {
   View,
   Text,StyleSheet,
   BlurView,
   TouchableOpacity,
-  Dimensions
+  Dimensions,
+  
 } from 'react-native';
+
 import Svg, {Path} from 'react-native-svg';
 import InfoPage from './DetailPage/InfoPage';
 import DetailsPage from './DetailPage/DetailsPage';
@@ -16,6 +18,7 @@ import SignInPage from './SignInPage';
 import SignUpPage from './SignUp/SignUpPage';
 import ProfileDetails from './ProfilePage/ProfileDetails';
 import AttractionsPage from './AttractionsPage';
+import DiscountDetail from './DiscountPage/DiscountDetail';
 import HomePage from './HomePage';
 import A from './Product';
 import { NavigationContainer } from '@react-navigation/native';
@@ -26,9 +29,12 @@ import BookingCartPage from './CartPage/BookingCartPage';
 import PaymentPage from './CartPage/PaymentPage';
 import EditProfile from './ProfilePage/EditProfile';
 import InfoPageSU from './SignUp/InfoPage';
-import {Provider} from 'react-redux'
+import {Provider} from 'react-redux';
+import { useFocusEffect } from '@react-navigation/native';
+import ProfilePage1 from './ProfilePage/ProfilePage1';
 import store from '../reducers/store';
 import Icon from 'react-native-vector-icons/Ionicons'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const Tab = createBottomTabNavigator();
 const { width, height } = Dimensions.get('window');
 function MyTabBar({ state, descriptors, navigation }) {
@@ -105,7 +111,27 @@ function MyTabBar({ state, descriptors, navigation }) {
 }
 
 function MyTabs() {
+  const [showProfile, setShowProfile] = useState(false);
+  useFocusEffect(
+    React.useCallback(() => {
+      const checkUserToken = async () => {
+        try {
+          const token = await AsyncStorage.getItem('userToken');
+          setShowProfile(!!token);
+          //console.log(token);
+        } catch (error) {
+          console.error('Lỗi khi kiểm tra userToken:', error);
+        }
+      };
+
+      checkUserToken();
+    }, [])
+  );
+
+  
   return (
+
+
     <Tab.Navigator 
     tabBar={(props) => <MyTabBar {...props} />}
       screenOptions={{headerShown: false}}>
@@ -113,14 +139,18 @@ function MyTabs() {
       <Tab.Screen name="Attractions" component={AttractionsPage} />
       <Tab.Screen name="BookingCartPage" component={BookingCartPage}/>
       <Tab.Screen name="DiscountPage" component={DiscountPage} />
-      <Tab.Screen name="Profile" component={ProfilePage} />
+      {showProfile === true ? 
+        (<Tab.Screen name="Profile" component={ProfilePage}/>):(<Tab.Screen name="Profile1" component={ProfilePage1}/>) }
+      
     
     </Tab.Navigator>
   );
 }
 const Stack = createNativeStackNavigator();
 export default RootComponent = function(){
+
     return(
+      
       <Provider store ={store}>
         <NavigationContainer>
           <Stack.Navigator screenOptions={{headerShown: false}} initialRouteName="Home1">
@@ -134,6 +164,7 @@ export default RootComponent = function(){
             <Stack.Screen name="PaymentPage" component={PaymentPage} />
             <Stack.Screen name="EditProfile" component={EditProfile} />
             <Stack.Screen name="InfoPageSU" component={InfoPageSU} />
+            <Stack.Screen name="DiscountDetail" component={DiscountDetail} />
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>

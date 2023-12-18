@@ -7,6 +7,7 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import { useNavigation } from '@react-navigation/native';
 import axios from "axios";
 import { err } from "react-native-svg/lib/typescript/xml";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import axiosClient from "../API";
 import authApi from "../API/auth";
 //const URL = `http://localhost:8000`
@@ -67,7 +68,9 @@ export default SignInPage = () => {
                 username: email,
                 password: password
             })
+            AsyncStorage.setItem('userToken',res.data.token)
             navigation.navigate('Home1')
+            
             
         } catch (error) {
             console.log("Login faild")

@@ -8,10 +8,13 @@ import {
 import {useEffect} from 'react'
 import Icon from 'react-native-vector-icons/Ionicons'
 import Icon1 from 'react-native-vector-icons/MaterialCommunityIcons'
+import {useNavigation} from '@react-navigation/native'
+import authApi from "../../API/auth";
 
 export default DiscountsComp = ({discountData}) => {
     const endTime = new Date (discountData.end_time);
     const supplier = discountData.supplier;
+    const navigation = useNavigation();
     useEffect (()=>{
         console.log(endTime)
     },[])
@@ -44,7 +47,7 @@ export default DiscountsComp = ({discountData}) => {
                     <Text style = {style.textQuantity}>-{discountData.value}% Price</Text>
                 </View>
                 <View style = {style.viewBtnViewDetails}>
-                    <TouchableOpacity style = {style.btnViewDetails}>
+                    <TouchableOpacity style = {style.btnViewDetails} onPress={()=>{navigation.navigate('DiscountDetail', {discountData})}}>
                         <Text style= {style.textViewDetails}>View details</Text>
                     </TouchableOpacity>
                 </View>

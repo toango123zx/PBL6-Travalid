@@ -1,5 +1,5 @@
 import React from "react";
-
+import { useState, useEffect } from "react";
 import{
     View,
     TouchableOpacity,
@@ -11,9 +11,44 @@ import{
 import {styleProfilePage} from "../../themes/styleProfilePage";
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import authApi from "../../API/auth";
 export default ProfilePage = () =>{
     const navigation = useNavigation(); // Sử dụng hook navigation
+    const [user, setUser]= useState([]);
+    useEffect( ()=>{
+        
+        const getProfileUser = async () =>{
 
+            // const token = "bearer " + await AsyncStorage.getItem('userToken')
+            // //     console.log(token)
+            // axios.get('http://10.0.2.2:8000/user/me', {
+            //     headers:{
+            //         'token': token
+            //     }})
+            //     .then((res)=>{
+            //         console.log(res.data)
+            //     })
+            //     .catch((err)=>{
+            //         console.log(err)
+            //     })
+            try {
+                
+                const token = "bearer " + await AsyncStorage.getItem('userToken')
+                console.log(token)
+                const res = await authApi.getProfileUser({
+                    "token" : token,
+                })
+                setUser(res.data.data)
+                
+                
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        getProfileUser()
+        console.log(user.image)
+    },[])
     const handlePressProfile = () => {
       navigation.navigate('ProfileDetails');
     };
@@ -27,7 +62,7 @@ export default ProfilePage = () =>{
                 
             </View>
             <View style = {styleProfilePage.viewName}>
-                <Text style = {styleProfilePage.textName}>Kham Thuan</Text>
+                <Text style = {styleProfilePage.textName}>{user.name}</Text>
             </View>
             <View style = {styleProfilePage.viewBtnProfile}>
                 <TouchableOpacity style = {styleProfilePage.BtnProfile} onPress={handlePressProfile}>
@@ -66,7 +101,14 @@ export default ProfilePage = () =>{
                 </TouchableOpacity>
             </View>
             <View style = {styleProfilePage.viewBtnLogout}> 
-                <TouchableOpacity style = {styleProfilePage.BtnLogout}> 
+                <TouchableOpacity style = {styleProfilePage.BtnLogout} onPress={async () => {
+                        try {
+                        await AsyncStorage.removeItem('userToken');
+                        navigation.navigate('SplishPage');
+                        } catch (error) {
+                        console.error('Lỗi khi xóa userToken:', error);
+                        }
+                    }}> 
                     <Text style = {styleProfilePage.textLogout}>Log out</Text>
                     <Icon style = {styleProfilePage.iconLogout} name="log-out-outline" color="#FFF" size={25}/>
                 </TouchableOpacity>

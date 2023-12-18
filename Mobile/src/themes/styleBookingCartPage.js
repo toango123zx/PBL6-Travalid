@@ -30,7 +30,7 @@ export const styleCartPage = StyleSheet.create ({
     },
     viewBottom: {
         width: width,
-        height: 220,
+        height: 240,
         backgroundColor: '#FFF',
         elevation: 10,
     },
