@@ -1,4 +1,4 @@
-import React  from "react";
+import React, { useEffect }  from "react";
 import {useState} from 'react'
 
 import {
@@ -15,9 +15,13 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { create } from "react-test-renderer";
 import { styleCartPage } from "../../themes/styleBookingCartPage";
+import ItemInPayment from "./ItemInPayment";
 const { width, height } = Dimensions.get('window');
 const statusBarHeight = StatusBar.currentHeight || 0;
-export default PaymentPage = () => {
+export default PaymentPage = ({route}) => {
+    
+    const {dataList} = route.params;
+
     const navigation = useNavigation();
     const [quantity, setQuantity] = useState(1);
     const [selectPay, setSelectPay] = useState(false)
@@ -25,6 +29,10 @@ export default PaymentPage = () => {
         // Thực hiện chuyển hướng về trang trước đó
         navigation.goBack();
       };
+
+    useEffect(()=> {
+        console.log(dataList)
+    })
     return(
         <View style = {style.View}>
             <StatusBar translucent backgroundColor="transparent" />
@@ -38,7 +46,13 @@ export default PaymentPage = () => {
 
                        
             <ScrollView style = {style.viewBookedTour}>
-
+                {dataList && (  
+                    dataList.map((item) => (
+                        <View>
+                            <ItemInPayment key={item.id} data={item} />
+                        </View>
+                    ))
+                )}
             </ScrollView>
 
             

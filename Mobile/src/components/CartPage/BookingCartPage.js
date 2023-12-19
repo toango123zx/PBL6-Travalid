@@ -30,7 +30,7 @@ export default BookingCartPage = ({route}) => {
     const navigation = useNavigation(); // Sử dụng hook navigation
 
     const goToPaymentPage = () => {
-      navigation.navigate('PaymentPage');
+      navigation.navigate('PaymentPage', {dataPayment});
     };
     useEffect(() => {
         

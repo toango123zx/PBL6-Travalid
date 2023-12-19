@@ -5,10 +5,28 @@ import { styleHomePage, styleTopDestination, styleService } from "../themes/styl
 import Icon from 'react-native-vector-icons/Ionicons'
 import authApi from "../API/auth";
 import Attraction from "./Product";
+import { useFocusEffect } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const statusBarHeight = StatusBar.currentHeight || 0;
 
 export default HomePage = () => {
     const [productData, setProductData] = useState([])
+    const [showProfile, setShowProfile] = useState(false);
+  useFocusEffect(
+    React.useCallback(() => {
+      const checkUserToken = async () => {
+        try {
+          const token = await AsyncStorage.getItem('userToken');
+          setShowProfile(!!token);
+          //console.log(token);
+        } catch (error) {
+          console.error('Lỗi khi kiểm tra userToken:', error);
+        }
+      };
+
+      checkUserToken();
+    }, [])
+  );
     useEffect(()=>{
 
         const getAllProduct = async () => {
@@ -22,6 +40,40 @@ export default HomePage = () => {
         }
         
         getAllProduct();
+    },[])
+    const [user, setUser]= useState([]);
+    useEffect( ()=>{
+        
+        const getProfileUser = async () =>{
+
+            // const token = "bearer " + await AsyncStorage.getItem('userToken')
+            // //     console.log(token)
+            // axios.get('http://10.0.2.2:8000/user/me', {
+            //     headers:{
+            //         'token': token
+            //     }})
+            //     .then((res)=>{
+            //         console.log(res.data)
+            //     })
+            //     .catch((err)=>{
+            //         console.log(err)
+            //     })
+            try {
+                
+                const token = "bearer " + await AsyncStorage.getItem('userToken')
+                console.log(token)
+                const res = await authApi.getProfileUser({
+                    "token" : token,
+                })
+                setUser(res.data.data)
+                
+                
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        getProfileUser()
+        console.log(user.image)
     },[])
     const attractionData = [
         {
@@ -137,15 +189,15 @@ export default HomePage = () => {
                 </View>
             </ScrollView>
             <View style = {styleHomePage.view}>
-                <View style = {styleHomePage.viewUser}>
+                {showProfile === true ? (<View style = {styleHomePage.viewUser}>
                     <View style = {styleHomePage.imageUser}>
                         
                     </View>
                     <View style = {styleHomePage.viewUserName}> 
-                        <Text style = {styleHomePage.textUserName}>Kham Thuan</Text>
+                        <Text style = {styleHomePage.textUserName}>{user.name}</Text>
                     </View>
                     
-                </View>
+                </View>): null}
                 <View style = {styleHomePage.viewNofitication}>
                     <TouchableOpacity>
                         <Text><Icon name="notifications-outline" color="#000" size={25} /></Text>
