@@ -1,3 +1,5 @@
+import { not } from 'joi';
+
 const { prisma } = require('../config/prismaDatabase');
 
 export const getSchedulesProductByDiscounts = async (id_schedules_product, id_discount) => {
@@ -148,7 +150,7 @@ export const deleteScheduleProduct = async (id_schedule_product) => {
                 id_schedule_product: id_schedule_product
             },
             data: {
-                status: 'inactive'
+                status: 'cancel'
             }
         });
     } catch (error) {
@@ -161,7 +163,10 @@ export const getIdScheduleProductbyId = async (id_schedule_product) => {
     try {
         return await prisma.schedule_Product.findUnique({
             where : {
-                id_schedule_product : id_schedule_product
+                id_schedule_product : id_schedule_product,
+                NOT : {
+                    status : 'cancel'
+                }
             },
             select : {
                 id_schedule_product : true,

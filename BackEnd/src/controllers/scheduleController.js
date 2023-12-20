@@ -15,7 +15,7 @@ export const getAllScheduleProduct = async (req, res, next) => {
         const schedules = await scheduleProductService.getSchedulesProduct(undefined, id_user, 'travel_supplier', start, limit)
         if (!schedules) {
             return res.status(403).json({
-                position: "getAllSchedule",
+                position: "getAllScheduleProduct",
                 msg: "The user does not have permission to access this resource"
             });
         }
