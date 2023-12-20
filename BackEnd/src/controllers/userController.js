@@ -113,13 +113,13 @@ export const updateUserImage = async (req, res) => {
 
     const __imageDelete = {
         id: Number(__user.id_user),
-        category: "image",
         value: String(__user.image)
     };
+    
     if (__user.image !== envApp.defaultUserImage) {
         __updateDb = await Promise.allSettled([
             userService.updateUser(__user.id_user, { image: __imageURL }),
-            deletionService.createDestroy(__imageDelete)
+            deletionService.createDestroy(__imageDelete, "image")
         ]).then(async (value) => {
             const __status = String(value[0].value) + String(value[1].value.status);
             if (__status == "truetrue") {
@@ -156,7 +156,7 @@ export const updateUserImage = async (req, res) => {
     res.cookie('refreshToken', __refreshToken, {
         httpOnly: true
     });
-    
+
     return res.status(200).json({
         data: __user,
         token: __token

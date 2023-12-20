@@ -97,20 +97,3 @@ export const changeUserPasswordValidation = (req, res, next) => {
     };
     next();
 };
-
-export const changeUserImageValidation = (req, res, next) => {
-    try {
-        if (!req.file || !req.file.mimetype.includes("image")) {
-            return res.status(404).json({
-                position: "no user image error",
-                msg: "There are currently no user image found to perform this function"
-            });
-        };
-    } catch (err) {
-        return res.status(500).send({
-            position: "Change user Image Validation Error",
-            msg: "Error from the server",
-        });
-    };
-    next();
-};
