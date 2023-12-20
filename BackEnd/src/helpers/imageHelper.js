@@ -12,14 +12,14 @@ export const deleteImage = (imageURL) => {
     });
 };
 
-export const uploadImage = (folder, name, imageData) => {
+export const uploadImage = (folder, name, dataImage) => {
     const __filePath = `${folder}/${name}-${Date.now()}`;
     const __metadata = {
-        contentType: imageData.mimetype
+        contentType: dataImage.mimetype
     };
 
     return new Promise((resolve, rejects) => {
-        const __uploadUserImage = firebase.uploadBytesResumable(firebase.ref(firebase.storage, __filePath), imageData.buffer, __metadata);
+        const __uploadUserImage = firebase.uploadBytesResumable(firebase.ref(firebase.storage, __filePath), dataImage.buffer, __metadata);
         __uploadUserImage.on('state_changed',
             (snapshot) => {
                 switch (snapshot.state) {
@@ -48,5 +48,33 @@ export const uploadImage = (folder, name, imageData) => {
                 });
             }
         );
+    });
+};
+
+export const uploadImages = (folder, name, dataImages) => {
+    const __imageURLs = [];
+    const __failUploadImages = [];
+    const __promises = [];
+
+    for (const i in dataImages) {
+        const __name = `${name}-${i}`;
+        __promises.push(uploadImage(folder, __name, dataImages[i]));
+    };
+
+    return new Promise((resolve, reject) => {
+        Promise.allSettled(__promises)
+            .then((values) => {
+                for (const i in values) {
+                    if (values[i].status === 'fulfilled') {
+                        __imageURLs.push(values[i].value);
+                    } else {
+                        __failUploadImages.push(i);
+                    };
+                };
+                resolve({
+                    imageURLs: __imageURLs,
+                    failUploadImages: __failUploadImages
+                });
+            });
     });
 };
