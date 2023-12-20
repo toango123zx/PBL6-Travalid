@@ -78,3 +78,30 @@ export const uploadImages = (folder, name, dataImages) => {
             });
     });
 };
+
+export const deleteImages = (imageURLs) => {
+    const __urlsDeleteFail = [];
+    const __promises = [];
+
+    for (const i in imageURLs) {
+        __promises.push(deleteImage(imageURLs[i]));
+    };
+
+    return new Promise((resolve, reject) => {
+        Promise.allSettled(__promises)
+            .then((values) => {
+                for (const i in values) {
+                    if (values[i].status === 'rejected') {
+                        __urlsDeleteFail.push(imageURLs[i]);
+                    };
+                };
+                if (__urlsDeleteFail) {
+                    resolve(true);
+                } else {
+                    reject({
+                        urlsDeleteFail: __urlsDeleteFail
+                    });
+                };
+            });
+    });
+};
