@@ -73,7 +73,6 @@ export const getSchedulesProduct = async (id_schedules_product, id_user, role, s
     let whereGetScheduleProduct;
     switch (role) {
         case 'traveller': {
-            console.log(1)
             whereGetScheduleProduct = {
                 id_schedule_product: {
                     in: id_schedules_product,
@@ -94,7 +93,6 @@ export const getSchedulesProduct = async (id_schedules_product, id_user, role, s
             break;
         }
         default: {
-            console.log(2)
             return false;
         }
     }
@@ -131,3 +129,45 @@ export const getSchedulesProduct = async (id_schedules_product, id_user, role, s
         return false;
     };
 };
+
+export const createScheduleProduct = async (data) => {
+    try {
+        return await prisma.schedule_Product.create({
+            data : data,
+        })
+    } catch (error) {
+        return false;
+    }
+}
+
+
+export const deleteScheduleProduct = async (id_schedule_product) => {
+    try {
+        return await prisma.schedule_Product.update({
+            where: {
+                id_schedule_product: id_schedule_product
+            },
+            data: {
+                status: 'inactive'
+            }
+        });
+    } catch (error) {
+        return false;
+    }
+
+}
+
+export const getIdScheduleProductbyId = async (id_schedule_product) => {
+    try {
+        return await prisma.schedule_Product.findUnique({
+            where : {
+                id_schedule_product : id_schedule_product
+            },
+            select : {
+                id_schedule_product : true,
+            }
+        })
+    } catch (error) {
+        return false;
+    }
+}
