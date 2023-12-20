@@ -1,8 +1,9 @@
-import * as userService from '../services/userService';
 import * as hash from '../helpers/hash';
-import * as firebase from '../config/firebase.config';
 import * as envApp from '../config/envApp';
+import * as userService from '../services/userService';
+import * as deletionService from '../services/destroyService';
 import * as authHelper from '../helpers/authHelper';
+import * as imageHelper from '../helpers/imageHelper';
 
 export const getUser = async (req, res) => {
     const __id_user = Number(req.params.id)
@@ -98,65 +99,66 @@ export const updateUserPassword = async (req, res) => {
 };
 
 export const updateUserImage = async (req, res) => {
-    const __user = req.user;
-    const __imageData = req.file.buffer;
-    if (__user.image !== envApp.defaultUserImage) {
-        const __desertRef = firebase.ref(firebase.storage, __user.image);
-        const __checkDeleteUserImage = firebase.deleteObject(__desertRef)
-            .catch((error) => {
-                return false;
-            });
-    }
-    const __filePath = `avata/avata-${__user.name}-${Date.now()}`;
-    const __metadata = {
-        contentType: req.file.mimetype
-    };
-    const __uploadUserImage = firebase.uploadBytesResumable(firebase.ref(firebase.storage, __filePath), __imageData, __metadata);
+    let __user = req.user;
+    const __imageData = req.file;
+    let __updateDb;
 
-    // Listen for state changes, errors, and completion of the upload.
-    __uploadUserImage.on('state_changed',
-        (snapshot) => {
-            switch (snapshot.state) {
-                case 'paused':
-                    return res.status(500).json({
-                        msg: "The process of uploading photos to firebase is paused",
-                        position: "Error from the server"
-                    });
-                case 'running':
-                    break;
-            }
-        },
-        (error) => {
-            switch (error.code) {
-                case 'storage/unauthorized':
-                    // User doesn't have permission to access the object
-                    break;
-                case 'storage/canceled':
-                    // User canceled the upload
-                    break;
-                case 'storage/unknown':
-                    // Unknown error occurred, inspect error.serverResponse
-                    break;
-            }
-        },
-        async () => {
-            await firebase.getDownloadURL(__uploadUserImage.snapshot.ref).then(async (imageURL) => {
-                if (!await userService.updateUser(__user.id_user, { image: imageURL })) {
-                    return res.status(500).json({
-                        msg: "change url user image with prisma",
-                        position: "Error from the server"
-                    });
-                };
-                __user.image = imageURL;
-                const { __token, __refreshToken } = authHelper.createSignInToken(__user);
-                res.cookie('refreshToken', __refreshToken, {
-                    httpOnly: true
-                });
-                return res.status(200).json({
-                    data: __user,
-                    token: __token
-                });
-            });
+    const __imageURL = await imageHelper.uploadImage("avatar", __user.name, __imageData);
+    if (!__imageURL) {
+        return res.status(500).json({
+            position: "upload user Image",
+            msg: "Error from the server"
+        });
+    };
+
+    const __imageDelete = {
+        id: Number(__user.id_user),
+        category: "image",
+        value: String(__user.image)
+    };
+    if (__user.image !== envApp.defaultUserImage) {
+        __updateDb = await Promise.allSettled([
+            userService.updateUser(__user.id_user, { image: __imageURL }),
+            deletionService.createDestroy(__imageDelete)
+        ]).then(async (value) => {
+            const __status = String(value[0].value) + String(value[1].value.status);
+            if (__status == "truetrue") {
+                return true;
+            };
+            if (__status == "falsetrue") {
+                await deletionService.updateDestroyByIdDestroy(__user.id_user, __imageURL);
+                return false;
+            };
+            imageHelper.deleteImage(__imageURL);
+            switch (__status) {
+                case "falsefalse":
+                    return false;
+                case "truefalse":
+                    await userService.updateUser(__user.id_user, { image: __user.image });
+                    return false;
+            };
+        });
+    } else {
+        __updateDb = await userService.updateUser(__user.id_user, { image: __imageURL });
+        if (!__updateDb) {
+            imageHelper.deleteImage(__imageURL);
         }
-    );
+    };
+    if (!__updateDb) {
+        return res.status(500).json({
+            position: "upldate user Image",
+            msg: "Error from the server"
+        });
+    };
+
+    __user.image = __imageURL;
+    const { __token, __refreshToken } = authHelper.createSignInToken(__user);
+    res.cookie('refreshToken', __refreshToken, {
+        httpOnly: true
+    });
+    
+    return res.status(200).json({
+        data: __user,
+        token: __token
+    });
 };

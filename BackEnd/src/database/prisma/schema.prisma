@@ -245,3 +245,16 @@ model Info_Contact {
   message         String   @db.Text
   time            DateTime @default(now())
 }
+
+enum Destroy_Category {
+  image
+  user
+  prodcut
+}
+
+model Destroy {
+  id_destroy String @id @default(cuid())
+  id Int @db.UnsignedInt
+  value String @db.Text
+  category Destroy_Category
+}
