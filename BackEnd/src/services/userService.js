@@ -154,12 +154,13 @@ export const createSupplier = async (user, info_Supplier) => {
 
 export const updateUser = async (id_user, user) => {
     try {
-        return await prisma.user.update({
+        await prisma.user.update({
             where: {
                 id_user: Number(id_user),
             },
             data: user,
         });
+        return true;
     } catch (e) {
         return false;
     };
