@@ -151,6 +151,7 @@ model Discount {
   id_product  Int             @db.UnsignedInt
   product     Product         @relation(fields: [id_product], references: [id_product])
   name        String
+  code        String          @default(cuid())
   description String          @db.LongText
   start_time  DateTime
   end_time    DateTime
@@ -187,8 +188,8 @@ model Bill {
   id_supplier    Int         @db.UnsignedInt
   supplier       User        @relation(name: "supplier", fields: [id_supplier], references: [id_user])
   time           DateTime    @default(now())
-  id_discount    Int         @db.UnsignedInt
-  discount       Discount    @relation(fields: [id_discount], references: [id_discount])
+  id_discount    Int?        @db.UnsignedInt
+  discount       Discount?   @relation(fields: [id_discount], references: [id_discount])
   discount_value Int
   quantity       Int         @db.UnsignedSmallInt
   status         Bill_Status @default(pending)
@@ -253,8 +254,8 @@ enum Destroy_Category {
 }
 
 model Destroy {
-  id_destroy String @id @default(cuid())
-  id Int @db.UnsignedInt
-  value String @db.Text
-  category Destroy_Category
+  id_destroy String           @id @default(cuid())
+  id         Int              @db.UnsignedInt
+  value      String           @db.Text
+  category   Destroy_Category
 }

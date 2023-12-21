@@ -3,11 +3,12 @@ const discountRouter = express.Router();
 
 import * as discountController from '../controllers/discountController';
 import * as authMiddleware from '../middlewares/authMiddleware';
+import * as discountValidation from '../validation/discountValidation';
 
 discountRouter.get('/all', discountController.getAllDiscount);
 discountRouter.get('/', authMiddleware.verifyToken, authMiddleware.checkSupplierOrAdminRole, discountController.getDiscounts);
 discountRouter.get('/:id', discountController.getDetailDiscount);
-discountRouter.post('/', authMiddleware.verifyToken, authMiddleware.checkSupplierOrAdminRole, discountController.createDiscount);
+discountRouter.post('/', authMiddleware.verifyToken, authMiddleware.checkSupplierOrAdminRole, discountValidation.createDiscountValidation, discountController.createDiscount);
 discountRouter.delete('/:id', authMiddleware.verifyToken, authMiddleware.checkSupplierOrAdminRole, discountController.cancelDiscount);
 
 module.exports = discountRouter;
