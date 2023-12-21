@@ -39,7 +39,7 @@ const changeUserInformationSchema = Joi.object({
         .messages({
             "date.base": "Date_of_birth must be a valid date (maybe string format yy-mm-dd)",
             "date.format": "Invalid date and as sample: yy-mm-dd",
-            "date.max": "Date_of_birth greater than the current date"
+            "date.max": "Date_of_birth is less the current date"
         }),
 });
 
