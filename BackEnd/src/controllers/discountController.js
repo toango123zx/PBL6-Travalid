@@ -62,6 +62,13 @@ export const createDiscount = async (req, res) => {
     const __discount = req.discount;
     __discount.id_user = Number(__user.id_user);
 
+    if (__discount.code && await discountService.getDiscountByCode(__user.id_user, __discount.code)) {
+        return res.status(409).json({
+            position: "Code discount",
+            msg: "This discount code is in use"
+        });
+    };
+
     const __product = await productService.getProductById(__discount.id_product);
 
     if (!__product) {

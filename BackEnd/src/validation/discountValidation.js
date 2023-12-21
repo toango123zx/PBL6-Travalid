@@ -102,4 +102,3 @@ export const createDiscountValidation = (req, res, next) => {
 
     next();
 };
-

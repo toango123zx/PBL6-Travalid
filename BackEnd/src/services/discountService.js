@@ -7,6 +7,7 @@ export const getAllDiscount = async () => {
                 id_discount: true,
                 id_product: true,
                 name: true,
+                code: true,
                 description: true,
                 start_time: true,
                 end_time: true,
@@ -55,6 +56,7 @@ export const getDiscounts = async (id_user , start , limit) => {
                 id_discount: true,
                 id_product: true,
                 name: true,
+                code: true,
                 description: true,
                 start_time: true,
                 end_time: true,
@@ -108,6 +110,7 @@ export const getDetailDiscount = async (id_discount) => {
                     }
                 },
                 name: true,
+                code: true,
                 description: true,
                 start_time: true,
                 end_time: true,
@@ -143,6 +146,7 @@ export const getDiscountbySchedulesProduct = async (id_discount, id_schedule_pro
             select: {
                 id_discount: true,
                 id_product: true,
+                code: true,
                 value: true,
                 quantity: true,
                 point: true,
@@ -168,6 +172,32 @@ export const getDiscountbySchedulesProduct = async (id_discount, id_schedule_pro
                     }
                 }
             }
+        });
+    } catch (e) {
+        return false
+    };
+};
+
+export const getDiscountByCode = async (id_user, code, start, limit) => {
+    try {
+        return await prisma.discount.findFirst({
+            select: {
+                id_discount: true,
+                id_product: true,
+                code: true,
+                value: true,
+                quantity: true,
+                point: true,
+                applited: true,
+            },
+            where: {
+                code: String(code),
+                id_user: Number(id_user),
+                end_time: {
+                    gte: new Date()
+                },
+                status: "active",
+            },
         });
     } catch (e) {
         return false
