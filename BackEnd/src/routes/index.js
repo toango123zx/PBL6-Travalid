@@ -4,6 +4,7 @@ const billRouter = require('./bill');
 const cartRouter = require ('./cart');
 const discountRouter = require ('./discount');
 const userRouter = require ('./user');
+const rateRouter = require ('./rate');
 const scheduleProductRouter = require ('./scheduleProduct');
 
 function route(app) {
@@ -14,6 +15,7 @@ function route(app) {
     app.use('/discount', discountRouter);
     app.use('/cart',cartRouter)
     app.use('/bill', billRouter);
+    app.use('/rate', rateRouter);
 }
 
 module.exports = route;

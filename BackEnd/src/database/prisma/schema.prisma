@@ -208,7 +208,7 @@ model Info_Bill {
 }
 
 enum Rate_Status {
-  presently
+  display
   hidden
 }
 
@@ -220,7 +220,7 @@ model Rate {
   user       User        @relation(fields: [id_user], references: [id_user])
   comment    String      @db.Text
   star       Int         @db.UnsignedSmallInt
-  status     Rate_Status @default(presently)
+  status     Rate_Status @default(display)
 }
 
 enum Contact_Category {
