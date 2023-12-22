@@ -199,9 +199,9 @@ const Bot = ({login}) => {
                         <Text style = {styleBotSIPage.textSignUp}> Sign up</Text>
                     </TouchableOpacity> 
                 </View>
-                <View style = {{flex: 1, alignItems: 'center'}}>
+            </View>
+            <View style = {{flex: 1, alignItems: 'center'}}>
                     <Text style = {styleBotSIPage.text1}>Or connect</Text>
-                </View>
             </View>
             <View style = {styleBotSIPage.view2}>
                 <TouchableOpacity style = {styleBotSIPage.button}>
