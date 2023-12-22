@@ -1,8 +1,9 @@
 import * as discountService from '../services/discountService';
 import * as productService from '../services/productService';
 
-export const getAllDiscount = async (req, res) => {
-    let __discounts = await discountService.getAllDiscount();
+export const getDiscountsForTraveller = async (req, res) => {
+    const __start = req.start;
+    let __discounts = await discountService.getAllDiscount(__start);
     if (!__discounts) {
         return res.status(404).json({
             position: "id user",
@@ -20,9 +21,10 @@ export const getAllDiscount = async (req, res) => {
     };
 };
 
-export const getDiscounts = async (req, res) => {
+export const getDiscountsForSupplier = async (req, res) => {
     const __user = req.user;
-    let __discounts = await discountService.getDiscounts(__user.id_user);
+    const __start = req.start;
+    let __discounts = await discountService.getDiscounts(__user.id_user, __start);
     if (!__discounts) {
         return res.status(404).json({
             position: "id user",
@@ -57,10 +59,21 @@ export const getDetailDiscount = async (req, res) => {
     };
 };
 
+/**
+ * Code is only valid during the validity period + depending on the product
+ */
+
 export const createDiscount = async (req, res) => {
     const __user = req.user;
     const __discount = req.discount;
     __discount.id_user = Number(__user.id_user);
+
+    if (__discount.code && await discountService.getDiscountByCode(__discount.id_product, __discount.code)) {
+        return res.status(409).json({
+            position: "Code discount",
+            msg: "Discount code is being used for this product"
+        });
+    };
 
     const __product = await productService.getProductById(__discount.id_product);
 

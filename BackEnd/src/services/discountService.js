@@ -1,12 +1,16 @@
 const { prisma } = require('../config/prismaDatabase');
+import  * as envApp from '../config/envApp';
 
-export const getAllDiscount = async () => {
+const limnit = envApp.LimitGetDiscount;
+
+export const getAllDiscount = async (start) => {
     try {
         return await prisma.discount.findMany({
             select: {
                 id_discount: true,
                 id_product: true,
                 name: true,
+                code: true,
                 description: true,
                 start_time: true,
                 end_time: true,
@@ -21,6 +25,8 @@ export const getAllDiscount = async () => {
                     }
                 }
             },
+            skip: start,
+            take: limnit,
             where: {
                 status: {
                     not: "cancel"
@@ -48,13 +54,14 @@ export const getAllDiscount = async () => {
     };
 };
 
-export const getDiscounts = async (id_user , start , limit) => {
+export const getDiscounts = async (id_user , start ) => {
     try {
         return prisma.discount.findMany({
             select: {
                 id_discount: true,
                 id_product: true,
                 name: true,
+                code: true,
                 description: true,
                 start_time: true,
                 end_time: true,
@@ -69,10 +76,11 @@ export const getDiscounts = async (id_user , start , limit) => {
                     }
                 }
             },
+            skip: start,
+            take: limnit,
             where: {
                 id_user: Number(id_user),
             },
-            
             orderBy: [
                 {
                     start_time: 'desc',
@@ -86,8 +94,6 @@ export const getDiscounts = async (id_user , start , limit) => {
                 {
                     quantity: 'desc'
                 }],
-                skip : start,
-                take : limit,
                 
         });
     } catch (e) {
@@ -108,6 +114,7 @@ export const getDetailDiscount = async (id_discount) => {
                     }
                 },
                 name: true,
+                code: true,
                 description: true,
                 start_time: true,
                 end_time: true,
@@ -143,6 +150,7 @@ export const getDiscountbySchedulesProduct = async (id_discount, id_schedule_pro
             select: {
                 id_discount: true,
                 id_product: true,
+                code: true,
                 value: true,
                 quantity: true,
                 point: true,
@@ -174,14 +182,40 @@ export const getDiscountbySchedulesProduct = async (id_discount, id_schedule_pro
     };
 };
 
+export const getDiscountByCode = async (id_product, code, start, limit) => {
+    try {
+        return await prisma.discount.findFirst({
+            select: {
+                id_discount: true,
+                id_product: true,
+                code: true,
+                value: true,
+                quantity: true,
+                point: true,
+                applited: true,
+            },
+            where: {
+                code: String(code),
+                id_product: Number(id_product),
+                end_time: {
+                    gte: new Date()
+                },
+                status: "active",
+            },
+        });
+    } catch (e) {
+        return false
+    };
+};
+
 export const createDiscount = async (discount) => {
     try {
         await prisma.discount.create({
             data: discount,
         });
+
         return true;
     } catch (e) {
-        console.log(e)
         return false;
     };
 };
@@ -198,6 +232,7 @@ export const updateDiscount = async (id_discount, id_user, role, status) => {
     } else {
         id_user = Number(id_user);
     };
+    
     try {
         await prisma.discount.update({
             where: {
@@ -209,6 +244,7 @@ export const updateDiscount = async (id_discount, id_user, role, status) => {
                 status: String(status)
             }
         });
+
         return true;
     } catch (e) {
         return false;
