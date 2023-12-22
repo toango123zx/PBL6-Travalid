@@ -15,6 +15,9 @@ import DetailsPage from './DetailPage/DetailsPage';
 import ProfilePage from './ProfilePage/ProfilePage';
 import SplishPage from './SplishPage'
 import SignInPage from './SignInPage';
+import ForgotPassPage from './ForgotPassPage/ForgotPassPage';
+import VerifyPage from './ForgotPassPage/VerifyPage';
+import ChangePassPage from './ForgotPassPage/ChangePassPage';
 import SignUpPage from './SignUp/SignUpPage';
 import ProfileDetails from './ProfilePage/ProfileDetails';
 import AttractionsPage from './AttractionsPage';
@@ -157,6 +160,9 @@ export default RootComponent = function(){
             <Stack.Screen name='Home1' component={MyTabs}/>
             <Stack.Screen name="SignInPage" component={SignInPage}/>
             <Stack.Screen name="SignUpPage" component={SignUpPage}/>
+            <Stack.Screen name="ForgotPassPage" component={ForgotPassPage}/>
+            <Stack.Screen name="VerifyPage" component={VerifyPage}/>
+            <Stack.Screen name="ChangePassPage" component={ChangePassPage}/>
             <Stack.Screen name="SplishPage" component={SplishPage}/>
             <Stack.Screen name="DetailsPage" component={DetailsPage } />
             <Stack.Screen name="ProfileDetails" component={ProfileDetails}/>

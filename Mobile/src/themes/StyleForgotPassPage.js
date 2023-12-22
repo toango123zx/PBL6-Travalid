@@ -2,7 +2,7 @@ import { StyleSheet, Dimensions , StatusBar} from "react-native";
 const { width, height } = Dimensions.get('window');
 const statusBarHeight = StatusBar.currentHeight || 0;
 
-const styleSignInPage = StyleSheet.create({
+const styleForgotPassPage = StyleSheet.create({
     View: {
         height: height,
         width: width,
@@ -11,23 +11,32 @@ const styleSignInPage = StyleSheet.create({
         top: statusBarHeight,
     },
     viewTop: {
-        height: '27%',
+        height: '33%',
         width: '100%',
         borderWidth: 0
     },
     viewMid: {
-        height: '28%',
+        height: '20%',
         width: '100%',
         borderWidth: 0
     },
     viewBot: {
-        height: '41%',
+        height: '40%',
         width: '100%',
         borderWidth: 0
-    }
-
+    },
+    viewTopChange: {
+        height: '25%',
+        width: '100%',
+        borderWidth: 0
+    },
+    viewMidChange: {
+        height: '28%',
+        width: '100%',
+        borderWidth: 0
+    },
 })
-const styleTopSIPage = StyleSheet.create({
+const styleTopFPPage = StyleSheet.create({
     View: {
         height: '100%',
         width: '100%',
@@ -51,17 +60,19 @@ const styleTopSIPage = StyleSheet.create({
         alignItems: 'center',
         borderWidth: 0,
     },
+    viewText1: {
+        height: '55%',
+        width: '100%',
+        marginTop: height*0.25*0.1,
+        justifyContent: 'left',
+        alignItems: 'left',
+        borderWidth: 0,
+    },
     text1: {
         color: '#1B1E28',
         fontSize: 28.525,
         fontFamily: 'Montserrat SemiBold',
-        lineHeight: 37.3
-    },
-    text2: {
-        color: '#7D848D',
-        fontSize: 17.55,
-        fontFamily: 'Montserrat Regular',
-        lineHeight: 40
+        lineHeight: 70
     },
     buttonBack: {
         width: '100%',
@@ -70,9 +81,22 @@ const styleTopSIPage = StyleSheet.create({
         borderRadius: 50,
         justifyContent: 'center',
         alignItems: 'center'
-    }
+    },
+    text2: {
+        color: '#7D848D',
+        fontSize: 17.55,
+        fontFamily: 'Montserrat Regular',
+        lineHeight: 30
+    },
+    text3: {
+        color: '#7D848D',
+        fontSize: 17.55,
+        fontFamily: 'Montserrat Bold',
+        lineHeight: 20,
+    },
+
 })
-const styleMidSIPage = StyleSheet.create({
+const styleMidFPPage = StyleSheet.create({
     View: {
         height: '100%',
         width: '100%',
@@ -100,33 +124,25 @@ const styleMidSIPage = StyleSheet.create({
         flexDirection: 'row',
         borderWidth: 0
     },
-    viewForgotPass: {
-        height: '10%',
-        width: '90%',
-        borderWidth: 0,
-        marginLeft: '5%',
-        marginTop: height*0.3*0.02
-    },
-    touchForgotPass: {
-        height: '100%',
-        width: '40%',
-        marginLeft: '60%',
-        alignItems: 'flex-end',
-        justifyContent: 'center'
-    },
-    textForgotPass: {
-        color: '#FF6B00',
-        fontFamily: 'Montserrat Medium',
-        fontSize: 14,
-    },
-    touchHiddenPass: {
-        justifyContent: 'center',
-        height: '100%',
+    OTPStyle: {
+        backgroundColor: '#F7F7F9',
+        borderRadius: 16,
+        height: 61.5,
+        width: 61.5,
+        justifyContent:'center',
         alignItems: 'center',
-        borderWidth: 0,
-        position: 'absolute',
-        marginRight: (height*0.3*0.25)/2-12 ,
-        right: 0
+        borderWidth: 1
+    },
+    viewOTP: {
+        height: 61.5,
+        width: 367.5,
+        marginLeft: (width - 367.5)/2,
+        marginTop: height*0.5*0.05,
+        marginBottom: height*0.3*0.05,
+        borderRadius: 16,
+        justifyContent:'center',
+        alignItems: 'center',
+        borderWidth: 0
     },
     textInputUserName: {
         color: '#1B1E28',
@@ -141,21 +157,52 @@ const styleMidSIPage = StyleSheet.create({
         fontSize: 16,
         width: 380,
         marginLeft: (height*0.3*0.25)/2-12
-    },     
-    
+    },    
+    touchHiddenPass: {
+        justifyContent: 'center',
+        height: '100%',
+        alignItems: 'center',
+        borderWidth: 0,
+        position: 'absolute',
+        marginRight: (height*0.3*0.25)/2-12 ,
+        right: 0
+    },
+    viewText: {
+        height: '55%',
+        width: '100%',
+        marginTop: height*0.25*0.1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 0,
+    },
+    text1: {
+        color: '#7D848D',
+        fontSize: 15.36,
+        marginLeft: (width - 367.5)/2,
+        fontFamily: 'Montserrat',
+        lineHeight: 40
+    },
+    text2: {
+        color: '#7D848D',
+        fontSize: 17.55,
+        marginLeft: (width - 367.5)/2,
+        fontFamily: 'Montserrat Bold',
+        lineHeight: 40
+    },
+
 })
-const styleBotSIPage = StyleSheet.create({
+const styleBotFPPage = StyleSheet.create({
     View: {
         height: '100%',
         width: '100%',
         borderWidth: 0,
     },
-    viewButtonSignIn: {
+    viewButtonNext: {
         height: 61.5,
         width: 367.5,
         marginLeft: (width - 367.5)/2,
     },
-    buttonSignIn: {
+    buttonNext: {
         width: '100%',
         height: '100%',
         borderRadius: 16,
@@ -164,7 +211,7 @@ const styleBotSIPage = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: '#FF852C'
     },
-    textSignIn: {
+    textNext: {
         color: '#FFF',
         fontSize: 16,
         fontFamily: 'Montserrat SemiBold'
@@ -183,15 +230,15 @@ const styleBotSIPage = StyleSheet.create({
         justifyContent: 'center',
         flexDirection: 'row'
     },
+    textSignIn: {
+        fontSize: 14,
+        color: '#FF6B00',
+        fontFamily: 'Montserrat Medium'
+    },
     text1: {
         fontSize: 14,
         color: '#707B81',
         fontFamily: 'Montserrat Regular'
-    },
-    textSignUp: {
-        fontSize: 14,
-        color: '#FF6B00',
-        fontFamily: 'Montserrat Medium'
     },
     view2:{
         width: '100%',
@@ -210,4 +257,4 @@ const styleBotSIPage = StyleSheet.create({
         marginRight: '2.5%'
     }
 })
-export {styleBotSIPage,styleMidSIPage,styleSignInPage,styleTopSIPage}
+export {styleBotFPPage,styleMidFPPage,styleForgotPassPage,styleTopFPPage}

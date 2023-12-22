@@ -147,7 +147,7 @@ const Top = () => {
 }
 
 const Mid = ({setEmail, setPassword, email, password}) => {
-    
+    const navigation = useNavigation();
     const [pwdHidden, setPwdHidden] = useState(true)
     return(
         <View style = {styleMidSIPage.View}>
@@ -175,7 +175,7 @@ const Mid = ({setEmail, setPassword, email, password}) => {
                 </TouchableOpacity>
             </View>
             <View style = {styleMidSIPage.viewForgotPass}>
-                <TouchableOpacity style = {styleMidSIPage.touchForgotPass}>
+                <TouchableOpacity style = {styleMidSIPage.touchForgotPass} onPress={()=>{navigation.navigate('ForgotPassPage')}}>
                     <Text style = {styleMidSIPage.textForgotPass}>Forgot Password?</Text>
                 </TouchableOpacity>
             </View>
