@@ -208,3 +208,14 @@ export const productDeleteValidate = data => {
     const time = Joi.number().required()
     return time.validate(data)
 }
+
+export const scheduleCreateValidate = data => {
+    const currentTime = new Date();
+    const scheduleSchema = Joi.object({
+        id_product: Joi.number().strict(),
+        start_time: Joi.date().min(currentTime).required(), 
+        end_time: Joi.date().min(Joi.ref('start_time')).required(),
+        price: Joi.number().min(0).strict().required()
+    });
+    return scheduleSchema.validate(data);
+}

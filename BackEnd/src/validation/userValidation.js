@@ -39,7 +39,7 @@ const changeUserInformationSchema = Joi.object({
         .messages({
             "date.base": "Date_of_birth must be a valid date (maybe string format yy-mm-dd)",
             "date.format": "Invalid date and as sample: yy-mm-dd",
-            "date.max": "Date_of_birth greater than the current date"
+            "date.max": "Date_of_birth is less the current date"
         }),
 });
 
@@ -92,23 +92,6 @@ export const changeUserPasswordValidation = (req, res, next) => {
     } catch (err) {
         return res.status(500).send({
             position: "Change user password  Validation Error",
-            msg: "Error from the server",
-        });
-    };
-    next();
-};
-
-export const changeUserImageValidation = (req, res, next) => {
-    try {
-        if (!req.file || !req.file.mimetype.includes("image")) {
-            return res.status(404).json({
-                position: "no user image error",
-                msg: "There are currently no user image found to perform this function"
-            });
-        };
-    } catch (err) {
-        return res.status(500).send({
-            position: "Change user Image Validation Error",
             msg: "Error from the server",
         });
     };
