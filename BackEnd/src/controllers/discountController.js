@@ -1,8 +1,9 @@
 import * as discountService from '../services/discountService';
 import * as productService from '../services/productService';
 
-export const getAllDiscount = async (req, res) => {
-    let __discounts = await discountService.getAllDiscount();
+export const getDiscountsForTraveller = async (req, res) => {
+    const __start = req.start;
+    let __discounts = await discountService.getAllDiscount(__start);
     if (!__discounts) {
         return res.status(404).json({
             position: "id user",
@@ -20,9 +21,10 @@ export const getAllDiscount = async (req, res) => {
     };
 };
 
-export const getDiscounts = async (req, res) => {
+export const getDiscountsForSupplier = async (req, res) => {
     const __user = req.user;
-    let __discounts = await discountService.getDiscounts(__user.id_user);
+    const __start = req.start;
+    let __discounts = await discountService.getDiscounts(__user.id_user, __start);
     if (!__discounts) {
         return res.status(404).json({
             position: "id user",

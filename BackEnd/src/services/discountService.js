@@ -1,6 +1,9 @@
 const { prisma } = require('../config/prismaDatabase');
+import  * as envApp from '../config/envApp';
 
-export const getAllDiscount = async () => {
+const limnit = envApp.LimitGetDiscount;
+
+export const getAllDiscount = async (start) => {
     try {
         return await prisma.discount.findMany({
             select: {
@@ -22,6 +25,8 @@ export const getAllDiscount = async () => {
                     }
                 }
             },
+            skip: start,
+            take: limnit,
             where: {
                 status: {
                     not: "cancel"
@@ -49,7 +54,7 @@ export const getAllDiscount = async () => {
     };
 };
 
-export const getDiscounts = async (id_user , start , limit) => {
+export const getDiscounts = async (id_user , start ) => {
     try {
         return prisma.discount.findMany({
             select: {
@@ -71,10 +76,11 @@ export const getDiscounts = async (id_user , start , limit) => {
                     }
                 }
             },
+            skip: start,
+            take: limnit,
             where: {
                 id_user: Number(id_user),
             },
-            
             orderBy: [
                 {
                     start_time: 'desc',
@@ -88,8 +94,6 @@ export const getDiscounts = async (id_user , start , limit) => {
                 {
                     quantity: 'desc'
                 }],
-                skip : start,
-                take : limit,
                 
         });
     } catch (e) {

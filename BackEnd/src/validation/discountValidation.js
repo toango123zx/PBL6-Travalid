@@ -1,5 +1,7 @@
 const Joi = require('joi');
 
+import * as envApp from '../config/envApp';
+
 const discountSchema = Joi.object({
     id_product: Joi.number().strict()
         .required()
@@ -102,3 +104,13 @@ export const createDiscountValidation = (req, res, next) => {
 
     next();
 };
+
+export const checkPage = (req, res, next) => {
+    let __page = Number(req.query.page);
+    if (!__page) {
+        __page = 1;
+    };
+    
+    req.start = (__page - 1) * envApp.LimitGetDiscount;
+    next();
+}
