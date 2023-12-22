@@ -15,10 +15,10 @@ import DetailsPage from './DetailPage/DetailsPage';
 import ProfilePage from './ProfilePage/ProfilePage';
 import SplishPage from './SplishPage'
 import SignInPage from './SignInPage';
+import SignUpPage from './SignUp/SignUpPage';
 import ForgotPassPage from './ForgotPassPage/ForgotPassPage';
 import VerifyPage from './ForgotPassPage/VerifyPage';
 import ChangePassPage from './ForgotPassPage/ChangePassPage';
-import SignUpPage from './SignUp/SignUpPage';
 import ProfileDetails from './ProfilePage/ProfileDetails';
 import AttractionsPage from './AttractionsPage';
 import DiscountDetail from './DiscountPage/DiscountDetail';
