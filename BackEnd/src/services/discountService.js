@@ -182,7 +182,7 @@ export const getDiscountbySchedulesProduct = async (id_discount, id_schedule_pro
     };
 };
 
-export const getDiscountByCode = async (id_user, code, start, limit) => {
+export const getDiscountByCode = async (id_product, code, start, limit) => {
     try {
         return await prisma.discount.findFirst({
             select: {
@@ -196,7 +196,7 @@ export const getDiscountByCode = async (id_user, code, start, limit) => {
             },
             where: {
                 code: String(code),
-                id_user: Number(id_user),
+                id_product: Number(id_product),
                 end_time: {
                     gte: new Date()
                 },
@@ -213,9 +213,9 @@ export const createDiscount = async (discount) => {
         await prisma.discount.create({
             data: discount,
         });
+
         return true;
     } catch (e) {
-        console.log(e)
         return false;
     };
 };
@@ -232,6 +232,7 @@ export const updateDiscount = async (id_discount, id_user, role, status) => {
     } else {
         id_user = Number(id_user);
     };
+    
     try {
         await prisma.discount.update({
             where: {
@@ -243,6 +244,7 @@ export const updateDiscount = async (id_discount, id_user, role, status) => {
                 status: String(status)
             }
         });
+
         return true;
     } catch (e) {
         return false;

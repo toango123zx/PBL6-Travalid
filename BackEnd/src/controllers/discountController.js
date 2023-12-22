@@ -59,15 +59,19 @@ export const getDetailDiscount = async (req, res) => {
     };
 };
 
+/**
+ * Code is only valid during the validity period + depending on the product
+ */
+
 export const createDiscount = async (req, res) => {
     const __user = req.user;
     const __discount = req.discount;
     __discount.id_user = Number(__user.id_user);
 
-    if (__discount.code && await discountService.getDiscountByCode(__user.id_user, __discount.code)) {
+    if (__discount.code && await discountService.getDiscountByCode(__discount.id_product, __discount.code)) {
         return res.status(409).json({
             position: "Code discount",
-            msg: "This discount code is in use"
+            msg: "Discount code is being used for this product"
         });
     };
 
