@@ -25,6 +25,8 @@ import DiscountDetail from './DiscountPage/DiscountDetail';
 import ProductSupplierPage from './ProductsSupplierPage/ProductSupplierPage';
 import AddProductPage from './ProductsSupplierPage/AddProductPage';
 import HomePage from './HomePage';
+import OrderHistoryPage from './OderHistoryPage/OrderHistoryPage';
+import BillDetailPage from './OderHistoryPage/BillDetailPage';
 import A from './Product';
 import { NavigationContainer } from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -172,6 +174,9 @@ export default RootComponent = function(){
             <Stack.Screen name="DiscountDetail" component={DiscountDetail} />
             <Stack.Screen name="ProductSupplierPage" component={ProductSupplierPage} />
             <Stack.Screen name="AddProductPage" component={AddProductPage} />
+            <Stack.Screen name="OrderHistoryPage" component={OrderHistoryPage} />
+            <Stack.Screen name="BillDetailPage" component={BillDetailPage} />
+
 
           </Stack.Navigator>
         </NavigationContainer>

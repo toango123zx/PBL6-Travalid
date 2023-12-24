@@ -101,7 +101,9 @@ export default ProfilePage = () =>{
             </View>
             : null}
             <View style = {styleProfilePage.viewBtnBill}>
-                <TouchableOpacity style = {styleProfilePage.BtnProfile}>
+                <TouchableOpacity style = {styleProfilePage.BtnProfile} onPress={() => {
+                    navigation.navigate('OrderHistoryPage', {user})
+                }}>
                     <Icon style = {styleProfilePage.icon1} name="earth-outline" color="#7D848D" size={25}/>
                     <Text style = {styleProfilePage.text1}>Oder History</Text>
                     <Icon style = {styleProfilePage.iconChevronforward} name="chevron-forward" color="#7D848D" size={25}/>
