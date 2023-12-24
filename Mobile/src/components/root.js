@@ -11,6 +11,9 @@ import {
 
 import Svg, {Path} from 'react-native-svg';
 import InfoPage from './DetailPage/InfoPage';
+
+
+//Page 
 import DetailsPage from './DetailPage/DetailsPage';
 import ProfilePage from './ProfilePage/ProfilePage';
 import SplishPage from './SplishPage'
@@ -19,6 +22,8 @@ import SignUpPage from './SignUp/SignUpPage';
 import ProfileDetails from './ProfilePage/ProfileDetails';
 import AttractionsPage from './AttractionsPage';
 import DiscountDetail from './DiscountPage/DiscountDetail';
+import ProductSupplierPage from './ProductsSupplierPage/ProductSupplierPage';
+import AddProductPage from './ProductsSupplierPage/AddProductPage';
 import HomePage from './HomePage';
 import A from './Product';
 import { NavigationContainer } from '@react-navigation/native';
@@ -165,6 +170,9 @@ export default RootComponent = function(){
             <Stack.Screen name="EditProfile" component={EditProfile} />
             <Stack.Screen name="InfoPageSU" component={InfoPageSU} />
             <Stack.Screen name="DiscountDetail" component={DiscountDetail} />
+            <Stack.Screen name="ProductSupplierPage" component={ProductSupplierPage} />
+            <Stack.Screen name="AddProductPage" component={AddProductPage} />
+
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>

@@ -24,6 +24,7 @@ export default DetailsPage = ({route}) => {
     const { id } = route.params;
     const [page, setPage] = useState('INFO');
     const [product, setProduct] = useState([])
+    const [schedule, setSchedule] = useState([])
     const navigation = useNavigation();
     const handleBackPress = () => {
         // Thực hiện chuyển hướng về trang trước đó
@@ -48,18 +49,20 @@ export default DetailsPage = ({route}) => {
     useEffect(()=>{
         
         
-        console.log("ngay ket thuc: "+dayEnd+"-"+monthEnd+"-"+yearEnd)
+        
         const getDetailProduct = async () => {
             try {
                 const res = await authApi.getDetailProduct(id)
                 setProduct(res.data.data)
-                console.log(product)
+                setSchedule(res.data.data.schedule_product)
             } catch (error) {
                 console.log(error)
             }
         }
         
         getDetailProduct();
+        console.log(schedule);
+        
     },[])
     const [showModal, setShowModal] = useState (false);
     const [showModalEnd, setShowModalEnd] = useState (false);
@@ -77,6 +80,7 @@ export default DetailsPage = ({route}) => {
 
     const dataToSend = {
         id: product.id_product,
+        id_schedule: schedule.id_schedule_product,
         name: product.name,
         city: product.city,
         image: product.image,
@@ -144,9 +148,36 @@ export default DetailsPage = ({route}) => {
                     <Icon name="chevron-back" color="#FFF" size={25}/>
                 </TouchableOpacity>
                 <Text style = {styleDetailsPage.textDetails}>Details</Text>
-                <TouchableOpacity style = {styleDetailsPage.btnTB}>
-                    <Icon name="notifications-outline" color="#4A4A4A" size={25}/>
-                </TouchableOpacity>
+
+                {navigate === true ? 
+                (
+                    <TouchableOpacity style = {styleDetailsPage.btnTB}>
+                        <Icon name="notifications-outline" color="#4A4A4A" size={25}/>
+                    </TouchableOpacity>
+                ) : 
+                (
+                    <TouchableOpacity 
+                    style = {{
+                        width: 100,
+                        height: 38,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        position: 'absolute',
+                        top: 5,
+                        right: 0,
+                        backgroundColor: '#FF852C',
+                        borderRadius: 18
+                    }}
+                    onPress={() => {navigation.navigate('SignInPage')}}>
+                        <Text style = {{
+                            color: '#FFF',
+                            fontFamily: 'Montserrat SemiBold',
+                            fontSize: 16,
+                            letterSpacing: 0.6
+                        }}>Sign In</Text>
+                    </TouchableOpacity>
+                )}
+                
             </View>
             <View style = {styleDetailsPage.View}>
                 <View style = {styleDetailsPage.viewMenu}>
@@ -175,7 +206,7 @@ export default DetailsPage = ({route}) => {
                 
             </View>
             
-            {page === INFO ? <InfoPage product={product} /> : page === RAITING ? <RaitingsPage product={product} /> : page === SUPPLIER ? <SupplierPage /> : null}
+            {page === INFO ? <InfoPage product={product} scheduleData ={schedule} navigate = {navigate} /> : page === RAITING ? <RaitingsPage product={product} /> : page === SUPPLIER ? <SupplierPage /> : null}
             <View style = {styleDetailsPage.viewAddTour}>
                 <View style = {{position: 'absolute', width: 90, height: 20, marginTop: 15, left: 95, borderLeftWidth: 1, borderRightWidth: 1, borderLeftColor: 'rgba(128, 128, 128, 0.6)', borderRightColor: 'rgba(128, 128, 128, 0.6)'}}></View>
                 <TouchableOpacity style = {styleDetailsPage.viewDateTime} onPress={() => setShowModal(true)}>

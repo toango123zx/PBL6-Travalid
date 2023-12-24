@@ -13,6 +13,8 @@ import {
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { useRoute } from "@react-navigation/native";
+
 import { create } from "react-test-renderer";
 import { styleCartPage } from "../../themes/styleBookingCartPage";
 import ItemInPayment from "./ItemInPayment";
@@ -20,8 +22,9 @@ const { width, height } = Dimensions.get('window');
 const statusBarHeight = StatusBar.currentHeight || 0;
 export default PaymentPage = ({route}) => {
     
+    
     const {dataList} = route.params;
-
+    const [data, setData] = useState([])
     const navigation = useNavigation();
     const [quantity, setQuantity] = useState(1);
     const [selectPay, setSelectPay] = useState(false)
@@ -30,9 +33,13 @@ export default PaymentPage = ({route}) => {
         navigation.goBack();
       };
 
-    useEffect(()=> {
-        console.log(dataList)
-    })
+    
+      useEffect(() => {
+        if (Array.isArray(data) ) {
+          setData(JSON.parse(dataList));
+          console.log(data);
+        }
+      }, [dataList]);
     return(
         <View style = {style.View}>
             <StatusBar translucent backgroundColor="transparent" />
@@ -46,13 +53,13 @@ export default PaymentPage = ({route}) => {
 
                        
             <ScrollView style = {style.viewBookedTour}>
-                {dataList && (  
-                    dataList.map((item) => (
+                { 
+                    data.map((data) => (
                         <View>
-                            <ItemInPayment key={item.id} data={item} />
+                            <ItemInPayment key={data.id} data={data} />
                         </View>
                     ))
-                )}
+                }
             </ScrollView>
 
             
@@ -241,7 +248,7 @@ const style = StyleSheet.create({
     viewBookedTour: {
         width: 380,
         height: 300,
-        borderWidth: 1,
+        borderWidth: 0,
         marginLeft: (width-380)/2,
         marginTop: 10,
     },

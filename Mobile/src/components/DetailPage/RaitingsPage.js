@@ -56,7 +56,7 @@ export default RaitingsPage = ({product}) => {
                 </View> 
                 <View style = {styleRaittingsPage.viewRight}>
                     <TouchableOpacity style = {styleRaittingsPage.btnReview}>
-                        <Text style = {styleRaittingsPage.textReview}>avg_rate</Text>
+                        <Text style = {styleRaittingsPage.textReview}>Rate</Text>
                     </TouchableOpacity>
                     <Dropdown
                         style={styleRaittingsPage.dropdown}

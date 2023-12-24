@@ -83,19 +83,49 @@ export const styleAttractionPage = StyleSheet.create({
     View: {
         width: width,
         height: height,
-        backgroundColor: '#FFF'
+        backgroundColor: '#FFF',
+        marginTop: statusBarHeight
     },
-    viewText: {
-        width: '100%',
-        height: 20,
+    viewHeader: {
+        width: 380,
+        height: 48,
+        marginLeft: (-380+width)/2,
         borderWidth: 0,
-        marginTop: 30
+        marginTop: 10,
+        flexDirection: 'row',
+        alignItems: 'center'
     },
     text: {
         fontSize: 16,
         color: '#000',
         fontFamily: 'Montserrat SemiBold',
-        textAlign: 'center'
+        textAlign: 'left'
+    },
+    btnNof: {
+        width: 48,
+        height: 48,
+        borderRadius: 24,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#F7F7F9',
+        position: 'absolute',
+        right: 0
+    },
+    btnSignIn: {
+        width: 100,
+        height: 38,
+        borderRadius: 18,
+        backgroundColor: '#FF852C',
+        position: 'absolute',
+        justifyContent: 'center',
+        alignItems: 'center',
+        right: 0
+    },
+    textSignIn: {
+        color: '#FFF',
+        fontFamily: 'Montserrat SemiBold',
+        fontSize: 16,
+        letterSpacing: 0.6
     },
     viewSearchPlace: {
         width: 380,
@@ -166,7 +196,8 @@ export const styleAttractionPage = StyleSheet.create({
         marginLeft: (width - 380) / 2,
         borderRadius: 16,
         flexDirection: 'row',
-        marginTop: 35
+        marginTop: 35,
+        marginBottom: 0
     },
     textPrice: {
         marginLeft : 14,
@@ -196,7 +227,9 @@ export const styleAttractionPage = StyleSheet.create({
         height: 55,
         borderWidth: 0,
         borderRadius: 50,
-        backgroundColor: '#FF852C'
+        backgroundColor: '#FF852C',
+        justifyContent: 'center',
+        alignItems: 'center'
     },
 
     viewAttractions: {

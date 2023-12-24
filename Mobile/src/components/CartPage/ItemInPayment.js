@@ -21,7 +21,7 @@ export default ItemInCart = ({data}) => {
             <View style = {style.viewTop}>
                 
                 <View style = {style.viewImage}>
-                    <Image style = {{width: 90, height: 80}} source={{
+                    <Image style = {{width: 90, height: 80, borderRadius: 10}} source={{
                         uri: data.image
                         }}/>
                 </View>
@@ -51,7 +51,7 @@ const style = StyleSheet.create({
         width: 380,
         height: 120,
         borderWidth: 0,
-        marginLeft: (width-380)/2,
+        
         backgroundColor: 'rgba(0,0,0,0.0)',
         marginTop: 10,
         marginBottom: 5,

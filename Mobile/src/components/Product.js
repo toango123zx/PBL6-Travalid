@@ -13,7 +13,7 @@ export default AttractionComponent = ({productData}) => {
       navigation.navigate('DetailsPage',{id});
     };
     return(
-        <TouchableOpacity onPress={handlePress} style = {styleAttraction.View}>
+        <TouchableOpacity onPress={handlePress} style = {{...styleAttraction.View, marginTop: 5}}>
             <View style = {styleAttraction.viewPicture}>
                 <Image style = {{...styleAttraction.image, borderRadius: 10}} source={{
                     uri: productData.image

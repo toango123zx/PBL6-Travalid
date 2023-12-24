@@ -27,7 +27,7 @@ export const styleProfilePage = StyleSheet.create({
     viewAvatar: {
         width: 105,
         height: 105,
-        marginTop: 45 + statusBarHeight,
+        marginTop: 0 + statusBarHeight,
         borderWidth: 0,
         justifyContent: 'center',
         alignItems: 'center',
@@ -51,7 +51,7 @@ export const styleProfilePage = StyleSheet.create({
     },
     viewBtnProfile: {
         width: 370,
-        height: 65.8,
+        height: 55,
         marginTop: 24,
         borderWidth: 0,
         marginLeft: (width-370)/2 ,
@@ -60,31 +60,31 @@ export const styleProfilePage = StyleSheet.create({
     },
     BtnProfile: {
         width: 370,
-        height: 65.8,
+        height: 55,
         alignItems: 'center',
         flexDirection: 'row',
         borderWidth: 0,
-        borderRadius: 20,
+        borderRadius: 15,
         backgroundColor: '#F7F7F9',
         elevation: 5,
     },
     viewBtnBill: {
         width: 370,
-        height: 65.8,
+        height: 55,
         marginTop: 13.2,
         borderWidth: 0,
         marginLeft: (width-370)/2 
     },
     viewBtnSetting: {
         width: 370,
-        height: 65.8,
+        height: 55,
         marginTop: 13.2,
         borderWidth: 0,
         marginLeft: (width-370)/2 
     },
     viewBtnVersion: {
         width: 370,
-        height: 65.8,
+        height: 55,
         marginTop: 13.2,
         borderWidth: 0,
         marginLeft: (width-370)/2 

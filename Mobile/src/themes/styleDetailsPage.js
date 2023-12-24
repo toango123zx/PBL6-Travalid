@@ -17,7 +17,7 @@ export const styleDetailsPage = StyleSheet.create({
         borderWidth: 0,
         top: statusBarHeight,
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         alignItems: 'center',
         marginTop: 10,
         
@@ -28,7 +28,9 @@ export const styleDetailsPage = StyleSheet.create({
         borderRadius: 24,
         backgroundColor: '#FF852C',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        position: 'absolute',
+        left: 0,
     },
     btnTB:{
         width: 48,
@@ -36,7 +38,9 @@ export const styleDetailsPage = StyleSheet.create({
         borderRadius: 24,
         backgroundColor: '#F7F7F9',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        position: 'absolute',
+        right: 0
     },
     viewMenu: {
         width: width - 9,
@@ -204,10 +208,10 @@ export const styleInfoPage = StyleSheet.create({
     },
     viewInfo: {
         width: 380,
-        height: 270,
+        height: 230,
         borderWidth: 0,
         marginLeft: (width-380)/2,
-        marginBottom: 50,
+        marginBottom: 0,
         
     },
     textDes: {

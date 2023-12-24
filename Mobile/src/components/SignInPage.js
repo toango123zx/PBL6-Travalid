@@ -153,13 +153,12 @@ const Mid = ({setEmail, setPassword, email, password}) => {
         <View style = {styleMidSIPage.View}>
             <View style = {styleMidSIPage.viewUserName}>
             <TextInput
-                    
-                    placeholder={'E-mail'}
-                    placeholderTextColor={'#7D848D'}
-                    style={styleMidSIPage.textInputUserName}
-                    onChangeText={setEmail}
-                    value={email}
-                />
+                placeholder={'E-mail'}
+                placeholderTextColor={'#7D848D'}
+                style={styleMidSIPage.textInputUserName}
+                onChangeText={setEmail}
+                value={email}
+            />
             </View>
             <View style = {styleMidSIPage.viewPassword}>
                 <TextInput 

@@ -1,15 +1,21 @@
 import React from "react";
 import {useState, useEffect} from "react";
 import AttractionComponent from "./Product";
-import {View, Text, TextInput, TouchableOpacity, Modal, FlatList, Image, ScrollView, SafeAreaView, StatusBar} from 'react-native'
+import {View, Text, TextInput, TouchableOpacity, Modal, FlatList, Image, ScrollView, SafeAreaView, StatusBar, StyleSheet} from 'react-native'
 import { styleAttractionPage } from "../themes/styleAttractionPage";
+import Icon from 'react-native-vector-icons/Ionicons'
 import authApi from "../API/auth";
+import { useFocusEffect } from "@react-navigation/native";
+import { Dropdown } from "react-native-element-dropdown";
+import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 export default AttractionPage = () => {
     const [place, setPlace] = useState(placeData);
     const [minPrice, setMinPrice] = useState('');
     const [maxPrice, setMaxPrice] = useState('');
     const [modalVisible, setModalVisible] = useState(false)
     const [productData, setProductData] = useState([])
+    const navigation = useNavigation()
     const handlePlaceClick = () => {
         setModalVisible(true);
       };
@@ -30,6 +36,23 @@ export default AttractionPage = () => {
         console.log("-----------------------------------------------------")
         getAllProduct();
     },[])
+    const [showProfile, setShowProfile] = useState(false);
+    
+    useFocusEffect(
+        React.useCallback(() => {
+        const checkUserToken = async () => {
+            try {
+            const token = await AsyncStorage.getItem('userToken');
+            setShowProfile(!!token);
+            //console.log(token);
+            } catch (error) {
+            console.error('Lỗi khi kiểm tra userToken:', error);
+            }
+        };
+
+        checkUserToken();
+        }, [])
+    );
     const placeData = [
         { id: 1, name: 'Place 1' },
         { id: 2, name: 'Place 2' },
@@ -43,11 +66,30 @@ export default AttractionPage = () => {
             image: 'https://dfstudio-d420.kxcdn.com/wordpress/wp-content/uploads/2019/06/digital_camera_photo-1080x675.jpg'
         }
     ]
+    const [value, setValue] = useState('Place');
+    const data = [
+        { label: 'Latest', value: '1' },
+        { label: 'Item 2', value: '2' },
+        { label: 'Item 3', value: '3' },
+    ];
     return(
         <SafeAreaView style = {styleAttractionPage.View}>
             <StatusBar translucent backgroundColor="transparent" />
-            <View style = {styleAttractionPage.viewText}>
-                <Text style = {styleAttractionPage.text} >Find the Adventure of a lifetime</Text>
+            <View style = {styleAttractionPage.viewHeader}>
+
+                <Text style = {styleAttractionPage.text} >Find the Attraction</Text>
+                {showProfile === true ?
+                (
+                    <TouchableOpacity style = {styleAttractionPage.btnNof}>
+                        <Icon name="notifications-outline" color="#000" size={25} />
+                    </TouchableOpacity>
+                ) : 
+                (
+                    <TouchableOpacity style = {styleAttractionPage.btnSignIn} onPress={()=>{navigation.navigate('SignInPage')}}>
+                        <Text style = {styleAttractionPage.textSignIn}>Sign In</Text>
+                    </TouchableOpacity>
+                )
+                }
             </View >
             <View style = {styleAttractionPage.viewSearchPlace}>
                 <View style = {styleAttractionPage.viewTextInput}>
@@ -59,28 +101,29 @@ export default AttractionPage = () => {
                         placeholderTextColor={'#7D848D'}
                     />
                 </View>
+                <View style = {{width: 120, height: 25, borderLeftWidth: 2, borderLeftColor: '#7D848D'}}></View>
+                <Dropdown
+                        style={style.dropdown}
+                        placeholderStyle={style.placeholderStyle}
+                        selectedTextStyle={style.selectedTextStyle}
+                        inputSearchStyle={style.inputSearchStyle}
+                        iconStyle={style.iconStyle}
+                        itemContainerStyle={style.itemsStyle}
+                        itemTextStyle={style.itemDropStyle}
+                        containerStyle={style.dropStyle}
+                        data={data}
+                        maxHeight={300}
+                        labelField="label"
+                        valueField="value"
+                        placeholder={'Place'}
+                        searchPlaceholder="Search..."
+                        value={value}
+                        onChange={item => {
+                        setValue(item.value);
+                        }}
+                    
+                    />
                 
-                <TouchableOpacity style = {styleAttractionPage.touchPlace} onPress={handlePlaceClick}>
-                    <Text style = {styleAttractionPage.textPlace}>Place  </Text>
-                    <Image source={require('../assets/images/downarrow.png')}/>
-                </TouchableOpacity>
-                <Modal
-                    animationType="slide"
-                    transparent={true}
-                    visible={modalVisible}
-                    onRequestClose={handleCloseModal}>
-                    <View style = {styleAttractionPage.viewModal}>
-                        <FlatList
-                            data = {placeData}
-                            keyExtractor={(item, index) => index.toString()}
-                            renderItem={({ item }) => (
-                                <View style = {styleAttractionPage.viewListPlace}>
-                                  <Text style = {styleAttractionPage.textListPlace}>{item.name}</Text>
-                                </View>
-                            )}
-                        />
-                    </View>
-                </Modal>
 
             </View>
 
@@ -105,7 +148,7 @@ export default AttractionPage = () => {
                 </View>
                 <View style = {styleAttractionPage.viewButtonSearch}>
                     <TouchableOpacity style = {styleAttractionPage.buttonSearch}>
-
+                        <Icon name = 'search-outline' color = '#FFF' size = {30}/>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -114,10 +157,72 @@ export default AttractionPage = () => {
                     {productData.map((productData) => (
                         <AttractionComponent key={productData.id_product} productData={productData} />
                     ))}
-                </View>                    
+                </View>
+                                    
             </ScrollView>
             
         </SafeAreaView>
         
     )
 }
+
+const style = StyleSheet.create({
+    dropdown: {
+        width: 120,
+        height: 55,
+        borderWidth: 0,
+        position: 'absolute',
+        borderRadius: 17.5,
+        right: 0,
+        alignItems: 'center'
+    },
+    icon: {
+        marginRight: 10,
+    },
+    placeholderStyle: {
+        fontSize: 16,
+        marginLeft: 20,
+        fontFamily: 'Montserrat SemiBold',
+        color: '#000',
+    },
+    selectedTextStyle: {
+        fontSize: 16,
+        marginLeft: 10,
+        fontFamily: 'Montserrat SemiBold',
+        color: '#000',
+    },
+    iconStyle: {
+        width: 30,
+        height: 30,
+        marginRight : 20,
+        
+    },
+    inputSearchStyle: {
+        height: 23,
+        fontSize: 16,
+        fontFamily: 'Montserrat SemiBold',
+    },
+    itemDropStyle: {
+        fontSize: 16,
+        fontFamily: 'Montserrat SemiBold',
+        color: '#000',
+        padding: 0,
+        position: 'absolute',
+        textAlign: 'center',
+        left: 13,
+       
+
+    },
+    itemsStyle: {
+        height: 30,
+        justifyContent: 'center',
+         borderRadius: 17.5,
+        
+       
+        
+    },
+    dropStyle: {
+        borderRadius: 17.5,
+    }
+
+})

@@ -1,16 +1,21 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
     ScrollView,View,Text, TouchableOpacity
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {styleInfoPage} from "../../themes/styleDetailsPage";
-export default InfoPage = ({product}) => {
+import Schedule from "./Schedule";
+import { useFocusEffect } from "@react-navigation/core";
+export default InfoPage = ({product,scheduleData, navigate}) => {
+    
     const product1 = [
         {
             name: "trung",
             city: "ga"
         }
     ]
+
+    
     return(
         
         <ScrollView style = {styleInfoPage.scrollView}>
@@ -50,9 +55,16 @@ export default InfoPage = ({product}) => {
                     <Text style = {styleInfoPage.textDetails2}>24</Text>
                 </View>
                 <View style = {styleInfoPage.viewDetails}>
-                    <Text style = {styleInfoPage.textDetails1}>Location on map</Text>
+                    <Text style = {styleInfoPage.textDetails1}></Text>
                     <Text style = {styleInfoPage.textDetails2}>{product.location_map}</Text>
                 </View>
+            </View>
+
+            {(scheduleData).map((scheduleData) => (
+                <Schedule key={scheduleData.id_schedule_product} scheduleData={scheduleData} product = {product} navigate = {navigate} />
+            ))}
+            <View style = {{height: 100}}>
+                
             </View>
         </ScrollView>   
        

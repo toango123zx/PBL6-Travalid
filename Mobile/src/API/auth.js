@@ -6,7 +6,8 @@ const authApi = {
     getAllDiscount: () => axiosClient.get('discount/all'),
     getProduct:() => axiosClient.get('product'),
     getDetailProduct: (id) => axiosClient.get('product/'+ id),
-    getProfileUser: (headers) => axiosClient.get('user/me', {headers})
+    getProfileUser: (headers) => axiosClient.get('user/me', {headers}),
+    getProductBySupplier: (page, headers) => axiosClient.get('product/supplier?page='+page, {headers})
 
 }
 export default authApi

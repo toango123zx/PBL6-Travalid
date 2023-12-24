@@ -7,26 +7,28 @@ import authApi from "../API/auth";
 import Attraction from "./Product";
 import { useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 const statusBarHeight = StatusBar.currentHeight || 0;
 
 export default HomePage = () => {
     const [productData, setProductData] = useState([])
     const [showProfile, setShowProfile] = useState(false);
-  useFocusEffect(
-    React.useCallback(() => {
-      const checkUserToken = async () => {
-        try {
-          const token = await AsyncStorage.getItem('userToken');
-          setShowProfile(!!token);
-          //console.log(token);
-        } catch (error) {
-          console.error('Lỗi khi kiểm tra userToken:', error);
-        }
-      };
+    const navigation = useNavigation()
+    useFocusEffect(
+        React.useCallback(() => {
+        const checkUserToken = async () => {
+            try {
+            const token = await AsyncStorage.getItem('userToken');
+            setShowProfile(!!token);
+            //console.log(token);
+            } catch (error) {
+            console.error('Lỗi khi kiểm tra userToken:', error);
+            }
+        };
 
-      checkUserToken();
-    }, [])
-  );
+        checkUserToken();
+        }, [])
+    );
     useEffect(()=>{
 
         const getAllProduct = async () => {
@@ -188,8 +190,10 @@ export default HomePage = () => {
                     </View>  
                 </View>
             </ScrollView>
-            <View style = {styleHomePage.view}>
-                {showProfile === true ? (<View style = {styleHomePage.viewUser}>
+            {showProfile === true ? 
+            (<View style = {styleHomePage.view}>
+                
+                <View style = {styleHomePage.viewUser}>
                     <View style = {styleHomePage.imageUser}>
                         
                     </View>
@@ -197,7 +201,7 @@ export default HomePage = () => {
                         <Text style = {styleHomePage.textUserName}>{user.name}</Text>
                     </View>
                     
-                </View>): null}
+                </View>
                 <View style = {styleHomePage.viewNofitication}>
                     <TouchableOpacity>
                         <Text><Icon name="notifications-outline" color="#000" size={25} /></Text>
@@ -205,7 +209,31 @@ export default HomePage = () => {
                     
                     {/* <Image source={require('../assets/images/menu-notifications.png')}/> */}
                 </View>
-            </View>
+            </View> ): 
+            (<View style = {styleHomePage.view}>
+                    <TouchableOpacity 
+                    style = {{
+                        width: 100,
+                        height: 38,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        position: 'absolute',
+                        top: 5,
+                        right: 0,
+                        backgroundColor: '#FF852C',
+                        borderRadius: 18
+                    }}
+                    onPress={() => {navigation.navigate('SignInPage')}}>
+                        <Text style = {{
+                            color: '#FFF',
+                            fontFamily: 'Montserrat SemiBold',
+                            fontSize: 16,
+                            letterSpacing: 0.6
+                        }}>Sign In</Text>
+                    </TouchableOpacity>
+                    
+                    {/* <Image source={require('../assets/images/menu-notifications.png')}/> */} 
+            </View> )}
         </SafeAreaView>
     )
 }

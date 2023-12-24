@@ -30,10 +30,11 @@ export default BookingCartPage = ({route}) => {
     const navigation = useNavigation(); // Sử dụng hook navigation
 
     const goToPaymentPage = () => {
-      navigation.navigate('PaymentPage', {dataPayment});
+        // console.log("data:  "+ JSON.stringify(dataPayment,null,3))
+      navigation.navigate('PaymentPage',{dataList: JSON.stringify(dataPayment)});
     };
     useEffect(() => {
-        
+        console.log("trung")
         if (data) {
             setDataList((prevList) => [...prevList, data]);
             
@@ -141,7 +142,7 @@ export default BookingCartPage = ({route}) => {
                     </View>
                     <TouchableOpacity style = {styleCartPage.btnCheckOut} onPress={goToPaymentPage}>
                         <Text style = {styleCartPage.textCheckOut}>Check out</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> 
                 </View>
             </View>
             
