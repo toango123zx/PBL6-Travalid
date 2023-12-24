@@ -24,7 +24,7 @@ export const getDiscountsForTraveller = async (req, res) => {
 export const getDiscountsForSupplier = async (req, res) => {
     const __user = req.user;
     const __start = req.start;
-    let __discounts = await discountService.getDiscounts(__user.id_user, __start);
+    let __discounts = await discountService.getDiscountsByIdUser(__user.id_user, __start);
     if (!__discounts) {
         return res.status(404).json({
             position: "id user",

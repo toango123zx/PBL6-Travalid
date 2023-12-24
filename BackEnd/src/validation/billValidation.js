@@ -67,6 +67,6 @@ export const checkPage = (req, res, next) => {
         __page = 1;
     };
 
-    req.start = (__page - 1) * envApp.LimitGetDiscount;
+    req.start = (__page - 1) * envApp.LimitGetBill;
     next();
-}
+};

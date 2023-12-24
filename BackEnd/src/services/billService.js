@@ -1,6 +1,10 @@
+import * as envApp from '../config/envApp';
+
 const { prisma } = require('../config/prismaDatabase');
 
-export const getBills = async (id_user, id_supplier) => {
+const limnit = envApp.LimitGetDiscount;
+
+export const getBills = async (id_user, id_supplier, start) => {
     if (id_user && id_supplier) {
         return false;
     };
@@ -22,7 +26,12 @@ export const getBills = async (id_user, id_supplier) => {
                 quantity: true,
                 status: true,
             },
-            where: __where
+            skip: start,
+            take: limnit,
+            where: __where,
+            orderBy: {
+                time: "desc"
+            }
         });
     } catch (e) {
         return false;

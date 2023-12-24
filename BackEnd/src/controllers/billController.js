@@ -8,7 +8,8 @@ const lodash = require('lodash');
 
 export const getPurchaseBills = async (req, res) => {
     const __user = req.user;
-    const __bills = await billService.getBills(__user.id_user);
+    const __start = req.start;
+    const __bills = await billService.getBills(__user.id_user, undefined, __start);
     if (!__bills) {
         return res.status(500).json({
             position: "Pisma query bills",
@@ -22,7 +23,8 @@ export const getPurchaseBills = async (req, res) => {
 
 export const getSellBills = async (req, res) => {
     const __user = req.user;
-    const __bills = await billService.getBills(undefined, __user.id_user);
+    const __start = req.start;
+    const __bills = await billService.getBills(undefined, __user.id_user, __start);
     if (!__bills) {
         return res.status(500).json({
             position: "Pisma query bills",
@@ -152,21 +154,19 @@ export const createBill = async (req, res) => {
     };
 
     delete __bill.id_schedule_product;
-    __bill.total = __bill.cost + __bill.discount_value;
+    __bill.total = __bill.cost - __bill.discount_value;
     __prosmise = null;
     __prosmise = [];
     if (__user.balance >= Number(__bill.total)) {
         __user.balance -= Number(__bill.total)
         __bill.status = "paided";
-        __prosmise.push(userService.updateUser(__user.id_user, __user.balance))
+    __prosmise.push(userService.updateUser(__user.id_user, { balance: Number(__user.balance) }));
     };
 
     delete __bill.cost;
     delete __bill.total;
 
-    __prosmise.push(userService.updateUser(__user.id_user, { balance: Number(__user.balance) }));
-
-    
+    __prosmise.push(billService.createBill(__bill));
     await Promise.allSettled(__prosmise)
         .then((result) => {
             if (result.length == 2) {
