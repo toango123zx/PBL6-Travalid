@@ -98,7 +98,7 @@ export const getDetailBill = async (id_bill, id_user) => {
                         id_user: Number(id_user)
                     },
                     {
-                        id_bill: id_bill,
+                        id_bill: Number(id_bill),
                         id_supplier: Number(id_user),
                     }
                 ]
@@ -123,7 +123,7 @@ export const updateBillStatus = async (id_bill, id_user, status) => {
             __status = 'pending';
             break;
         case 'pending':
-            return false;
+            __status = 'pending';
         case 'cancel':
             __status = 'pending';
             break;
@@ -133,7 +133,7 @@ export const updateBillStatus = async (id_bill, id_user, status) => {
     try {
         await prisma.bill.update({
             where: {
-                id_bill: id_bill,
+                id_bill: Number(id_bill),
                 status: __status,
                 OR: [
                     {

@@ -52,24 +52,6 @@ export const getDetailBill = async (req, res) => {
     });
 };
 
-export const cancelBill = async (req, res) => {
-    const __id_bill = Number(req.params.id);
-    const __user = req.user;
-    switch (await billService.updateBillStatus(__id_bill, __user.id_user, 'cancel')) {
-        case true:
-            return res.sendStatus(200);
-        case false:
-            return res.status(403).json({
-                position: "Id bill",
-                msg: "The user does not have permission to update this resource"
-            });
-        case null:
-            return res.status(422).json({
-                position: "Bill status",
-                msg: "Invalid bill status"
-            });
-    };
-};
 
 export const createBill = async (req, res) => {
     let __user = req.user;
@@ -160,7 +142,7 @@ export const createBill = async (req, res) => {
     if (__user.balance >= Number(__bill.total)) {
         __user.balance -= Number(__bill.total)
         __bill.status = "paided";
-    __prosmise.push(userService.updateUser(__user.id_user, { balance: Number(__user.balance) }));
+        __prosmise.push(userService.updateUser(__user.id_user, { balance: Number(__user.balance) }));
     };
 
     delete __bill.cost;
@@ -191,4 +173,108 @@ export const createBill = async (req, res) => {
             };
         });
     return;
+};
+
+export const payBill = async (req, res) => {
+    const dataFromDb = await Promise.allSettled([
+        userService.getUser(req.user.username),
+        billService.getDetailBill(req.params.id, req.user.id_user)
+    ])
+        .then((result) => {
+            if (!result[1].value) {
+                res.status(404).json({
+                    position: "Error: Bill id",
+                    msg: "This resource does not exist"
+                });
+
+                return false;
+            };
+            if (result[1].value.status !== "pending") {
+                res.status(403).json({
+                    position: "Error: Bill status",
+                    msg: "The user does not have permission to update billing information for this resource"
+                });
+
+                return false;
+            };
+            const dateNow = new Date();
+            for (const scheduleProduct of result[1].value.info_bill) {
+                if (new Date(scheduleProduct.schedule_product.start_time) <= dateNow) {
+                    res.status(409).json({
+                        position: "Error: start time for schedule prodcut in the bill",
+                        msg: "There exists a schedule whose start time has elapsed"
+                    });
+
+                    return false;
+                };
+            };
+
+            return [result[0].value, billHelper.formatBillFormDb(result[1].value)];
+        });
+    if (!dataFromDb) {
+        return;
+    };
+    const [__user, __bill] = dataFromDb;
+
+    if (__user.balance <= Number(__bill.total)) {
+        return res.status(409).json({
+            position: "Error: Pay bill",
+            msg: "Bill payment failed due to insufficient user account balance"
+        });
+    };
+
+    __user.balance -= Number(__bill.total);
+    const __total = __bill.total;
+    delete __bill.cost;
+    delete __bill.total;
+
+    await Promise.allSettled([
+        billService.updateBillStatus(__bill.id_bill, __user.id_user, "paided"),
+        userService.updateUser(__user.id_user, { balance: Number(__user.balance) })
+    ])
+        .then(async (result) => {
+            const __status = String(result[0].value) + String(result[1].value);
+            switch (__status) {
+                case "truetrue":
+                    return res.sendStatus(200);
+                case "truefalse":
+                    await billService.updateBillStatus(__bill, __bill.id_user, "pending");
+                    return res.status(500).json({
+                        position: "Error: Prisma Update User balance",
+                        msg: "Error from the server"
+                    });
+                case "falsetrue":
+                    await userService.updateUser(__user.id_user, { balance: Number(__user.balance) + Number(__total) });
+                    return res.status(403).json({
+                        position: "Error: Prisma upadate bill status",
+                        msg: "The user does not have permission to update this resource"
+                    });
+                case "falsefalse":
+                    return res.status(500).json({
+                        position: "Error: Prisma Update User balance and upadate bill status",
+                        msg: "Error from the server"
+                    });
+            };
+        });
+
+    return;
+};
+
+export const cancelBill = async (req, res) => {
+    const __id_bill = Number(req.params.id);
+    const __user = req.user;
+    switch (await billService.updateBillStatus(__id_bill, __user.id_user, 'cancel')) {
+        case true:
+            return res.sendStatus(200);
+        case false:
+            return res.status(403).json({
+                position: "Id bill",
+                msg: "The user does not have permission to update this resource"
+            });
+        case null:
+            return res.status(422).json({
+                position: "Bill status",
+                msg: "Invalid bill status"
+            });
+    };
 };
