@@ -15,11 +15,25 @@ export const getAllRates = async (id_product, start, limit) => {
     }
 };
 
+export const getAllRateProduct = async (id_product) => {
+    try {
+        return await prisma.rate.findMany({
+            where: {
+                id_product: id_product,
+                status: 'display'
+            }
+        });
+    } catch (error) {
+        return false;
+    }
+};
+
 export const getRateById = async (id_rate) => {
     try {
         return await prisma.rate.findUnique({
             where: {
-                id_rate: id_rate
+                id_rate: id_rate,
+                status : 'display'
             },
             select: {
                 id_rate: true
@@ -39,7 +53,6 @@ export const createRate = async (data) => {
         return false;
     }
 }
-
 
 export const deleteRate = async (id_rate) => {
     try {
