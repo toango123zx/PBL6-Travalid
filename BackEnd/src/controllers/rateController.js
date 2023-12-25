@@ -1,5 +1,6 @@
 import * as rateService from '../services/rateService';
 import * as envApp from '../config/envApp';
+const { rateCreateValidate} = require('../validation/rateValidation');
 
 export const getAllRate = async (req, res, next) => {
     try {
@@ -43,6 +44,12 @@ export const createRate = async (req, res, next) => {
             id_product: id_product,
             comment: comment,
             star: star
+        }
+        const { error } = rateCreateValidate(data);
+        if (error) {
+            return res.status(422).json({
+                msg: error.details[0].message
+            })
         }
         const quantityComplete = await rateService.getComplete(id_user, id_product);
         const quantityRate = await rateService.getQuantityRate(id_user, id_product);
