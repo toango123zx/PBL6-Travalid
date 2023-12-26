@@ -24,7 +24,7 @@ export const getDiscountsForTraveller = async (req, res) => {
 export const getDiscountsForSupplier = async (req, res) => {
     const __user = req.user;
     const __start = req.start;
-    let __discounts = await discountService.getDiscounts(__user.id_user, __start);
+    let __discounts = await discountService.getDiscountsByIdUser(__user.id_user, __start);
     if (!__discounts) {
         return res.status(404).json({
             position: "id user",
@@ -61,7 +61,7 @@ export const getDetailDiscount = async (req, res) => {
 
 /**
  * Code is only valid during the validity period + depending on the product
- */
+*/
 
 export const createDiscount = async (req, res) => {
     const __user = req.user;
@@ -78,14 +78,17 @@ export const createDiscount = async (req, res) => {
     const __product = await productService.getProductById(__discount.id_product);
 
     if (!__product) {
-        if (!(__user.role === 'admin' || __discount.id_user !== __product.user.id_user)) {
-            return res.status(403).json({
-                position: "Id discount",
-                msg: "The user does not have permission to update this resource"
-            });
-        };
+        return res.status(409).json({
+            position: "Id product",
+            msg: "Id product not found"
+        });
     };
-
+    if (!(__user.role === 'admin' || __discount.id_user !== __product.user.id_user)) {
+        return res.status(403).json({
+            position: "Id discount",
+            msg: "The user does not have permission to update this resource"
+        });
+    };
     if (await discountService.createDiscount(__discount)) {
         return res.sendStatus(200);
     };
