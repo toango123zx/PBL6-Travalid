@@ -274,7 +274,7 @@ enum Transaction_status {
 }
 
 model transactions {
-  id_transactions     Int                @id @default(autoincrement()) @db.UnsignedInt
+  id_transaction      Int                @id @default(autoincrement()) @db.UnsignedInt
   id_user             Int                @db.UnsignedInt
   user                User               @relation(fields: [id_user], references: [id_user])
   amount              Float              @default(0.0)

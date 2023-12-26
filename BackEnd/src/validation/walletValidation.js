@@ -5,12 +5,12 @@ const requestWithdrawalSchema = Joi.object({
         .integer()
         .min(10000)
         .required()
-        .label('amout error')
+        .label('amount error')
         .messages({
-            "number.base": "amout must be a number",
-            "number.integer": "amout must be an integer",
-            "number.min": "amout greater than the 10.000",
-            "any.required": "error due to input data missing amout"
+            "number.base": "amount must be a number",
+            "number.integer": "amount must be an integer",
+            "number.min": "amount greater than the 10.000",
+            "any.required": "error due to input data missing amount"
         }),
     bank_account_number: Joi.string()
         .required()
