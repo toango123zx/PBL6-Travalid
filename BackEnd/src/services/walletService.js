@@ -39,3 +39,13 @@ export const getTransactions = async (id_user, action, status, start) => {
         return false;
     };
 };
+
+export const createRequestWithdrawal = async (requestWithdrawal) => {
+    try {
+        return await prisma.transactions.create({
+            data: requestWithdrawal
+        });
+    } catch (e) {
+        return false;
+    };
+};
