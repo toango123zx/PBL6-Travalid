@@ -9,5 +9,6 @@ import * as pageValidation from '../validation/pageValidation';
 walletRouter.get('/', authMiddleware.verifyToken, pageValidation.checkPageWallet, walletController.getTransactions);
 walletRouter.post('/request-withdrawal', authMiddleware.verifyToken, walletValidation.createRequestWithdrawalValidation, walletController.createRequestWithdrawal);
 walletRouter.patch('/accept-request/:id', authMiddleware.verifyToken, authMiddleware.checkAdminRole, walletController.acceptRequest);
+walletRouter.patch('/reject-request/:id', authMiddleware.verifyToken, authMiddleware.checkAdminRole, walletController.rejectRequest);
 
 module.exports = walletRouter;

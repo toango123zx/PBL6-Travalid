@@ -49,7 +49,7 @@ export const acceptRequest = async (req, res) => {
             msg: "Your account balance is not enough to make the request"
         });
     };
-    __request.status = "accepted";
+
     Promise.allSettled([
         userService.updateUser(__user.id_user, { balance: __user.balance - Number(__request.amount) }),
         walletService.updateRequestWithdrawal(__request.id_transaction, "accepted")
@@ -80,4 +80,23 @@ export const acceptRequest = async (req, res) => {
         });
 
     return;
+};
+
+export const rejectRequest = async (req, res) => {
+    let __request = (await walletService.getTransactions(Number(req.params.id), undefined, "withdrawal", "waiting", req.start))[0];
+    if (!__request) {
+        return res.status(404).json({
+            position: "Error: id Request withdrawal not found",
+            msg: "Request withdrawal not found"
+        });
+    };
+    
+    if (!await walletService.updateRequestWithdrawal(__request.id_transaction, "rejected")) {
+        return res.status(500).json({
+            position: "Error: Reject request withdrawal with prisma",
+            msg: "Error from the server"
+        });
+    };
+    
+    return res.sendStatus(200);
 };
