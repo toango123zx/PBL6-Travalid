@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Text, View, StyleSheet, Image , Dimensions, TouchableOpacity} from 'react-native'
 const { width, height, scale } = Dimensions.get('window');
 const windowDimensions = Dimensions.get('window');
@@ -12,6 +12,9 @@ export default AttractionComponent = ({productData}) => {
         const id = productData.id_product
       navigation.navigate('DetailsPage',{id});
     };
+    useEffect(()=>{
+        console.log(productData.image)
+    },[])
     return(
         <TouchableOpacity onPress={handlePress} style = {{...styleAttraction.View, marginTop: 5}}>
             <View style = {styleAttraction.viewPicture}>

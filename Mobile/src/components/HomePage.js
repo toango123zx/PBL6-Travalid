@@ -12,23 +12,11 @@ const statusBarHeight = StatusBar.currentHeight || 0;
 
 export default HomePage = () => {
     const [productData, setProductData] = useState([])
+    const [user, setUser]= useState([]);
     const [showProfile, setShowProfile] = useState(false);
+    
     const navigation = useNavigation()
-    useFocusEffect(
-        React.useCallback(() => {
-        const checkUserToken = async () => {
-            try {
-            const token = await AsyncStorage.getItem('userToken');
-            setShowProfile(!!token);
-            //console.log(token);
-            } catch (error) {
-            console.error('Lỗi khi kiểm tra userToken:', error);
-            }
-        };
-
-        checkUserToken();
-        }, [])
-    );
+    
     useEffect(()=>{
 
         const getAllProduct = async () => {
@@ -40,26 +28,7 @@ export default HomePage = () => {
                 console.log(error)
             }
         }
-        
-        getAllProduct();
-    },[])
-    const [user, setUser]= useState([]);
-    useEffect( ()=>{
-        
         const getProfileUser = async () =>{
-
-            // const token = "bearer " + await AsyncStorage.getItem('userToken')
-            // //     console.log(token)
-            // axios.get('http://10.0.2.2:8000/user/me', {
-            //     headers:{
-            //         'token': token
-            //     }})
-            //     .then((res)=>{
-            //         console.log(res.data)
-            //     })
-            //     .catch((err)=>{
-            //         console.log(err)
-            //     })
             try {
                 
                 const token = "bearer " + await AsyncStorage.getItem('userToken')
@@ -75,8 +44,25 @@ export default HomePage = () => {
             }
         }
         getProfileUser()
-        console.log(user.image)
+        getAllProduct();
     },[])
+    
+    useFocusEffect(
+        React.useCallback(() => {
+        const checkUserToken = async () => {
+            try {
+            const token = await AsyncStorage.getItem('userToken');
+            setShowProfile(!!token);
+            setUser(user)
+            //console.log(token);
+            } catch (error) {
+            console.error('Lỗi khi kiểm tra userToken:', error);
+            }
+        };
+
+        checkUserToken();
+        }, [])
+    );
     const attractionData = [
         {
             id: 1,
@@ -119,6 +105,15 @@ export default HomePage = () => {
         }
 
     ]
+
+
+    if (user.name === 'underfined') {
+        return (
+            <View style = {{width: 400, height: 400, backgroundColor: '#000'}}>
+                
+            </View>
+        )
+    } else 
     return(
         <SafeAreaView style = {styleHomePage.View}>
             <StatusBar translucent backgroundColor="transparent" />
@@ -192,7 +187,6 @@ export default HomePage = () => {
             </ScrollView>
             {showProfile === true ? 
             (<View style = {styleHomePage.view}>
-                
                 <View style = {styleHomePage.viewUser}>
                     <View style = {styleHomePage.imageUser}>
                         

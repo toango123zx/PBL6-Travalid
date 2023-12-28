@@ -25,6 +25,7 @@ export default DetailsPage = ({route}) => {
     const [page, setPage] = useState('INFO');
     const [product, setProduct] = useState([])
     const [schedule, setSchedule] = useState([])
+    const [supplier, setSupplier] = useState([])
     const navigation = useNavigation();
     const handleBackPress = () => {
         // Thực hiện chuyển hướng về trang trước đó
@@ -55,13 +56,15 @@ export default DetailsPage = ({route}) => {
                 const res = await authApi.getDetailProduct(id)
                 setProduct(res.data.data)
                 setSchedule(res.data.data.schedule_product)
+                setSupplier(res.data.data.supplier)
+
             } catch (error) {
                 console.log(error)
             }
         }
         
         getDetailProduct();
-        console.log(schedule);
+        console.log(JSON.stringify(product, null, 2));
         
     },[])
     const [showModal, setShowModal] = useState (false);
@@ -206,7 +209,7 @@ export default DetailsPage = ({route}) => {
                 
             </View>
             
-            {page === INFO ? <InfoPage product={product} scheduleData ={schedule} navigate = {navigate} /> : page === RAITING ? <RaitingsPage product={product} /> : page === SUPPLIER ? <SupplierPage /> : null}
+            {page === INFO ? <InfoPage product={product} scheduleData ={schedule} navigate = {navigate} /> : page === RAITING ? <RaitingsPage product={product} /> : page === SUPPLIER ? <SupplierPage supplier = {supplier}/> : null}
             <View style = {styleDetailsPage.viewAddTour}>
                 <View style = {{position: 'absolute', width: 90, height: 20, marginTop: 15, left: 95, borderLeftWidth: 1, borderRightWidth: 1, borderLeftColor: 'rgba(128, 128, 128, 0.6)', borderRightColor: 'rgba(128, 128, 128, 0.6)'}}></View>
                 <TouchableOpacity style = {styleDetailsPage.viewDateTime} onPress={() => setShowModal(true)}>

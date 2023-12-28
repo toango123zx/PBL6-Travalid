@@ -45,6 +45,7 @@ export default Schedule = ({scheduleData, product, navigate}) => {
     }
     const goToCart = ()=> {
         dispatch(setSharedData(dataToSend));
+        console.log ('Data da gui di: '+dataToSend)
         if(navigate===false) navigation.navigate('SignInPage')
     }
     return(

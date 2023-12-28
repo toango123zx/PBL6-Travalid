@@ -190,8 +190,8 @@ export const styleInfoPage = StyleSheet.create({
 
     },
     viewImage: {
-        height: 70,
-        borderWidth: 0,
+        height: 100,
+        borderWidth: 0 ,
         marginTop: 16.65,
         flexDirection: 'row',
         marginLeft: (width-380)/2
@@ -202,7 +202,7 @@ export const styleInfoPage = StyleSheet.create({
         width: 380,
         height: 156,
         borderWidth: 0,
-        marginTop: 60,
+        marginTop: 30,
         marginLeft: (width-380)/2
         
     },

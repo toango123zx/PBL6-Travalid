@@ -37,7 +37,7 @@ export default BookingCartPage = ({route}) => {
         console.log("trung")
         if (data) {
             setDataList((prevList) => [...prevList, data]);
-            
+            console.log('Data nhan duoc: '+data)  
         }
       }, [data]);
     useEffect(() => {
@@ -87,7 +87,7 @@ export default BookingCartPage = ({route}) => {
                 {data && (  
                     dataList.map((item) => (
                         <View>
-                            <ItemInCart key={item.id} data={item} onDelete={handleDelete} onAddtoPayment={handleAddToPayment} onRemoveInPayment={handleRemoveInPayment} />
+                            <ItemInCart key={item.id_schedule} data={item} onDelete={handleDelete} onAddtoPayment={handleAddToPayment} onRemoveInPayment={handleRemoveInPayment} />
                         </View>
                     ))
                 )}

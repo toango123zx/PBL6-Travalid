@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
-    ScrollView,View,Text, TouchableOpacity
+    ScrollView,View,Text, TouchableOpacity, Image
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {styleInfoPage} from "../../themes/styleDetailsPage";
@@ -8,14 +8,10 @@ import Schedule from "./Schedule";
 import { useFocusEffect } from "@react-navigation/core";
 export default InfoPage = ({product,scheduleData, navigate}) => {
     
-    const product1 = [
-        {
-            name: "trung",
-            city: "ga"
-        }
-    ]
 
-    
+    useEffect (()=>{
+        console.log(product.image);
+    },[])
     return(
         
         <ScrollView style = {styleInfoPage.scrollView}>
@@ -30,7 +26,9 @@ export default InfoPage = ({product,scheduleData, navigate}) => {
                 <Text style = {styleInfoPage.textSoLuong}>({product.count_rate})</Text>
             </View>
             <ScrollView style = {styleInfoPage.viewImage}>
-
+                <Image style = {{width: 100, height: 100, borderRadius: 10}} source={{
+                    uri: product.image
+                    }}/>
             </ScrollView>
             <View style = {styleInfoPage.viewMota}>
                 <Text style = {styleInfoPage.textMota}>{product.description}</Text>
@@ -55,7 +53,7 @@ export default InfoPage = ({product,scheduleData, navigate}) => {
                     <Text style = {styleInfoPage.textDetails2}>24</Text>
                 </View>
                 <View style = {styleInfoPage.viewDetails}>
-                    <Text style = {styleInfoPage.textDetails1}></Text>
+                    <Text style = {styleInfoPage.textDetails1}>Location on Map</Text>
                     <Text style = {styleInfoPage.textDetails2}>{product.location_map}</Text>
                 </View>
             </View>

@@ -46,7 +46,7 @@ export default PaymentPage = ({route}) => {
             
             <View style = {style.viewHeader}>
                 <TouchableOpacity style = {style.btnBack} onPress={handleBackPress}>
-                    <Icon name = 'chevron-back-outline' color = '#FFF' size = {30}/>
+                    <Icon name = 'chevron-back-outline' color = '#FFF' size = {25}/>
                 </TouchableOpacity>
                 <Text style = {style.textPayment}>Payment</Text>
             </View>
@@ -231,7 +231,7 @@ const style = StyleSheet.create({
         width: 48,
         height: 48,
         borderRadius: 24,
-        backgroundColor: '#FF6B00',
+        backgroundColor: '#FF852C',
         position: 'absolute',
         left: 0,
         justifyContent: 'center',
@@ -239,9 +239,10 @@ const style = StyleSheet.create({
         borderWidth: 0
     },
     textPayment: {
-        color: '#FF6B00',
-        fontSize: 22,
+        color: '#FF852C',
         fontFamily: 'Montserrat SemiBold',
+        letterSpacing: 1,
+        fontSize: 20,
         textAlign: 'center'
     },
     //BookerTour

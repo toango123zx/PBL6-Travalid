@@ -17,6 +17,7 @@ export default ItemInCart = ({data, onDelete, onAddtoPayment, onRemoveInPayment}
     const [select, setSelect] = useState(false)
     const handleDelete = () => {
         // Gọi hàm onDelete và truyền data để xóa mục khỏi danh sách
+        if (select===true) onRemoveInPayment(data);
         onDelete(data);
     };
     return(
@@ -56,7 +57,7 @@ export default ItemInCart = ({data, onDelete, onAddtoPayment, onRemoveInPayment}
                 </View>
             </View>
             <View style = {style.viewBottom}>
-                <Text style = {style.text}>{data.dayStart}/{data.monthStart}/{data.yearStart}, {data.hourStart}:{data.minStart}  to  {data.dayEnd}/{data.monthEnd}/{data.yearEnd}, {data.hourEnd}:{data.minEnd}</Text>
+                <Text style = {style.text}>{data.dayStart}/{data.monthStart}/{data.yearStart}, {data.hourStart}:{data.minStart}     to     {data.dayEnd}/{data.monthEnd}/{data.yearEnd}, {data.hourEnd}:{data.minEnd}</Text>
             </View>
         </View>
     )

@@ -40,7 +40,7 @@ export default ItemInCart = ({data}) => {
                 
             </View>
             <View style = {style.viewBottom}>
-                <Text style = {style.text}>{data.dayStart}/{data.monthStart}/{data.yearStart}, {data.hourStart}:{data.minStart}  to  {data.dayEnd}/{data.monthEnd}/{data.yearEnd}, {data.hourEnd}:{data.minEnd}</Text>
+                <Text style = {style.text}>{data.dayStart}/{data.monthStart}/{data.yearStart}, {data.hourStart}:{data.minStart}     to     {data.dayEnd}/{data.monthEnd}/{data.yearEnd}, {data.hourEnd}:{data.minEnd}</Text>
             </View>
         </View>
     )

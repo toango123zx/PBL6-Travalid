@@ -17,6 +17,7 @@ import InfoPage from './DetailPage/InfoPage';
 import DetailsPage from './DetailPage/DetailsPage';
 import ProfilePage from './ProfilePage/ProfilePage';
 import SplishPage from './SplishPage'
+import AddDiscountPage from './ProductsSupplierPage/AddDiscountPage';
 import SignInPage from './SignInPage';
 import SignUpPage from './SignUp/SignUpPage';
 import ProfileDetails from './ProfilePage/ProfileDetails';
@@ -94,6 +95,7 @@ function MyTabBar({ state, descriptors, navigation }) {
                                     index ==3 ? styleTabBar.discount : styleTabBar.profile ;
             return (
               <TouchableOpacity
+                key = {route.key}
                 accessibilityRole="button"
                 accessibilityState={isFocused ? { selected: true } : {}}
                 accessibilityLabel={options.tabBarAccessibilityLabel}
@@ -170,12 +172,13 @@ export default RootComponent = function(){
             <Stack.Screen name="BookingCartPage" component={BookingCartPage} />
             <Stack.Screen name="PaymentPage" component={PaymentPage} />
             <Stack.Screen name="EditProfile" component={EditProfile} />
-            <Stack.Screen name="InfoPageSU" component={InfoPageSU} />
+            <Stack.Screen name="InfoPageSU" component={InfoPageSU}/>
             <Stack.Screen name="DiscountDetail" component={DiscountDetail} />
             <Stack.Screen name="ProductSupplierPage" component={ProductSupplierPage} />
             <Stack.Screen name="AddProductPage" component={AddProductPage} />
             <Stack.Screen name="OrderHistoryPage" component={OrderHistoryPage} />
             <Stack.Screen name="BillDetailPage" component={BillDetailPage} />
+            <Stack.Screen name="AddDiscountPage" component={AddDiscountPage}/>
 
 
           </Stack.Navigator>
