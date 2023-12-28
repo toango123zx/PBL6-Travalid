@@ -262,10 +262,25 @@ model Destroy {
   category   Destroy_Category
 }
 
+enum Transaction_action {
+  deposit
+  withdrawal
+}
+
+enum Transaction_status {
+  waiting
+  accepted
+  rejected
+}
+
 model transactions {
-  id_transactions Int    @id @default(autoincrement()) @db.UnsignedInt
-  id_user         Int    @db.UnsignedInt
-  user            User   @relation(fields: [id_user], references: [id_user])
-  amount          Float  @default(0.0)
-  time            String @db.Text
+  id_transaction      Int                @id @default(autoincrement()) @db.UnsignedInt
+  id_user             Int                @db.UnsignedInt
+  user                User               @relation(fields: [id_user], references: [id_user])
+  amount              Float              @default(0.0)
+  time                String             @db.Text
+  bank_account_number String?
+  bank_name           String?
+  action              Transaction_action @default(deposit)
+  status              Transaction_status @default(accepted)
 }

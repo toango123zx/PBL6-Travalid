@@ -62,7 +62,7 @@ export const createBill = async (req, res) => {
 
     let __prosmise = [
         scheduleProductService.getSchedulesProduct(__bill.id_schedule_product, __user.id_user, "traveller"),
-        userService.getUser(__user.username),
+        userService.getUser(undefined, __user.username),
     ];
     if (__bill.id_discount) {
         __prosmise.push(await discountService.getDiscounts(__bill.id_discount, undefined, undefined, __bill.id_schedule_product));
@@ -177,7 +177,7 @@ export const createBill = async (req, res) => {
 
 export const payBill = async (req, res) => {
     const dataFromDb = await Promise.allSettled([
-        userService.getUser(req.user.username),
+        userService.getUser(undefined, req.user.username),
         billService.getDetailBill(req.params.id, req.user.id_user)
     ])
         .then((result) => {

@@ -6,6 +6,7 @@ export const LimitGetProductTraveller = Number(process.env.LIMIT_GET_PRODUCT_TRA
 export const LimitGetProductSupplier = Number(process.env.LIMIT_GET_PRODUCT_SUPPLIER) || 20;
 export const LimitProductService = Number(process.env.LIMIT_PRODUCT_SERVICE) || 20;
 export const LimitGetDiscount = Number(process.env.LIMIT_GET_DISCOUNT) || 20;
+export const LimitGetTransaction = Number(process.env.LIMIT_GET_TRANSACTION) || 20;
 export const LimitGetRateTraveller = Number(process.env.LIMIT_GET_RATE_TRAVELLER) || 6;
 export const LimitGetBill = Number(process.env.LIMIT_GET_BILL) || 20;   
 export const expiresInAccessKey = String(process.env.EXPIRES_IN_ACCESS_KEY);

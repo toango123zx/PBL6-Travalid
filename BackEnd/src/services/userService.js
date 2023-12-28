@@ -1,8 +1,11 @@
 const { prisma } = require('../config/prismaDatabase');
 
-export const getUser = async (username, email, tax_id_number) => {
+export const getUser = async (id_user, username, email, tax_id_number) => {
     try {
         let __properties = [
+            {
+                id_user: id_user,
+            },
             {
                 username: username,
             },
