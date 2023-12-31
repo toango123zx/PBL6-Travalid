@@ -10,6 +10,9 @@ import * as envApp from './config/envApp';
 const route = require('./routes');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
+const cors = require('cors');
+app.use(cors());
+
 const options = {
   definition: {
     openapi: "3.0.3",

@@ -45,7 +45,7 @@ export const updateMyProfile = async (req, res) => {
     const __user = req.user;
     const __updateUserInfo = req.updateInfoUser;
     if (!__user.email) {
-        const __emailUser = await userService.getUser(undefined, __updateUserInfo.email);
+        const __emailUser = await userService.getUser(undefined, undefined, __updateUserInfo.email);
         if (__emailUser && __emailUser.id_user !== __user.id_user) {
             return res.status(409).json({
                 position: "email",
@@ -73,7 +73,7 @@ export const updateMyProfile = async (req, res) => {
 };
 
 export const updateUserPassword = async (req, res) => {
-    const __user = await userService.getUser(req.user.username);
+    const __user = await userService.getUser(undefined, req.user.username);
 
     if (!(hash.comparePassword(__user.password, __user.salt, req.body.currentPassword))) {
         return res.status(401).json({

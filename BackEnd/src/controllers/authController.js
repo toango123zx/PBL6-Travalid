@@ -65,7 +65,7 @@ export const signIn = async (req, res, next) => {
     const __username = req.body.username.replace(/\s/g, '');
     const __password = req.body.password;
 
-    const __user = await userService.getUser(__username, "", "");
+    const __user = await userService.getUser(undefined, __username, "", "");
     if (__user === false) {
         return res.status(500).json({
             position: "Prisma query User",

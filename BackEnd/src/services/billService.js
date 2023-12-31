@@ -1,6 +1,10 @@
+import * as envApp from '../config/envApp';
+
 const { prisma } = require('../config/prismaDatabase');
 
-export const getBills = async (id_user, id_supplier) => {
+const limnit = envApp.LimitGetDiscount;
+
+export const getBills = async (id_user, id_supplier, start) => {
     if (id_user && id_supplier) {
         return false;
     };
@@ -22,7 +26,12 @@ export const getBills = async (id_user, id_supplier) => {
                 quantity: true,
                 status: true,
             },
-            where: __where
+            skip: start,
+            take: limnit,
+            where: __where,
+            orderBy: {
+                time: "desc"
+            }
         });
     } catch (e) {
         return false;
@@ -89,7 +98,7 @@ export const getDetailBill = async (id_bill, id_user) => {
                         id_user: Number(id_user)
                     },
                     {
-                        id_bill: id_bill,
+                        id_bill: Number(id_bill),
                         id_supplier: Number(id_user),
                     }
                 ]
@@ -114,7 +123,7 @@ export const updateBillStatus = async (id_bill, id_user, status) => {
             __status = 'pending';
             break;
         case 'pending':
-            return false;
+            __status = 'pending';
         case 'cancel':
             __status = 'pending';
             break;
@@ -124,7 +133,7 @@ export const updateBillStatus = async (id_bill, id_user, status) => {
     try {
         await prisma.bill.update({
             where: {
-                id_bill: id_bill,
+                id_bill: Number(id_bill),
                 status: __status,
                 OR: [
                     {

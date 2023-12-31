@@ -65,6 +65,16 @@ export const verifyToken = (req, res, next) => {
     };
 };
 
+export const checkTravellerRole = async (req, res, next) => {
+    if (req.user.role === "traveller") {
+        return next();
+    };
+    return res.status(403).json({
+        position: "User role is not accessible",
+        msg: "Only travellers can use this function"
+    });
+};
+
 export const checkAdminRole = async (req, res, next) => {
     if (req.user.role === "admin") {
         return next();

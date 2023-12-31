@@ -1,5 +1,5 @@
 const { prisma } = require('../config/prismaDatabase');
-import  * as envApp from '../config/envApp';
+import * as envApp from '../config/envApp';
 
 const limnit = envApp.LimitGetDiscount;
 
@@ -38,7 +38,7 @@ export const getAllDiscount = async (start) => {
             orderBy: [
                 {
                     value: 'desc',
-                }, 
+                },
                 {
                     end_time: 'asc',
                 },
@@ -54,7 +54,7 @@ export const getAllDiscount = async (start) => {
     };
 };
 
-export const getDiscounts = async (id_user , start ) => {
+export const getDiscountsByIdUser = async (id_user, start) => {
     try {
         return prisma.discount.findMany({
             select: {
@@ -90,11 +90,11 @@ export const getDiscounts = async (id_user , start ) => {
                 },
                 {
                     value: 'desc',
-                }, 
+                },
                 {
                     quantity: 'desc'
                 }],
-                
+
         });
     } catch (e) {
         return false;
@@ -144,9 +144,9 @@ export const getDetailDiscount = async (id_discount) => {
     };
 };
 
-export const getDiscountbySchedulesProduct = async (id_discount, id_schedule_product) => {
+export const getDiscountbySchedulesProduct = async (id_discounts, id_schedule_products) => {
     try {
-        return await prisma.discount.findFirst({
+        return await prisma.discount.findMany({
             select: {
                 id_discount: true,
                 id_product: true,
@@ -157,7 +157,9 @@ export const getDiscountbySchedulesProduct = async (id_discount, id_schedule_pro
                 applited: true,
             },
             where: {
-                id_discount: Number(id_discount),
+                id_discount: {
+                    in: id_discounts
+                },
                 end_time: {
                     gte: new Date()
                 },
@@ -170,7 +172,7 @@ export const getDiscountbySchedulesProduct = async (id_discount, id_schedule_pro
                                 gt: new Date()
                             },
                             id_schedule_product: {
-                                in: id_schedule_product
+                                in: id_schedule_products
                             }
                         }
                     }
@@ -182,7 +184,7 @@ export const getDiscountbySchedulesProduct = async (id_discount, id_schedule_pro
     };
 };
 
-export const getDiscountByCode = async (id_product, code, start, limit) => {
+export const getDiscountByCode = async (id_product, code) => {
     try {
         return await prisma.discount.findFirst({
             select: {
@@ -201,6 +203,58 @@ export const getDiscountByCode = async (id_product, code, start, limit) => {
                     gte: new Date()
                 },
                 status: "active",
+            },
+        });
+    } catch (e) {
+        return false
+    };
+};
+
+export const getDiscounts = async (id_discounts, codes, id_prodcuts, id_schedule_products) => {
+    try {
+        return await prisma.discount.findMany({
+            select: {
+                id_discount: true,
+                id_product: true,
+                code: true,
+                value: true,
+                quantity: true,
+                point: true,
+                applited: true,
+            },
+            where: {
+                OR: [
+                    {
+                        id_discount: {
+                            in: id_discounts,
+                        },
+                    },
+                    {
+                        code: {
+                            in: codes
+                        },
+                    }
+                ],
+                id_product: {
+                    in: id_prodcuts
+                },
+                end_time: {
+                    gte: new Date()
+                },
+                status: "active",
+                product: {
+                    schedule_product: {
+                        some: {
+                            status: "active",
+                            start_time: {
+                                gt: new Date()
+                            },
+                            id_schedule_product: {
+                                in: id_schedule_products
+                            }
+                        }
+                    }
+                }
             },
         });
     } catch (e) {
@@ -232,7 +286,7 @@ export const updateDiscount = async (id_discount, id_user, role, status) => {
     } else {
         id_user = Number(id_user);
     };
-    
+
     try {
         await prisma.discount.update({
             where: {

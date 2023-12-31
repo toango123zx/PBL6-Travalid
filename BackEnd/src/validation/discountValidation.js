@@ -96,8 +96,11 @@ const discountValidation = (schemaValidation, data) => {
 
 export const createDiscountValidation = (req, res, next) => {
     try {
-        const value = discountValidation(discountSchema, req.body);
-        req.discount = value;
+        const __discount = discountValidation(discountSchema, req.body);
+        if (__discount.code) {
+            __discount.code = __discount.code.replace(/\s/g, '');    
+        }
+        req.discount = __discount;
     } catch (err) {
         return res.status(404).send(err);
     };

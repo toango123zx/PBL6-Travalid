@@ -63,7 +63,7 @@ export const getAllProductService = async (req, res, next) => {
         const id_user = req.user.id_user;
         const products = await productService.getAllProductForSupplier(id_user, start, limit);
         const schedules = await scheduleProductService.getSchedulesProduct(undefined, id_user, 'travel_supplier', start, limit)
-        const discounts = await discountService.getDiscounts(id_user, start, limit)
+        const discounts = await discountService.getDiscountsByIdUser(id_user, start)
         if (!products || !schedules || !discounts) {
             return res.status(403).json({
                 position: "getAllProduct",
