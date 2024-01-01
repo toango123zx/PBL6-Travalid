@@ -6,9 +6,10 @@ const { width, height } = Dimensions.get('window');
 import Icon from 'react-native-vector-icons/Ionicons'
 import { useNavigation } from "@react-navigation/native";
 
-export default ProductSupp = ({data})=> {
+export default ProductSupp = ({data, role})=> {
     const start = new Date (data.start_time);
     const end = new Date (data.end_time);
+    
     return (
         <View style = {style.View}>
             <View style = {{...style.view, marginTop: 5}}>
@@ -30,9 +31,10 @@ export default ProductSupp = ({data})=> {
                 </View>
                 
                 {data.status === 'active'? <Text style = {style.textStatusAvailable}>AVAILABLE</Text> : <Text style = {style.textStatusCanceled}>CANCELED</Text>}
-                <TouchableOpacity style = {style.btnDelete}>
+
+                { role === 'admin' ?(<TouchableOpacity style = {style.btnDelete}>
                     <Icon name = 'trash-outline' size = {25} color = '#000'/>
-                </TouchableOpacity>
+                </TouchableOpacity>): null}
             </View>
         </View>
     )
@@ -123,4 +125,5 @@ const style = StyleSheet.create({
         fontFamily: 'Montserrat Medium',
         fontSize: 16,
     }
+
 })

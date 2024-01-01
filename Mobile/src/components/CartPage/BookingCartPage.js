@@ -23,7 +23,7 @@ export default BookingCartPage = ({route}) => {
     const [total, setTotal] = useState(0)
     const [dataList, setDataList] = useState([]);
     const [dataPayment, setDataPayment] = useState([]);
-    
+    const [price, setPrice] = useState(0);
     const [componentItemList, setComponentCList] = useState([]);
     const [quantity, setQuantity] = useState(1);
     const data = useSelector((state) => state.data).data;
@@ -31,13 +31,17 @@ export default BookingCartPage = ({route}) => {
 
     const goToPaymentPage = () => {
         // console.log("data:  "+ JSON.stringify(dataPayment,null,3))
-      navigation.navigate('PaymentPage',{dataList: JSON.stringify(dataPayment)});
+      navigation.navigate('PaymentPage',{
+        dataList: JSON.stringify(dataPayment),
+        price: price}
+        );
     };
     useEffect(() => {
         console.log("trung")
         if (data) {
             setDataList((prevList) => [...prevList, data]);
-            console.log('Data nhan duoc: '+data)  
+            console.log('Data nhan duoc: '+JSON.stringify(data));
+            
         }
       }, [data]);
     useEffect(() => {
@@ -74,9 +78,12 @@ export default BookingCartPage = ({route}) => {
       };  
     const handleAddToPayment = (itemToSelect) => {
         setDataPayment((prevList) => [...prevList, itemToSelect]);
+        setPrice(price+itemToSelect.price)
     };
     const handleRemoveInPayment = (itemToSelect) => {
         setDataPayment((prevList) => prevList.filter((item) => item !== itemToSelect));
+        setPrice(price-itemToSelect.price)
+        
     };
     return(
         <View style = {styleCartPage.View}>
@@ -132,7 +139,7 @@ export default BookingCartPage = ({route}) => {
                         </View>
                         <View style = {styleCartPage.viewSubTotal}>
                             <Text style = {styleCartPage.textTotal1}>SubTotal</Text>
-                            <Text style = {styleCartPage.textTotal2}>{total}</Text>
+                            <Text style = {styleCartPage.textTotal2}>{price}</Text>
                         </View>
                     </View>
                 </View>

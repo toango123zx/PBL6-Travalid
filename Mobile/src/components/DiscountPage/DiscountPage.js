@@ -18,7 +18,7 @@ const { width, height } = Dimensions.get('window');
 import authApi from "../../API/auth";
 export default DiscountPage = () => {
     const [discountData, setDiscountData] = useState([]);
-    
+    const [page, setPage] = useState(1)
     useEffect(() => {
         const getDiscount = async () => {
         
@@ -46,7 +46,7 @@ export default DiscountPage = () => {
             //     })
             //     .catch((err)=>{console.log(err)})
             try {
-                const res = await authApi.getAllDiscount()
+                const res = await authApi.getDiscountTraveller(page)
                 setDiscountData(res.data.data)
             } catch (error) {
                 console.log(error)
@@ -55,7 +55,7 @@ export default DiscountPage = () => {
             }
         getDiscount();
         
-    }, [])
+    }, [page])
     
     return(
         <View style = {{width: "100%",height: "100%", backgroundColor: '#FFF', top : statusBarHeight}}>
@@ -66,7 +66,7 @@ export default DiscountPage = () => {
                     <View style = {style.viewText}>
                         <Text style = {style.textBestDeal}>Best Deal</Text>
                     </View>
-                    {discountData.slice(120,122).map((discountData)=>(
+                    {discountData.slice(0,2).map((discountData)=>(
                         <DiscountsComp key={discountData.id_discount} discountData = {discountData}/>
                     ))}
                 </View>
@@ -78,11 +78,26 @@ export default DiscountPage = () => {
                             <Icon name = 'arrow-forward' color = '#FF6B00' size ={15}/>
                         </TouchableOpacity>
                     </View>
-                    <View style = {{alignItems: 'center', height: 770}}>
-                        {discountData.slice(38,43).map((discountData)=>(
+                    <View style = {{alignItems: 'center'}}>
+                        {discountData.map((discountData)=>(
                             
                             <DiscountsComp key={discountData.id_discount} discountData = {discountData}/>
                         ))}
+                        <View style = {style.viewBottom}>
+                            <TouchableOpacity style = {style.btnPage} 
+                            onPress={()=> {
+                                if (page>1) setPage(page-1) 
+                            }}>
+                                <Icon name = 'arrow-back' color = '#FFF' size = {25}/>
+                            </TouchableOpacity>
+                            <TouchableOpacity style = {style.btnPage} 
+                            onPress={()=>{
+                                setPage(page+1)
+                            }}>
+                                <Icon name = 'arrow-forward' color = '#FFF' size = {25}/>
+                            </TouchableOpacity>
+                        </View> 
+                        <View style = {{height: 110}}></View>
                     </View>
                     
                 </View>
@@ -100,7 +115,23 @@ export default DiscountPage = () => {
 }
 
 const style = StyleSheet.create({
-    ScrollView: {
+    viewBottom: {
+        height: 40,
+        width: 200,
+        borderWidth: 0,
+        marginTop: 10,
+        justifyContent: 'space-between',
+        flexDirection: 'row'
+    }
+    ,btnPage: {
+        height: 40,
+        width: 70,
+        borderRadius: 20,
+        backgroundColor: '#FF852C',
+        justifyContent: 'center',
+        alignItems: 'center'
+    }
+    ,ScrollView: {
         width: width,
         alignItems: 'center',
         marginTop : 10,

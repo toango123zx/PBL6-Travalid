@@ -47,7 +47,7 @@ export default ItemInCart = ({data, onDelete, onAddtoPayment, onRemoveInPayment}
                         <Text style = {style.textLocation}>{data.city}</Text>
                     </View>
                     <View style = {style.viewPrice}>
-                        <Text style = {style.textPrice}>VND 165000</Text>
+                        <Text style = {style.textPrice}>VND {data.price}</Text>
                     </View>
                 </View>
                 <View style = {style.viewBtnDelete}>

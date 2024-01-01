@@ -16,15 +16,20 @@ import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import authApi from "../../API/auth";
 import AddProductPage from "./AddProductPage";
+import ScheduleSupp from "./ScheduleSupp";
 
 const { width, height } = Dimensions.get('window');
 const statusBarHeight = StatusBar.currentHeight || 0;
 import Icon from 'react-native-vector-icons/Ionicons'
 import DiscountSupp from "./DiscountSupp";
-export default ProductSuppilerPage = () => {
+import { err } from "react-native-svg/lib/typescript/xml";
+export default ProductSuppilerPage = ({route}) => {
+    const {user} = route.params;
     const [page, setPage] = useState('PRODUCTS');
+    const [page1, setPage1] = useState(1);
     const [product, setProduct] = useState ([]);
     const [discount, setDiscount] = useState([])
+    const [schedule, setSchedule] = useState([])
     const navigation = useNavigation()
     const data = [
         { label: 'Products', value: 'PRODUCTS' },
@@ -37,7 +42,7 @@ export default ProductSuppilerPage = () => {
             
             try {
                 const token = "bearer " + await AsyncStorage.getItem('userToken')
-                const res = await authApi.getProductBySupplier(1,{
+                const res = await authApi.getProductBySupplier(page1,{
                     "token" : token
                 })
                 
@@ -59,11 +64,25 @@ export default ProductSuppilerPage = () => {
                 console.log(error)
             }
         }
+        const getScheduleBySupplier = async () => {
+            try {
+                const token = "bearer " + await AsyncStorage.getItem('userToken')
+                const res = await authApi.getScheduleSupplier(page1,{
+                    "token" : token
+                })
+                setSchedule(res.data.data.schedule)
+            } catch (error) {
+                console.log(error)
+            }
+        }
         console.log("-----------------------------------------------------")
         getProductBySupplier();
         getDisountBySupplier();
+        getScheduleBySupplier();
+        console.log(schedule);
+        console.log("page: "+ page1);
         
-    },[])
+    },[page1])
     return(
         <View style = {style.View}>
             <StatusBar translucent backgroundColor="transparent" />
@@ -99,16 +118,81 @@ export default ProductSuppilerPage = () => {
                 
             </View>
             <View style = {{flex: 1}}>
-                    {page === 'PRODUCTS' ?  <ProductSuppPage product={product} navigation={navigation}/> : page === 'DISCOUNTS' ? <DiscountSuppPage discount = {discount} navigation = {navigation} /> :  null}
+                    {page === 'PRODUCTS' ?  
+                    <ProductSuppPage product={product} navigation={navigation}/> : 
+                    page === 'DISCOUNTS' ? <DiscountSuppPage discount = {discount} navigation = {navigation} role = {user.role}/> :  
+                    <ScheduleSuppPage schedule={schedule} navigation={navigation} role = {user.role}/>}
+                </View>
+            
+                <View style = {styleProductSuppPage.viewPage}>
+                    <TouchableOpacity style = {style.btnPage} 
+                    onPress={()=> {
+                        if (page1>1) setPage1(page1-1) 
+                    }}>
+                        <Icon name = 'arrow-back' color = '#FFF' size = {25}/>
+                    </TouchableOpacity>
+                    <TouchableOpacity style = {style.btnPage} 
+                    onPress={()=>{
+                        setPage1(page1+1)
+                    }}>
+                        <Icon name = 'arrow-forward' color = '#FFF' size = {25}/>
+                    </TouchableOpacity>
                 </View>
         </View>
     )
 }
 
-const ScheduleSuppPage = ({discount}) => {
-    
+const ScheduleSuppPage = ({schedule, navigation, role}) => {
+    const data1 = [
+        { label: 'Latest', value: '1' },
+        { label: 'Item 2', value: '2' },
+        { label: 'Item 3', value: '3' },
+    ];
+    const [value1, setValue1] = useState('Place');
+    return(
+        <View>
+            <View style = {styleProductSuppPage.viewAddProduct}>
+                <Dropdown
+                    style={styleProductSuppPage.dropdown}
+                    placeholderStyle={styleProductSuppPage.placeholderStyle}
+                    selectedTextStyle={styleProductSuppPage.selectedTextStyle}
+                    inputSearchStyle={styleProductSuppPage.inputSearchStyle}
+                    iconStyle={styleProductSuppPage.iconStyle}
+                    itemContainerStyle={styleProductSuppPage.itemsStyle}
+                    itemTextStyle={styleProductSuppPage.itemDropStyle}
+                    containerStyle={styleProductSuppPage.dropStyle}
+                    data={data1}
+                    maxHeight={300}
+                    labelField="label"
+                    valueField="value"
+                    placeholder={'Place'}
+                    searchPlaceholder="Search..."
+                    value={value1}
+                    onChange={item => {
+                    setValue1(item.value);
+                }}
+                    
+                />
+                <TouchableOpacity style = {styleProductSuppPage.btnAddProduct} onPress={() => {navigation.navigate('AddDiscountPage')}}>
+                    <Text style = {styleProductSuppPage.textAddProduct}>
+                        ADD DISCOUNT
+                    </Text>
+                </TouchableOpacity>
+            </View>
+            <ScrollView contentContainerStyle ={styleProductSuppPage.ScrollView}>
+                
+                {schedule.slice(0,10).map((schedule) => (
+                    <ScheduleSupp key={schedule.id_schedule_product} data ={schedule} role = {role} />
+                ))}
+                <View style = {{height: 60}}>
+
+                </View>
+            </ScrollView>
+            
+        </View>
+    )
 }
-const DiscountSuppPage = ({discount, navigation}) => {
+const DiscountSuppPage = ({discount, navigation, role}) => {
     const data1 = [
         { label: 'Latest', value: '1' },
         { label: 'Item 2', value: '2' },
@@ -148,15 +232,13 @@ const DiscountSuppPage = ({discount, navigation}) => {
             <ScrollView contentContainerStyle ={styleProductSuppPage.ScrollView}>
                 
                 {discount.slice(0,10).map((discount) => (
-                    <DiscountSupp key={discount.id_discount} data ={discount} />
+                    <DiscountSupp key={discount.id_discount} data ={discount} role = {role} />
                 ))}
                 <View style = {{height: 60}}>
 
                 </View>
             </ScrollView>
-            <View style = {styleProductSuppPage.viewPage}>
-
-            </View>
+            
         </View>
     )
 }
@@ -206,14 +288,28 @@ const ProductSuppPage = ({product, navigation}) => {
 
                 </View>
             </ScrollView>
-            <View style = {styleProductSuppPage.viewPage}>
-
-            </View>
+            
         </View>
     )
 }
 const style = StyleSheet.create({
-    View: {
+    viewBottom: {
+        height: 40,
+        width: 200,
+        borderWidth: 0,
+        marginLeft: (width-200)/2,
+        justifyContent: 'space-between',
+        flexDirection: 'row'
+    }
+    ,btnPage: {
+        height: 40,
+        width: 70,
+        borderRadius: 20,
+        backgroundColor: '#FF852C',
+        justifyContent: 'center',
+        alignItems: 'center'
+    }
+    ,View: {
         marginTop: statusBarHeight,
         backgroundColor: "#FFF",
         height: height,
@@ -361,15 +457,17 @@ const styleProductSuppPage = StyleSheet.create({
         
     }
     ,viewPage: {
-        width: 330,
-        height: 30,
+        width: 200,
+        height: 40,
         borderWidth: 0,
         marginBottom: 0,
         position: 'absolute',
         bottom: 20,
         borderRadius: 10,
         backgroundColor: '#FFF',
-        elevation: 5,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        elevation: 0,
         marginLeft: (width-330)/2
         
     }
@@ -621,4 +719,5 @@ const styleDiscountSuppPage = StyleSheet.create({
     dropStyle: {
         borderRadius: 17.5,
     }
+    
 })

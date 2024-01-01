@@ -1,7 +1,7 @@
 import React from "react";
 import {useState, useEffect} from "react";
 import AttractionComponent from "./Product";
-import {View, Text, TextInput, TouchableOpacity, Modal, FlatList, Image, ScrollView, SafeAreaView, StatusBar, StyleSheet} from 'react-native'
+import {View, Text, TextInput, TouchableOpacity, Modal, FlatList, Image, ScrollView, SafeAreaView, StatusBar, StyleSheet, Dimensions} from 'react-native'
 import { styleAttractionPage } from "../themes/styleAttractionPage";
 import Icon from 'react-native-vector-icons/Ionicons'
 import authApi from "../API/auth";
@@ -9,12 +9,14 @@ import { useFocusEffect } from "@react-navigation/native";
 import { Dropdown } from "react-native-element-dropdown";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+const { width, height } = Dimensions.get('window');
 export default AttractionPage = () => {
     const [place, setPlace] = useState(placeData);
     const [minPrice, setMinPrice] = useState('');
     const [maxPrice, setMaxPrice] = useState('');
     const [modalVisible, setModalVisible] = useState(false)
     const [productData, setProductData] = useState([])
+    const [page, setPage] = useState(1)
     const navigation = useNavigation()
     const handlePlaceClick = () => {
         setModalVisible(true);
@@ -26,7 +28,7 @@ export default AttractionPage = () => {
 
         const getAllProduct = async () => {
             try {
-                const res = await authApi.getProduct()
+                const res = await authApi.getProduct(page)
                 setProductData(res.data.data)
                 
             } catch (error) {
@@ -34,8 +36,9 @@ export default AttractionPage = () => {
             }
         }
         console.log("-----------------------------------------------------")
+        
         getAllProduct();
-    },[])
+    },[page])
     const [showProfile, setShowProfile] = useState(false);
     
     useFocusEffect(
@@ -158,7 +161,22 @@ export default AttractionPage = () => {
                         <AttractionComponent key={productData.id_product} productData={productData} />
                     ))}
                 </View>
-                                    
+                <View style = {style.viewBottom}>
+                    <TouchableOpacity style = {style.btnPage} 
+                    onPress={()=> {
+                        if (page>1) setPage(page-1) 
+                    }}>
+                        <Icon name = 'arrow-back' color = '#FFF' size = {25}/>
+                    </TouchableOpacity>
+                    <TouchableOpacity style = {style.btnPage} 
+                    onPress={()=>{
+                        setPage(page+1)
+                    }}>
+                        <Icon name = 'arrow-forward' color = '#FFF' size = {25}/>
+                    </TouchableOpacity>
+                </View>   
+                <View style ={{height: 100}}>
+                </View>                  
             </ScrollView>
             
         </SafeAreaView>
@@ -224,5 +242,20 @@ const style = StyleSheet.create({
     dropStyle: {
         borderRadius: 17.5,
     }
-
+    ,viewBottom: {
+        height: 40,
+        width: 200,
+        borderWidth: 0,
+        marginLeft: (width-200)/2,
+        justifyContent: 'space-between',
+        flexDirection: 'row'
+    }
+    ,btnPage: {
+        height: 40,
+        width: 70,
+        borderRadius: 20,
+        backgroundColor: '#FF852C',
+        justifyContent: 'center',
+        alignItems: 'center'
+    }
 })

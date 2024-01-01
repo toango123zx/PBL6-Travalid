@@ -32,6 +32,7 @@ export default Schedule = ({scheduleData, product, navigate}) => {
         city: product.city,
         image: product.image,
         location: product.location,
+        price: scheduleData.price,
         yearStart: startDate.getUTCFullYear(),
         monthStart: startDate.getUTCMonth(),
         dayStart: startDate.getUTCDate(),
@@ -75,7 +76,7 @@ export default Schedule = ({scheduleData, product, navigate}) => {
                     </View>
                 </View>
                 <View style = {style.viewPrice}>
-                    <Text style = {style.textPrice}>165.000</Text>
+                    <Text style = {style.textPrice}>{scheduleData.price}</Text>
                     <Text style = {style.textVND}> VND</Text>
                 </View>
             </View>

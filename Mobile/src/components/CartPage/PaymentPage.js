@@ -23,11 +23,13 @@ const statusBarHeight = StatusBar.currentHeight || 0;
 export default PaymentPage = ({route}) => {
     
     
-    const {dataList} = route.params;
+    const {dataList, price} = route.params;
     const [data, setData] = useState([])
     const navigation = useNavigation();
     const [quantity, setQuantity] = useState(1);
-    const [selectPay, setSelectPay] = useState(false)
+    const [discount, setDiscount] = useState(0);
+    const [selectPay, setSelectPay] = useState(false);
+    
     const handleBackPress = () => {
         // Thực hiện chuyển hướng về trang trước đó
         navigation.goBack();
@@ -38,7 +40,11 @@ export default PaymentPage = ({route}) => {
         if (Array.isArray(data) ) {
           setData(JSON.parse(dataList));
           console.log(data);
+          
+          
         }
+        
+        
       }, [dataList]);
     return(
         <View style = {style.View}>
@@ -125,18 +131,18 @@ export default PaymentPage = ({route}) => {
             <View style = {style.viewSubTotal}>
                 <View style = {style.viewTopSubTotal}>
                     <Text style = {style.textDiscount}>Discount</Text>
-                    <Text style = {style.text11}>-30,000 VND</Text>
+                    <Text style = {style.text11}>-{discount} VND</Text>
                 </View>
                 <View style = {style.viewBotSubTotal}>
                     <Text style = {style.textDiscount}>Subtotal</Text>  
-                    <Text style = {style.text11}>690,000 VND</Text>                 
+                    <Text style = {style.text11}>{price} VND</Text>                 
                 </View>
             </View>
             <View style = {{width: width, height: 4, backgroundColor: 'rgba(128, 128, 128, 0.3)' }}></View>
             <View style = {style.viewCheckOut}>
                 <View style = {style.leftCheckout}>
                     <Text style = {style.textTotalAmount}>Total amount</Text>
-                    <Text style = {style.textTotalAmount1}>666,000 VND</Text>                        
+                    <Text style = {style.textTotalAmount1}>{price - discount*price} VND</Text>                        
                 </View>
                 <TouchableOpacity style = {style.btnCheckout}>
                     <Text style = {style.textCheckout}>Checkout</Text>

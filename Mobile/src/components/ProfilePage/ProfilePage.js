@@ -91,9 +91,9 @@ export default ProfilePage = () =>{
                 </TouchableOpacity>
             </View>
 
-            {user.role === 'travel_supplier' ? 
+            {user.role === 'travel_supplier' || user.role === 'admin' ? 
             <View style = {styleProfilePage.viewBtnBill}>
-                <TouchableOpacity style = {styleProfilePage.BtnProfile} onPress={()=>{navigation.navigate('ProductSupplierPage')}}>
+                <TouchableOpacity style = {styleProfilePage.BtnProfile} onPress={()=>{navigation.navigate('ProductSupplierPage', {user})}}>
                     <Icon style = {styleProfilePage.icon1} name="map-outline" color="#7D848D" size={25}/>
                     <Text style = {styleProfilePage.text1}>Products</Text>
                     <Icon style = {styleProfilePage.iconChevronforward} name="chevron-forward" color="#7D848D" size={25}/>

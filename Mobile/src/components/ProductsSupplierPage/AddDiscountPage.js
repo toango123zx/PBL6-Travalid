@@ -12,9 +12,11 @@ import {
 const { width, height } = Dimensions.get('window');
 const statusBarHeight = StatusBar.currentHeight || 0;
 import { Dropdown } from "react-native-element-dropdown";
+import { useNavigation } from "@react-navigation/native";
 import DateTimePicker from "../DateTimePicker";
 import Icon from 'react-native-vector-icons/Ionicons'
 export default AddDiscountPage = () => {
+    const navigation = useNavigation();
     const [name, setName] =  useState();
     const [value, setValue] = useState();
     const [provider, setProvider] = useState();
@@ -40,7 +42,7 @@ export default AddDiscountPage = () => {
         <View style = {style.View}>
             <StatusBar translucent backgroundColor="transparent" />
             <View style = {style.viewHeader}>
-                <TouchableOpacity style = {style.btnBack}>
+                <TouchableOpacity style = {style.btnBack} onPress={()=> {navigation.goBack()}}>
                     <Icon name = 'chevron-back' color = '#FFF' size = {25}/>
                 </TouchableOpacity>
                 <Text style = {style.textAddDiscount}>

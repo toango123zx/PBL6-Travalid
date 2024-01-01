@@ -21,7 +21,7 @@ export default HomePage = () => {
 
         const getAllProduct = async () => {
             try {
-                const res = await authApi.getProduct()
+                const res = await authApi.getProduct(2)
                 setProductData(res.data.data)
                 
             } catch (error) {
@@ -136,7 +136,7 @@ export default HomePage = () => {
                     <TouchableOpacity><Text style = {styleTopDestination.textViewAll}>View all</Text></TouchableOpacity>
                 </View>
                 <View style = {styleTopDestination.ViewDes}>
-                    {productData.map((productData) => (
+                    {productData.slice(0,4).map((productData) => (
                         <AttractionComponent key={productData.id_product} productData={productData} />
                     ))}
                 </View>
