@@ -4,12 +4,24 @@ import * as walletService from '../services/walletService';
 export const getTransactions = async (req, res) => {
     const [__user, __wallet] = await Promise.all([
         userService.getUser(String(undefined, req.user.username)),
-        walletService.getTransactions(undefined, Number(req.user.id_user), undefined, undefined, req.start)
+        walletService.getTransactions(Number(req.user.id_user))
     ]);
-    __user.transaction = __wallet;
-
     return res.status(200).json({
-        user: __user
+        data: __wallet
+    });
+};
+
+export const getTotals = async (req, res) => {
+    const [__user, __wallet] = await Promise.all([
+        userService.getUser(String(undefined, req.user.username)),
+        walletService.getTransactions(Number(req.user.id_user))
+    ]);
+    let total = 0;
+    for (const transaction of __wallet) {
+        total += transaction.amount;
+      }
+    return res.status(200).json({
+        total: total
     });
 };
 

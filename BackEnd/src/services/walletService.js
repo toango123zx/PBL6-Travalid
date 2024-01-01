@@ -2,48 +2,20 @@ const { prisma } = require('../config/prismaDatabase');
 import * as envApp from '../config/envApp';
 
 
-export const getTransactions = async (id_transaction, id_user, action, status, start) => {
-    const __checkAction = ["deposit", "withdrawal"];
-    const __checkStatus = ["waiting", "accepted", "rejected"];
+export const getTransactions = async (id_user) => {
     try {
-        const __where = {
-            id_transaction: Number(id_transaction),
-            id_user: Number(id_user),
-            action: String(action),
-            status: String(status),
-        };
-        if (!id_transaction) {
-            delete __where.id_transaction;
-        };
-        if (!__where.id_user) {
-            delete __where.id_user;
-        };
-        if (!action && __checkAction.includes(action)) {
-            delete __where.action;
-        }
-        if (!status && __checkStatus.includes(status)) {
-            delete __where.status;
-        };
-        return await prisma.transactions.findMany({
+        const _transactions =  await prisma.transactions.findMany({
             select: {
                 id_transaction: true,
                 id_user: true,
                 amount: true,
-                time: true,
-                bank_account_number: true,
-                bank_name: true,
-                action: true,
-                status: true,
+                time: true
             },
-            skip: start,
-            take: envApp.LimitGetTransaction,
-            where: __where,
-            orderBy: [
-                {
-                    time: 'desc'
-                },
-            ]
+            where: {
+                id_user: Number(id_user),
+            }
         });
+        return _transactions;
     } catch (e) {
         return false;
     };
