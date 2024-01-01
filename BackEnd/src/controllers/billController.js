@@ -52,6 +52,51 @@ export const getDetailBill = async (req, res) => {
     });
 };
 
+export const getBillsByUser = async (req, res) => {
+    const __user = req.user;
+    if (__user.role === 'admin') {
+        let __bill = await billService.getAllBills();
+        if (!__bill) {
+            return res.status(403).json({
+                position: "Detailed bill id",
+                msg: "The user does not have permission to access this resource"
+            });
+        };
+        // __bill = billHelper.formatBillFormDb(__bill);
+        return res.status(200).json({
+            data: __bill,
+        });
+        }
+    else {
+        let __bill = await billService.getBill(__user.id_user);
+        if (!__bill) {
+            return res.status(403).json({
+                position: "Detailed bill id",
+                msg: "The user does not have permission to access this resource"
+            });
+        };
+        // __bill = billHelper.formatBillFormDb(__bill);
+        return res.status(200).json({
+            data: __bill,
+        });
+    }
+    
+};
+
+export const getAllBills = async (req, res) => {
+    let __bill = await billService.getAllBills();
+    if (!__bill) {
+        return res.status(403).json({
+            position: "Detailed bill id",
+            msg: "The user does not have permission to access this resource"
+        });
+    };
+    // __bill = billHelper.formatBillFormDb(__bill);
+    return res.status(200).json({
+        data: __bill,
+    });
+};
+
 
 export const createBill = async (req, res) => {
     let __user = req.user;
@@ -62,7 +107,7 @@ export const createBill = async (req, res) => {
 
     let __prosmise = [
         scheduleProductService.getSchedulesProduct(__bill.id_schedule_product, __user.id_user, "traveller"),
-        userService.getUser(undefined, __user.username),
+        userService.getUser(__user.username),
     ];
     if (__bill.id_discount) {
         __prosmise.push(await discountService.getDiscounts(__bill.id_discount, undefined, undefined, __bill.id_schedule_product));
@@ -147,7 +192,6 @@ export const createBill = async (req, res) => {
 
     delete __bill.cost;
     delete __bill.total;
-
     __prosmise.push(billService.createBill(__bill));
     await Promise.allSettled(__prosmise)
         .then((result) => {
@@ -158,7 +202,13 @@ export const createBill = async (req, res) => {
                         msg: "Error from the server"
                     });
                 };
-                return res.sendStatus(200);
+                return res.status(200).json({
+                    position: "Success",
+                    msg: "Payment's Successful",
+                    order_id: result[1].value
+                });
+                // return res.sendStatus(200);
+                
             } else {
                 if (result[0].status === "rejected") {
                     return res.status(500).json({
@@ -177,7 +227,7 @@ export const createBill = async (req, res) => {
 
 export const payBill = async (req, res) => {
     const dataFromDb = await Promise.allSettled([
-        userService.getUser(undefined, req.user.username),
+        userService.getUser(req.user.username),
         billService.getDetailBill(req.params.id, req.user.id_user)
     ])
         .then((result) => {

@@ -10,7 +10,8 @@ export const formatBillFormDb = (bill) => {
         return __valueInfoBill;
     });
     bill.cost = sum;
-    bill.total = sum - bill.discount_value;
+    bill.voucher = - (sum * bill.discount_value / 100)
+    bill.total = sum + bill.voucher;
     delete bill.info_bill
     return bill;
 };

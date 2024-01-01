@@ -59,6 +59,24 @@ export const getDetailDiscount = async (req, res) => {
     };
 };
 
+export const getDiscountByProduct = async (req, res) => {
+    const __id_product = Number(req.params.id);
+    console.log('--->', __id_product)
+    let __discount = await discountService.getDiscountByProduct(__id_product);
+    if (!__discount) {
+        return res.status(404).json({
+            position: "id discount",
+            msg: "This discount code could not be found"
+        });
+    } else {
+        // __discount.supplier = __discount.user.role;
+        // delete __discount.user;
+        return res.status(200).json({
+            data: __discount
+        });
+    };
+};
+
 /**
  * Code is only valid during the validity period + depending on the product
 */

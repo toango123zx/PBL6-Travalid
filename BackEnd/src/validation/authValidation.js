@@ -152,7 +152,7 @@ export const userUpdateValidation = (req, res, next) => {
 
 export const checkDuplicateUser = async (req, res, next) => {
     const __tax_id_number = !(req.body.tax_id_number) ? "" : req.body.tax_id_number.replace(/\s/g, '');
-    const __user = await userService.getUser(undefined, req.body.username.replace(/\s/g, ''), req.body.email.replace(/\s/g, ''), __tax_id_number);
+    const __user = await userService.getUser(req.body.username.replace(/\s/g, ''), req.body.email.replace(/\s/g, ''), __tax_id_number);
     if (__user !== null && __tax_id_number) {
         return res.status(409).json({
             position: "username or email or tax id number",

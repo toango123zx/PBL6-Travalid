@@ -65,7 +65,7 @@ export const signIn = async (req, res, next) => {
     const __username = req.body.username.replace(/\s/g, '');
     const __password = req.body.password;
 
-    const __user = await userService.getUser(undefined, __username, "", "");
+    const __user = await userService.getUser(__username, "", "");
     if (__user === false) {
         return res.status(500).json({
             position: "Prisma query User",
@@ -96,7 +96,8 @@ export const signIn = async (req, res, next) => {
 
     return res.status(200).json({
         data: __user,
-        token: __token
+        token: __token,
+        refreshToken: __refreshToken
     });
 };
 
@@ -139,6 +140,7 @@ export const refreshSignInToken = (req, res, next) => {
 
     return res.json({
         token: __token,
+        refreshToken: __newRefreshToken,
     });
 };
 

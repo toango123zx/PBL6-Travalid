@@ -15,6 +15,12 @@ export const getCarts = async (id_user) => {
                         end_time: true,
                         price: true,
                         status: true,
+                        // Include the 'image' field from the Product table
+                        product: {
+                            select: {
+                                image: true
+                            }
+                        }
                     }
                 }
             },
@@ -27,8 +33,9 @@ export const getCarts = async (id_user) => {
         });
     } catch (e) {
         return false;
-    };
+    }
 };
+
 
 export const getCartByIdSchedule = async (id_schedule_product, id_user) => {
     try {

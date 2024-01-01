@@ -54,7 +54,11 @@ export const createScheduleProduct = async (req, res, next) => {
                 msg: 'Schedule not created'
             });
         }
-        return res.sendStatus(200)
+        // return res.sendStatus(200)
+        res.status(200).json({
+            msg: "Successfully created schedule",
+            data: schedule
+        });
     } catch (error) {
         res.status(500).json({
             msg: 'Create schedule error',

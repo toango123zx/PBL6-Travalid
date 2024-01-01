@@ -35,12 +35,12 @@ export const getAllProduct = async (req, res, next) => {
         let page = parseInt(req.query.page, 10);
         if (page < 0 || !!page == false) page = 1;
         const allProduct = await productService.getAllProducts(page);
-        if (!allProduct) {
-            return res.status(403).json({
-                position: "getAllProduct",
-                msg: "The user does not have permission to access this resource"
-            });
-        }
+        // if (!allProduct) {
+        //     return res.status(403).json({
+        //         position: "getAllProduct",
+        //         msg: "The user does not have permission to access this resource"
+        //     });
+        // }
         res.status(200).json({
             status: 'success',
             msg: 'You have successfully.',
@@ -63,7 +63,7 @@ export const getAllProductService = async (req, res, next) => {
         const id_user = req.user.id_user;
         const products = await productService.getAllProductForSupplier(id_user, start, limit);
         const schedules = await scheduleProductService.getSchedulesProduct(undefined, id_user, 'travel_supplier', start, limit)
-        const discounts = await discountService.getDiscountsByIdUser(id_user, start)
+        const discounts = await discountService.getDiscounts(id_user, start, limit)
         if (!products || !schedules || !discounts) {
             return res.status(403).json({
                 position: "getAllProduct",
@@ -185,7 +185,10 @@ export const createProduct = async (req, res, next) => {
                 });
             }
         }
-        return res.sendStatus(200)
+        return res.status(200).json({
+            msg: "Successfully created product",
+            data: createProduct
+        });
     } catch (err) {
         return res.status(500).json({
             msg: 'Get internal server error in get product',

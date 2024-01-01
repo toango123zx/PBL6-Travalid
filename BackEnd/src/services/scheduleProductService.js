@@ -134,9 +134,10 @@ export const getSchedulesProduct = async (id_schedules_product, id_user, role, s
 
 export const createScheduleProduct = async (data) => {
     try {
-        return await prisma.schedule_Product.create({
+        const created_schedule = await prisma.schedule_Product.create({
             data : data,
-        })
+        });
+        return created_schedule
     } catch (error) {
         return false;
     }

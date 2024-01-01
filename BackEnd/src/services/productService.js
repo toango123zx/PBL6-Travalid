@@ -4,8 +4,8 @@ import * as envApp from '../config/envApp';
 export const getAllProducts = async (page) => {
     try {
         const limit = envApp.LimitGetProductTraveller;
-        let start = (page - 1) * limit;
-        return await prisma.product.findMany({
+        let start = (page - 1) * limit;       
+        const res =  await prisma.product.findMany({
             select: {
                 id_product: true,
                 name: true,
@@ -17,6 +17,7 @@ export const getAllProducts = async (page) => {
             skip: start,
             take: limit,
         });
+        return res
     } catch (error) {
         return false;
     }
@@ -74,10 +75,12 @@ export const getProductById = async (productId) => {
 
 export const create_Product = async (product) => {
     try {
-        return await prisma.product.create({
+        const created_product = await prisma.product.create({
             data: product
         });
+        return created_product;
     } catch (error) {
+        console.log(error);
         return false;
     }
 }

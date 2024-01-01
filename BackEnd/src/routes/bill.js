@@ -8,6 +8,7 @@ import * as billValidation from '../validation/billValidation';
 billRouter.get('/purchase', authMiddleware.verifyToken, billValidation.checkPage, billController.getPurchaseBills);
 billRouter.get('/sell', authMiddleware.verifyToken,  billValidation.checkPage, authMiddleware.checkSupplierRole, billController.getSellBills);
 billRouter.get('/:id', authMiddleware.verifyToken, billController.getDetailBill);
+billRouter.get('/', authMiddleware.verifyToken, billController.getBillsByUser);
 billRouter.post('/', authMiddleware.verifyToken, billValidation.createBillValidation, billController.createBill);
 billRouter.patch('/payment/:id', authMiddleware.verifyToken, billController.payBill);
 billRouter.delete('/:id', authMiddleware.verifyToken, billController.cancelBill);

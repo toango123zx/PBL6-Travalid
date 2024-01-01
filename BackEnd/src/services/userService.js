@@ -1,11 +1,8 @@
 const { prisma } = require('../config/prismaDatabase');
 
-export const getUser = async (id_user, username, email, tax_id_number) => {
+export const getUser = async (username, email, tax_id_number) => {
     try {
         let __properties = [
-            {
-                id_user: id_user,
-            },
             {
                 username: username,
             },
@@ -30,10 +27,10 @@ export const getUser = async (id_user, username, email, tax_id_number) => {
                 name: true,
                 image: true,
                 date_of_birth: true,
-                balance: true,
                 salt: true,
                 role: true,
                 status: true,
+                balance: true,
             },
             where: {
                 OR: __properties,
@@ -58,7 +55,6 @@ export const getUsers = async () => {
                 name: true,
                 role: true,
                 phone_number: true,
-                balance: true,
                 status: true,
             }
         });
@@ -79,7 +75,6 @@ export const getInfoUser = async (id_user, role) => {
         date_of_birth: true,
         phone_number: true,
         address: true,
-        balance: true,
         status: true,
         info_supplier: {
             select: {
@@ -171,7 +166,6 @@ export const updateUser = async (id_user, user) => {
         return false;
     };
 };
-
 
 export const deleteUser = async (username) => {
     try {

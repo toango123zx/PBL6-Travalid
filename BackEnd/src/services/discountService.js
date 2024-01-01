@@ -53,6 +53,57 @@ export const getAllDiscount = async (start) => {
         return false;
     };
 };
+export const getDiscountByProduct = async (id_product) => {
+    try {
+        return await prisma.discount.findMany({
+            select: {
+                id_discount: true,
+                id_product: true,
+                name: true,
+                code: true,
+                description: true,
+                start_time: true,
+                end_time: true,
+                value: true,
+                quantity: true,
+                point: true,
+                applited: true,
+                status: true,
+                user: {
+                    select: {
+                        role: true,
+                    }
+                }
+            },
+            // skip: start,
+            take: limnit,
+            where: {
+                status: {
+                    not: "cancel"
+                },
+                end_time: {
+                    gt: new Date(),
+                },
+                id_product: id_product
+            },
+            orderBy: [
+                {
+                    value: 'desc',
+                },
+                {
+                    end_time: 'asc',
+                },
+                {
+                    start_time: 'asc',
+                },
+                {
+                    quantity: 'asc'
+                }]
+        });
+    } catch (e) {
+        return false;
+    };
+};
 
 export const getDiscountsByIdUser = async (id_user, start) => {
     try {
@@ -143,6 +194,8 @@ export const getDetailDiscount = async (id_discount) => {
         return false;
     };
 };
+
+
 
 export const getDiscountbySchedulesProduct = async (id_discounts, id_schedule_products) => {
     try {

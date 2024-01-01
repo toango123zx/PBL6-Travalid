@@ -7,8 +7,7 @@ const { insertDataProduct } = require('./product');
 const { insertDataRate } = require('./rate');
 const { insertDataContact } = require('./contact');
 const { insertDataCart } = require('./cart');
-const { insertDataBill } = require('./bill');
-const { insertDataTransaction } = require('./transaction');
+const { insertDataBill } = require('./bill')
 
 const prisma = new PrismaClient();
 
@@ -17,7 +16,6 @@ const insertData = async () => {
     await insertDataLocation();
     await insertDataUser();
     await insertDataProduct();
-    await insertDataTransaction();
     // await insertDataRate();
     // await insertDataContact();
     // await insertDataCart();

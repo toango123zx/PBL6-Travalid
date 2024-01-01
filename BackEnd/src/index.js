@@ -4,15 +4,14 @@ const cookies = require("cookie-parser");
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const path = require('path');
+const cors = require('cors');
 const app = express();
+app.use(cors());
 const compression = require('compression')
 import * as envApp from './config/envApp';
 const route = require('./routes');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
-const cors = require('cors');
-app.use(cors());
-
 const options = {
   definition: {
     openapi: "3.0.3",
@@ -41,8 +40,9 @@ app.use(morgan('combined'));
 // Allows the server to identify origin (protocol + domain name + port) to download and use resources from the server  
 app.use(function(req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  // res.header('Access-Control-Allow-Credentials', true);
   next();
 });
 

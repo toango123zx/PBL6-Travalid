@@ -1,5 +1,6 @@
 import * as hash from '../helpers/hash';
 import * as authHelper from '../helpers/authHelper';
+import { not } from 'joi';
 
 export const createUser = async (req, res, next) => {
     const __user = {
@@ -28,7 +29,15 @@ export const createUser = async (req, res, next) => {
 
 export const verifyToken = (req, res, next) => {
     const __token = req.headers.token;
-    const __refreshToken = req.cookies.refreshToken;
+    const __temp_refreshToken = req.headers.refresh;
+    let __refreshToken = "";
+    if (!__temp_refreshToken) {
+        __refreshToken = req.cookies.refreshToken;
+    } else {
+        __refreshToken = __temp_refreshToken;
+    }
+    // const __refreshToken = req.cookies.refreshToken;
+    // const __refreshToken = __temp_refreshToken;
     if (!__refreshToken || !__token) {
         return res.status(401).json({
             position: "Token or refreshToken does not exist",
@@ -36,7 +45,8 @@ export const verifyToken = (req, res, next) => {
         });
     };
 
-    const verify = authHelper.verifyToken(__token.split(" ")[1], req.cookies.refreshToken);
+    // const verify = authHelper.verifyToken(__token.split(" ")[1], req.cookies.refreshToken);
+    const verify = authHelper.verifyToken(__token.split(" ")[1], __refreshToken);
     if (verify.error) {
         switch (verify.error.name) {
             case undefined:
@@ -63,16 +73,6 @@ export const verifyToken = (req, res, next) => {
         req.user = verify.data;
         next();
     };
-};
-
-export const checkTravellerRole = async (req, res, next) => {
-    if (req.user.role === "traveller") {
-        return next();
-    };
-    return res.status(403).json({
-        position: "User role is not accessible",
-        msg: "Only travellers can use this function"
-    });
 };
 
 export const checkAdminRole = async (req, res, next) => {

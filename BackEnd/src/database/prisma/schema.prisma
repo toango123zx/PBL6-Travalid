@@ -38,9 +38,9 @@ model User {
   address       String      @db.Text
   create_at     DateTime    @default(now())
   point         Int         @default(0) @db.UnsignedMediumInt
-  balance       Int         @default(0) @db.UnsignedInt
   status        User_Status @default(active)
   salt          String      @db.Char(32)
+  balance       Float       @default(0)
 
   info_supplier  Info_Supplier[]
   product        Product[]
@@ -163,7 +163,7 @@ model Discount {
   applited    Int             @default(0) @db.UnsignedSmallInt
   status      Discount_Status @default(active)
 
-  Info_Bill Info_Bill[]
+  bill Bill[]
 }
 
 model Cart {
@@ -190,6 +190,8 @@ model Bill {
   id_supplier    Int         @db.UnsignedInt
   supplier       User        @relation(name: "supplier", fields: [id_supplier], references: [id_user])
   time           DateTime    @default(now())
+  id_discount    Int?        @db.UnsignedInt
+  discount       Discount?   @relation(fields: [id_discount], references: [id_discount])
   discount_value Int
   quantity       Int         @db.UnsignedSmallInt
   status         Bill_Status @default(pending)
@@ -204,13 +206,11 @@ model Info_Bill {
   id_schedule_product Int              @db.UnsignedInt
   schedule_product    Schedule_Product @relation(fields: [id_schedule_product], references: [id_schedule_product])
   product_name        String
-  id_discount         Int?             @db.UnsignedInt
-  discount            Discount?        @relation(fields: [id_discount], references: [id_discount])
   city_name           String
 }
 
 enum Rate_Status {
-  display
+  presently
   hidden
 }
 
@@ -222,7 +222,7 @@ model Rate {
   user       User        @relation(fields: [id_user], references: [id_user])
   comment    String      @db.Text
   star       Int         @db.UnsignedSmallInt
-  status     Rate_Status @default(display)
+  status     Rate_Status @default(presently)
 }
 
 enum Contact_Category {
@@ -262,25 +262,10 @@ model Destroy {
   category   Destroy_Category
 }
 
-enum Transaction_action {
-  deposit
-  withdrawal
-}
-
-enum Transaction_status {
-  waiting
-  accepted
-  rejected
-}
-
 model transactions {
-  id_transaction      Int                @id @default(autoincrement()) @db.UnsignedInt
-  id_user             Int                @db.UnsignedInt
-  user                User               @relation(fields: [id_user], references: [id_user])
-  amount              Float              @default(0.0)
-  time                String             @db.Text
-  bank_account_number String?
-  bank_name           String?
-  action              Transaction_action @default(deposit)
-  status              Transaction_status @default(accepted)
+  id_transaction Int    @id @default(autoincrement()) @db.UnsignedInt
+  id_user        Int    @db.UnsignedInt
+  user           User   @relation(fields: [id_user], references: [id_user])
+  amount         Float
+  time           String @db.Text
 }
