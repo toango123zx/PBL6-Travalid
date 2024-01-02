@@ -6,11 +6,13 @@ export const formatBillFormDb = (bill) => {
             ...__valueInfoBill.schedule_product
         };
         sum += __valueInfoBill.price
-        delete __valueInfoBill.schedule_product
+        delete __valueInfoBill.schedule_product;
+        
         return __valueInfoBill;
     });
-    bill.cost = sum;
-    bill.total = sum - bill.discount_value;
-    delete bill.info_bill
+    bill.cost = sum * bill.quantity;
+    bill.total = bill.cost - bill.discount_value;
+    delete bill.info_bill;
+
     return bill;
 };
