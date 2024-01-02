@@ -18,6 +18,7 @@ import { useNavigation } from "@react-navigation/native";
 export default OrderHistoryPage = ({route}) =>{
     const navigation = useNavigation()
     const {user} = route.params;
+    const [page1, setPage1] = useState(1)
     const [bill, setBill] = useState([])
     useEffect(()=>{
         const getBill = async ()=> {
@@ -27,7 +28,7 @@ export default OrderHistoryPage = ({route}) =>{
                 //console.log(token)
 
                 if (user.role === 'traveller') {
-                    const res = await authApi.getPurchaseBill({
+                    const res = await authApi.getPurchaseBill(page1,{
                         "token" : token,
                     })
                     //console.log(JSON.stringify(res.data.data,null, 3))
@@ -65,7 +66,22 @@ export default OrderHistoryPage = ({route}) =>{
                 {bill.slice(0,8).map((bill)=>(     
                     <Bill key={bill.id_bill} billData = {bill}  role ={user.role}/>
                 ))}
+                <View style = {style.viewPage}>
+                    <TouchableOpacity style = {style.btnPage} 
+                    onPress={()=> {
+                        if (page1>1) setPage1(page1-1) 
+                    }}>
+                        <Icon name = 'arrow-back' color = '#FFF' size = {25}/>
+                    </TouchableOpacity>
+                    <TouchableOpacity style = {style.btnPage} 
+                    onPress={()=>{
+                        setPage1(page1+1)
+                    }}>
+                        <Icon name = 'arrow-forward' color = '#FFF' size = {25}/>
+                    </TouchableOpacity>
+                </View>
             </ScrollView>
+            
         </View>
     )
 }
@@ -105,5 +121,28 @@ const style = StyleSheet.create({
         fontFamily: 'Montserrat SemiBold',
         letterSpacing: 1,
         fontSize: 20,
+    }
+    ,viewPage: {
+        width: 200,
+        height: 40,
+        borderWidth: 0,
+        marginBottom: 0,
+        
+        bottom: 0,
+        borderRadius: 20,
+        
+        elevation: 0,
+        marginBottom: 20,
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+        
+    }
+    ,btnPage: {
+        height: 40,
+        width: 70,
+        borderRadius: 20,
+        backgroundColor: '#FF852C',
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 })

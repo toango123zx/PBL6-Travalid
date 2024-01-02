@@ -9,7 +9,8 @@ import {
     Dimensions,
     StatusBar,
     TouchableOpacity,
-    TextInput
+    TextInput,
+    Modal
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -17,18 +18,25 @@ import { useRoute } from "@react-navigation/native";
 
 import { create } from "react-test-renderer";
 import { styleCartPage } from "../../themes/styleBookingCartPage";
+import authApi from "../../API/auth";
 import ItemInPayment from "./ItemInPayment";
+import DiscountInPayment from "./DiscountInPayment";
+import SelectDiscount from "./SelectDiscount";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const { width, height } = Dimensions.get('window');
 const statusBarHeight = StatusBar.currentHeight || 0;
 export default PaymentPage = ({route}) => {
     
-    
+    const [showD, setShowD] = useState(false)
     const {dataList, price} = route.params;
     const [data, setData] = useState([])
     const navigation = useNavigation();
     const [quantity, setQuantity] = useState(1);
-    const [discount, setDiscount] = useState(0);
+    const [discount, setDiscount] = useState(null);
+    const [discountData, setDiscountData] = useState([])
     const [selectPay, setSelectPay] = useState(false);
+    const [nameDis, setNameDis] = useState(null);
+    
     
     const handleBackPress = () => {
         // Thực hiện chuyển hướng về trang trước đó
@@ -36,16 +44,41 @@ export default PaymentPage = ({route}) => {
       };
 
     
-      useEffect(() => {
-        if (Array.isArray(data) ) {
-          setData(JSON.parse(dataList));
-          console.log(data);
-          
-          
+    useEffect(() => {
+        console.log("data da nhan : "+JSON.stringify(dataList, null, 2))
+        const getDiscountByIdProduct = async () => {
+                // if (Array.isArray(data) ) {
+                // setData(JSON.parse(dataList));
+                // console.log(data)
+            
+                try {
+                    const apiCalls = dataList.map(async (item) => {
+                        const token = "bearer " + await AsyncStorage.getItem('userToken')
+                        const response = await authApi.getDiscountByProduct(item.id,{
+                            "token": token
+                        })
+                        
+                        
+                        
+                        return response.data.data
+                    });
+                    const results = await Promise.all(apiCalls)
+                    const resArrFlat = results.flat()
+                    setDiscountData(resArrFlat)
+                    
+                } catch (error) {
+                    console.log(error);
+                }
+            
+                
+              
         }
+
+        getDiscountByIdProduct()
+        console.log(showD)
         
         
-      }, [dataList]);
+      }, []);
     return(
         <View style = {style.View}>
             <StatusBar translucent backgroundColor="transparent" />
@@ -60,7 +93,7 @@ export default PaymentPage = ({route}) => {
                        
             <ScrollView style = {style.viewBookedTour}>
                 { 
-                    data.map((data) => (
+                    dataList.map((data) => (
                         <View>
                             <ItemInPayment key={data.id} data={data} />
                         </View>
@@ -98,40 +131,32 @@ export default PaymentPage = ({route}) => {
                     <Icon name = 'ticket-outline' color = '#FF6B00' size ={20}/>
                     <Text style = {style.textVoucher}> Voucher</Text>
                 </View>
-                <TouchableOpacity style = {style.viewVoucherRight}>
-                    <Text style = {style.textSeclect}>Select/enter code</Text>
+                <TouchableOpacity style = {style.viewVoucherRight} onPress={()=>{setShowD(!showD)}}>
+                    {nameDis === null ? (<Text style = {style.textSeclect}>Select discount</Text>) : <Text style = {style.textSeclect}>{nameDis}</Text>}
+                    
                     <Icon name = 'chevron-forward-outline' color = '#6F757C' size ={20}/>
                 </TouchableOpacity>                      
             </View>
 
-            <View style = {{width: width, height: 4, backgroundColor: 'rgba(128, 128, 128, 0.3)' }}></View>                        
-            <View style = {style.viewPay}>
+            
+                
 
-                <Text style = {style.textPayWith}>Pay With</Text>
-
-                <View style = {style.viewPayment}>
-                    <View style = {style.viewCard}>
-                        <TouchableOpacity style = {selectPay === false ? [style.btnCard, { borderColor: 'rgba(255, 107, 0, 1)' }] : style.btnCard} onPress={()=>{setSelectPay(false)}}>
-                            <View style = {selectPay === false ? [style.check, { backgroundColor: 'rgba(255, 107, 0, 1)' }] : style.check}></View>
-                        </TouchableOpacity>
-                        <Text style = {selectPay === false ? [style.textCard, { color: '#000' }] : style.textCard}> Card</Text>            
-                    </View>
-                    <View style = {style.viewBank}>
-                        <TouchableOpacity style = {selectPay === true ? [style.btnBank, { borderColor: 'rgba(255, 107, 0, 1)' }] : style.btnBank} onPress={()=>{setSelectPay(true)}}>
-                            <View style = {selectPay === true ? [style.check, { backgroundColor: 'rgba(255, 107, 0, 1)' }] : style.check}></View>
-                        </TouchableOpacity>
-                        <Text style = {selectPay === true ? [style.textCard, { color: '#000' }] : style.textCard}> Bank</Text>            
-                    </View>
-                    
-                </View> 
-                {selectPay === false ? <PayCard/> : <PayBank/>}           
-            </View>
+                <ScrollView contentContainerStyle = {style.viewPay}>
+                {discountData.map((discountData) => (
+                    <DiscountInPayment key={discountData.id_discount} data={discountData} setDiscount = {setDiscount} setNameDis = {setNameDis}/>
+                ))}
+                          
+                </ScrollView>
+                
+                                 
+            
 
             <View style = {{width: width, height: 4, backgroundColor: 'rgba(128, 128, 128, 0.3)' }}></View>
             <View style = {style.viewSubTotal}>
                 <View style = {style.viewTopSubTotal}>
                     <Text style = {style.textDiscount}>Discount</Text>
-                    <Text style = {style.text11}>-{discount} VND</Text>
+                    {discount === null? (<Text style = {style.text11}>0 VND</Text>): <Text style = {style.text11}>-{Math.round(price*discount/100)} VND</Text>}
+                    
                 </View>
                 <View style = {style.viewBotSubTotal}>
                     <Text style = {style.textDiscount}>Subtotal</Text>  
@@ -142,12 +167,16 @@ export default PaymentPage = ({route}) => {
             <View style = {style.viewCheckOut}>
                 <View style = {style.leftCheckout}>
                     <Text style = {style.textTotalAmount}>Total amount</Text>
-                    <Text style = {style.textTotalAmount1}>{price - discount*price} VND</Text>                        
+                    <Text style = {style.textTotalAmount1}>{Math.round(price - price*discount/100)} VND</Text>                        
                 </View>
                 <TouchableOpacity style = {style.btnCheckout}>
                     <Text style = {style.textCheckout}>Checkout</Text>
                 </TouchableOpacity>
             </View>
+
+            {/* <Modal visible = {showModal} animationType="slide" transparent={true}>
+                <SelectDiscount setShowModal = {setShowModal} setDiscount = {setDiscount} data= {discountData} />
+            </Modal> */}
 
         </View>
     )

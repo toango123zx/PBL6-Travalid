@@ -45,7 +45,7 @@ export const styleHomePage =  StyleSheet.create({
         height: 48,
         borderWidth: 0,
         borderRadius: 24,
-        backgroundColor: '#000'
+        
     },
     textUserName: {
         color: '#1B1E28',

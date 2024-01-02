@@ -6,7 +6,7 @@ import {
     StyleSheet,
     Dimensions,
     Modal,TextInput,StatusBar,
-    Alert
+    Alert 
 } from 'react-native'
 import {useState} from 'react'
 const { width, height } = Dimensions.get('window');

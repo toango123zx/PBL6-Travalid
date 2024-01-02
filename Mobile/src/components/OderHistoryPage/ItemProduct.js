@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {useState} from "react"
 import { 
     View,
@@ -12,19 +12,33 @@ import {
 
 import Icon from 'react-native-vector-icons/AntDesign'
 import Icon1 from 'react-native-vector-icons/Ionicons'
+import authApi from "../../API/auth";
 const { width, height } = Dimensions.get('window');
 export default ItemInCart = ({data}) => {
-    
+    const [image, setImage] = useState(null)
     const start = new Date (data.start_time)
     const end = new Date (data.end_time)
+    useEffect(()=>{
+        console.log(data);
+        const getProduct = async () => {
+            try {
+                const res = await authApi.getDetailProduct(data.id_product);
+                setImage(res.data.data.image)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        getProduct();
+        console.log(image)
+    },[])
     return(
         <View style = {style.View}>
             <View style = {style.viewTop}>
                 
                 <View style = {style.viewImage}>
-                    <Image style = {{width: 90, height: 80, borderRadius: 10}} source={{
-                        uri: data.image
-                        }}/>
+                    {image !== null ? (<Image style = {{width: 90, height: 80, borderRadius: 10}} source={{
+                        uri: image
+                        }}/>): null}
                 </View>
                 <View style = {style.viewInfo}>
                     <View style = {style.viewName}>
@@ -91,7 +105,7 @@ const style = StyleSheet.create({
         height: 80,
         borderWidth: 0,
         marginLeft: (width -380)/2,
-        backgroundColor: 'rgba(0,0,0,0.2)',
+        
         borderRadius: 5,
     },
     viewInfo:{

@@ -32,8 +32,10 @@ export default BookingCartPage = ({route}) => {
     const goToPaymentPage = () => {
         // console.log("data:  "+ JSON.stringify(dataPayment,null,3))
       navigation.navigate('PaymentPage',{
-        dataList: JSON.stringify(dataPayment),
-        price: price}
+        dataList: dataPayment,
+        price: price,
+        
+    }
         );
     };
     useEffect(() => {
@@ -93,8 +95,8 @@ export default BookingCartPage = ({route}) => {
             <ScrollView>
                 {data && (  
                     dataList.map((item) => (
-                        <View>
-                            <ItemInCart key={item.id_schedule} data={item} onDelete={handleDelete} onAddtoPayment={handleAddToPayment} onRemoveInPayment={handleRemoveInPayment} />
+                        <View key={item.id_schedule}>
+                            <ItemInCart  data={item} onDelete={handleDelete} onAddtoPayment={handleAddToPayment} onRemoveInPayment={handleRemoveInPayment} />
                         </View>
                     ))
                 )}

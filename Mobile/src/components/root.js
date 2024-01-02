@@ -22,6 +22,7 @@ import SignInPage from './SignInPage';
 import SignUpPage from './SignUp/SignUpPage';
 import ProfileDetails from './ProfilePage/ProfileDetails';
 import AttractionsPage from './AttractionsPage';
+import AddSchedule from './ProductsSupplierPage/AddSchedule';
 import DiscountDetail from './DiscountPage/DiscountDetail';
 import ProductSupplierPage from './ProductsSupplierPage/ProductSupplierPage';
 import AddProductPage from './ProductsSupplierPage/AddProductPage';
@@ -179,6 +180,7 @@ export default RootComponent = function(){
             <Stack.Screen name="OrderHistoryPage" component={OrderHistoryPage} />
             <Stack.Screen name="BillDetailPage" component={BillDetailPage} />
             <Stack.Screen name="AddDiscountPage" component={AddDiscountPage}/>
+            <Stack.Screen name="AddSchdule" component={AddSchedule}/>
 
 
           </Stack.Navigator>

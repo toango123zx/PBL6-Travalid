@@ -10,7 +10,9 @@ export default AttractionComponent = ({productData}) => {
     
     const handlePress = () => {
         const id = productData.id_product
-      navigation.navigate('DetailsPage',{id});
+        const rate = productData.avg_rate
+        const count = productData.count_complete
+      navigation.navigate('DetailsPage',{id, rate, count});
     };
     useEffect(()=>{
         console.log(productData.image)

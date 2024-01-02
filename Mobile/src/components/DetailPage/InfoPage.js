@@ -6,12 +6,10 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {styleInfoPage} from "../../themes/styleDetailsPage";
 import Schedule from "./Schedule";
 import { useFocusEffect } from "@react-navigation/core";
-export default InfoPage = ({product,scheduleData, navigate}) => {
+export default InfoPage = ({product,scheduleData, navigate, rate, count}) => {
     
-
-    useEffect (()=>{
-        console.log(product.image);
-    },[])
+    const image = product.image
+    console.log("product info page: " + JSON.stringify(product, null,2))
     return(
         
         <ScrollView style = {styleInfoPage.scrollView}>
@@ -22,13 +20,13 @@ export default InfoPage = ({product,scheduleData, navigate}) => {
             </View>
             <View style = {styleInfoPage.viewRate}>
                 <Icon Icon style = {styleInfoPage.iconStar} name="star" color="#FFD336" size={16}/>
-                <Text style = {styleInfoPage.textRate}>{product.avg_rate}</Text>
-                <Text style = {styleInfoPage.textSoLuong}>({product.count_rate})</Text>
+                <Text style = {styleInfoPage.textRate}>{rate}</Text>
+                <Text style = {styleInfoPage.textSoLuong}>({count})</Text>
             </View>
             <ScrollView style = {styleInfoPage.viewImage}>
-                <Image style = {{width: 100, height: 100, borderRadius: 10}} source={{
-                    uri: product.image
-                    }}/>
+                {image ? (<Image style = {{width: 100, height: 100, borderRadius: 10}} source={{
+                    uri: image
+                    }}/>): null}
             </ScrollView>
             <View style = {styleInfoPage.viewMota}>
                 <Text style = {styleInfoPage.textMota}>{product.description}</Text>

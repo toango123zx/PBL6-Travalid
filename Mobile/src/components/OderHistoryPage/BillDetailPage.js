@@ -40,6 +40,7 @@ export default BillDetailPage = ({route}) => {
                 setSupplier(res.data.data.supplier);
                 setProduct(res.data.data.schedule_product)
                 //setProduct(res.data.data.schedule_product)
+                console.log(JSON.stringify(res.data.data, null, 2))
             } catch (error) {
                 console.log(error)
             }
@@ -66,7 +67,7 @@ export default BillDetailPage = ({route}) => {
                          Order Placed in {time.getUTCDate()}/{time.getUTCMonth()}/{time.getUTCFullYear()} at {time.getUTCHours()}:{time.getUTCMinutes()}
                     </Text>
                 </View>
-                <Text style = {styleBillDetail.textTotal}>{billDetail.total} VND</Text>
+                <Text style = {styleBillDetail.textTotal}>{Math.round(billDetail.total)} VND</Text>
                 
             </View>
             <View style = {{width: width, height: 3, backgroundColor: 'rgba(128, 128, 128, 0.3)'}}></View>
@@ -203,7 +204,7 @@ export default BillDetailPage = ({route}) => {
                     <Text style = { styleBillDetail.textVoucher}> Voucher </Text>
                 </View>
                 <View >
-                    <Text style = {styleBillDetail.voucher}>{billDetail.voucher} VND</Text>
+                    <Text style = {styleBillDetail.voucher}>{Math.round(billDetail.voucher)} VND</Text>
                 </View>
             </View>
             <View style = {{width: width, height: 3, backgroundColor: 'rgba(128, 128, 128, 0.3)'}}></View>

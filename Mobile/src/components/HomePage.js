@@ -40,11 +40,12 @@ export default HomePage = () => {
                 
                 
             } catch (error) {
-                console.log(error)
+                console.log(error);
             }
         }
-        getProfileUser()
+        getProfileUser();
         getAllProduct();
+        console.log(user)
     },[])
     
     useFocusEffect(
@@ -53,7 +54,7 @@ export default HomePage = () => {
             try {
             const token = await AsyncStorage.getItem('userToken');
             setShowProfile(!!token);
-            setUser(user)
+            setUser(user);
             //console.log(token);
             } catch (error) {
             console.error('Lỗi khi kiểm tra userToken:', error);
@@ -189,7 +190,10 @@ export default HomePage = () => {
             (<View style = {styleHomePage.view}>
                 <View style = {styleHomePage.viewUser}>
                     <View style = {styleHomePage.imageUser}>
-                        
+                        {user.image  ? (<Image style = {{width: 48, height: 48, borderRadius: 24}} source={{
+                            uri: user.image
+                            }}/>): null}
+                            
                     </View>
                     <View style = {styleHomePage.viewUserName}> 
                         <Text style = {styleHomePage.textUserName}>{user.name}</Text>

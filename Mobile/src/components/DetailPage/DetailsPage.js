@@ -21,7 +21,7 @@ const INFO = 'INFO';
 const RAITING = 'RAITING';
 const SUPPLIER = 'SUPPLIER';
 export default DetailsPage = ({route}) => {
-    const { id } = route.params;
+    const { id, rate, count } = route.params;
     const [page, setPage] = useState('INFO');
     const [product, setProduct] = useState([])
     const [schedule, setSchedule] = useState([])
@@ -209,7 +209,7 @@ export default DetailsPage = ({route}) => {
                 
             </View>
             
-            {page === INFO ? <InfoPage product={product} scheduleData ={schedule} navigate = {navigate} /> : page === RAITING ? <RaitingsPage product={product} /> : page === SUPPLIER ? <SupplierPage supplier = {supplier}/> : null}
+            {page === INFO ? <InfoPage product={product} scheduleData ={schedule} rate = {rate} count = {count} navigate = {navigate} /> : page === RAITING ? <RaitingsPage product={product} /> : page === SUPPLIER ? <SupplierPage supplier = {supplier}/> : null}
             <View style = {styleDetailsPage.viewAddTour}>
                 <View style = {{position: 'absolute', width: 90, height: 20, marginTop: 15, left: 95, borderLeftWidth: 1, borderRightWidth: 1, borderLeftColor: 'rgba(128, 128, 128, 0.6)', borderRightColor: 'rgba(128, 128, 128, 0.6)'}}></View>
                 <TouchableOpacity style = {styleDetailsPage.viewDateTime} onPress={() => setShowModal(true)}>

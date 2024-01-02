@@ -27,7 +27,7 @@ export const styleBillDetail = StyleSheet.create({
             height: 48,
             borderRadius: 24,
             backgroundColor: '#FF852C',
-            justifyContent: 'center',
+            justifyContent: 'center', 
             alignItems: 'center',
             position: 'absolute',
             left: 0
@@ -102,20 +102,22 @@ export const styleBillDetail = StyleSheet.create({
             
             marginTop: 50,
             alignItems: 'center',
-            marginLeft: 0
+            marginLeft: 0,
+            borderWidth: 0
         }
             ,view1: {
-                width: 25,
-                height: 25,
+                width: 22,
+                height: 22,
                 borderWidth: 2,
                 borderColor: 'rgba(250, 130, 50, 1)',
                 borderRadius: 10,
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                
             }
             ,view2: {
-                width: 11,
-                height: 36,
+                width: 10,
+                height: 40,
                 marginTop: 2,
                 marginBottom: 2,
                 backgroundColor: 'rgba(255, 231, 214, 1)'

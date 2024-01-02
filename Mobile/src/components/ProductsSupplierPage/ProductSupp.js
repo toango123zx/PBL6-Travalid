@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, Vibration, View, Dimensions, Text, TouchableOpacity } from 'react-native'
 
 const { width, height } = Dimensions.get('window');
@@ -7,6 +7,8 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import { useNavigation } from "@react-navigation/native";
 
 export default ProductSupp = ({data})=> {
+    const navigation = useNavigation()
+    const [idP, setIdP] = useState(data.id_product)
     return (
         <View style = {style.View}>
             <View style = {{...style.view, marginTop: 5}}>
@@ -16,6 +18,11 @@ export default ProductSupp = ({data})=> {
             <View style = {{...style.view, justifyContent: 'flex-start'}}>
                 <Icon name = 'location-outline' size = {15} color = '#6F757C'/>
                 <Text style = {style.textCity}>{data.city}</Text>
+                <TouchableOpacity style = {style.btnAddSchedule} onPress={()=>{
+                    navigation.navigate('AddSchdule',{idP, name: data.name})
+                }}>
+                    <Text style = {style.textAddSchedule}>Add schdule</Text>
+                </TouchableOpacity>
             </View>
             <View style = {style.view}>
                 <Text style = {style.textQuantity}>{data.quantity} people</Text>
@@ -39,6 +46,22 @@ const style = StyleSheet.create({
         marginTop: 10,
         marginBottom: 10,
         elevation: 5
+    }
+    ,btnAddSchedule: {
+        height: 20,
+        width: 100,
+        backgroundColor: '#FF852C',
+        borderRadius: 5,
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'absolute',
+        right: 0
+    }
+    ,textAddSchedule: {
+        color: '#FFF',
+        fontFamily: 'Montserrat Medium',
+        fontSize: 14,
+        
     }
     ,view: {
         width: 350,

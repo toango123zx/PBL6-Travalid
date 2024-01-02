@@ -56,14 +56,14 @@ export default Schedule = ({scheduleData, product, navigate}) => {
                     <Icon name = 'calendar-start' color = '#000' size = {30}/>
                     <View style = {{marginLeft: 7}}>
                         <Text style = {style.text}>Start </Text>
-                        <Text style = {style.text1}>{startDate.getUTCHours()}:{startDate.getUTCMinutes()}, {startDate.getUTCDate()}/{startDate.getUTCMonth()}/{startDate.getUTCFullYear()}</Text>
+                        <Text style = {style.text1}>{startDate.getUTCHours()}:{startDate.getUTCMinutes()}, {startDate.getUTCDate()}/{startDate.getUTCMonth()+ 1}/{startDate.getUTCFullYear()}</Text>
                     </View>
                 </View>
                 <View style = {style.viewEndTime}>
                     <Icon name = 'calendar-end' color = '#000' size = {30}/>
                     <View style = {{marginLeft: 7}}>
                         <Text style = {style.text}>End </Text>
-                        <Text style = {style.text1}>{endDate.getUTCHours()}:{endDate.getUTCMinutes()}, {endDate.getUTCDate()}/{endDate.getUTCMonth()}/{endDate.getUTCFullYear()}</Text>
+                        <Text style = {style.text1}>{endDate.getUTCHours()}:{endDate.getUTCMinutes()}, {endDate.getUTCDate()}/{endDate.getUTCMonth()+1}/{endDate.getUTCFullYear()}</Text>
                     </View>
                 </View>
             </View>
