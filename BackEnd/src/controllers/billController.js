@@ -4,6 +4,8 @@ import * as discountService from '../services/discountService';
 import * as userService from '../services/userService';
 import * as billHelper from '../helpers/billHelper';
 
+const { prisma } = require('../config/prismaDatabase');
+
 const lodash = require('lodash');
 
 export const getPurchaseBills = async (req, res) => {
@@ -58,17 +60,17 @@ export const createBill = async (req, res) => {
     let __bill = req.bill;
 
     __bill.id_user = __user.id_user;
-    __bill.discount_value = 0;
 
-    let __prosmise = [
+    let __promise = [
         scheduleProductService.getSchedulesProduct(__bill.id_schedule_product, __user.id_user, "traveller"),
         userService.getUser(undefined, __user.username),
     ];
-    if (__bill.id_discount) {
-        __prosmise.push(await discountService.getDiscounts(__bill.id_discount, undefined, undefined, __bill.id_schedule_product));
+    if (__bill.id_discount.length > 0) {
+        __promise.push(discountService.getDiscounts(__bill.id_discount, undefined, undefined, __bill.id_schedule_product));
     };
-    const dataFromDatabase = await Promise.allSettled(__prosmise)
+    const dataFromDatabase = await Promise.allSettled(__promise)
         .then((dataFromDatabase) => dataFromDatabase);
+
     const __schedules_product = lodash.uniqBy(dataFromDatabase[0].value, "id_product");
     __user = dataFromDatabase[1].value;
     if (__schedules_product.length !== __bill.id_schedule_product.length) {
@@ -79,7 +81,7 @@ export const createBill = async (req, res) => {
     };
 
     let __discounts;
-    if (__bill.id_discount) {
+    if (__bill.id_discount.length !== 0) {
         __discounts = lodash.uniqBy(dataFromDatabase[2].value, 'id_product')
         if (__bill.id_discount.length != __discounts.length) {
             return res.status(409).json({
@@ -87,14 +89,17 @@ export const createBill = async (req, res) => {
                 msg: "The discount program has expired or there are no products available for this discount program or Product schedule ID has duplicate products when invoicing"
             });
         };
-        delete __bill.id_discount;
     };
 
     __bill.id_supplier = __schedules_product[0].product.id_user;
 
     __user.age = (new Date() - new Date(__user.date_of_birth)) / (1000 * 60 * 60 * 24 * 365.25);
     __bill.cost = 0;
+    __bill.discount_value = 0;
     __bill.info_bill = [];
+    let __adminDiscount = 0;
+    let __fulledScheduleProduct = [];
+    let __fulledDiscounts = [];
     for (const i in __schedules_product) {
         if (__schedules_product[i].product.id_user !== __bill.id_supplier) {
             return res.status(422).json({
@@ -102,22 +107,46 @@ export const createBill = async (req, res) => {
                 msg: `Product schedule ID ${__schedules_product[i].id_schedule_product} is different from the supplier's product schedule id from the previous product schedule`
             });
         };
-
         if (__user.age < __schedules_product[i].product.age) {
             return res.status(403).json({
                 position: "Error: User age",
                 msg: `Product schedule id ${__schedules_product.id_schedule_product} has a different supplier id than the previous products`
             });
         };
+        const __remainingSchedules = __schedules_product[i].product.quantity - __schedules_product[i].booked - __bill.quantity;
+        if (__remainingSchedules < 0) {
+            return res.status(409).json({
+                position: "Error: Quantity",
+                msg: `Product schedule id ${__schedules_product[i].id_schedule_product} no longer has an order quantity`
+            });
+        };
+        if (__remainingSchedules === 0) {
+            __fulledScheduleProduct.push(__schedules_product[i].id_schedule_product);
+        };
         const __info_bill = {
             id_schedule_product: Number(__bill.id_schedule_product[i]),
             product_name: String(__schedules_product[i].product.name),
             city_name: String(__schedules_product[i].product.city)
         };
-        __bill.cost += __schedules_product[i].price;
+        __bill.cost += __schedules_product[i].price * __bill.quantity;
         const __discount = lodash.find(__discounts, (discount) => __schedules_product[i].id_product == discount.id_product);
+
         if (__discount) {
-            __bill.discount_value = __schedules_product[i].price * __discount.value / 100;
+            const __remainingDiscount = __discount.quantity - __discount.applited - __bill.quantity;
+            if (__remainingDiscount < 0) {
+                return res.status(409).json({
+                    position: "Error: Discount quantity",
+                    msg: `Discount quantity id ${__discount.id_discount} no longer has enough order quantity`
+                });
+            };
+            if (__remainingDiscount === 0) {
+                __fulledDiscounts.push(__discount.id_discount);
+            };
+            const __discount_value = __schedules_product[i].price * __discount.value / 100 * __bill.quantity;
+            if (__discount.user.role === "admin") {
+                __adminDiscount += __discount_value;
+            };
+            __bill.discount_value += __discount_value;
             __info_bill.id_discount = Number(__discount.id_discount);
         };
 
@@ -135,44 +164,59 @@ export const createBill = async (req, res) => {
         };
     };
 
-    delete __bill.id_schedule_product;
-    __bill.total = __bill.cost - __bill.discount_value;
-    __prosmise = null;
-    __prosmise = [];
-    if (__user.balance >= Number(__bill.total)) {
-        __user.balance -= Number(__bill.total)
-        __bill.status = "paided";
-        __prosmise.push(userService.updateUser(__user.id_user, { balance: Number(__user.balance) }));
+    __bill.total = Number(__bill.cost - __bill.discount_value);
+
+    if (__user.balance < __bill.total) {
+        return res.status(409).json({
+            position: "Error: User balance",
+            msg: `User balance is not enough to pay for this bill`
+        });
     };
 
-    delete __bill.cost;
-    delete __bill.total;
+    try {
+        await prisma.$transaction(async (prismaClient) => {
+            __promise = null;
+            __promise = [
+                scheduleProductService.updateBookedSchedulesProduct(__bill.id_schedule_product, __bill.quantity, prismaClient),
+                userService.updateUserBalance(__user.id_user, - __bill.total, prismaClient),
+                userService.updateUserBalance(__bill.id_supplier, __bill.total + __adminDiscount, prismaClient)
+            ];
 
-    __prosmise.push(billService.createBill(__bill));
-    await Promise.allSettled(__prosmise)
-        .then((result) => {
-            if (result.length == 2) {
-                if (result[0].status === "rejected" || result[1].status === "rejected") {
-                    return res.status(500).json({
-                        position: "Error: Prisma Update User Or create bill",
-                        msg: "Error from the server"
-                    });
+            if (__bill.id_discount.length > 0) {
+                __promise.push(discountService.updateDiscountApplied(__bill.id_discount, __bill.quantity, prismaClient));
+                if (__fulledDiscounts.length !== 0) {
+                    __promise.push(discountService.updateDiscounts(__fulledDiscounts, undefined, "traveller", "full", prismaClient));
+
                 };
-                return res.sendStatus(200);
-            } else {
-                if (result[0].status === "rejected") {
-                    return res.status(500).json({
-                        position: "Error: Prisma Update User",
-                        msg: "Error from the server"
-                    });
-                }
-                return res.status(202).json({
-                    position: "Error: Pay bill",
-                    msg: "Bill was created but Bill Payment failed due to insufficient user account balance"
-                });
             };
+            if (__fulledScheduleProduct.length !== 0) {
+                __promise.push(scheduleProductService.updateStatusScheduleProduct(__fulledScheduleProduct, "full", prismaClient));
+            };
+            
+            delete __bill.id_discount;
+            delete __bill.id_schedule_product;
+            delete __bill.cost;
+            delete __bill.total;
+            __bill.status = "paided"
+            __promise.push(billService.createBill(__bill, prismaClient));
+
+            await Promise.allSettled(__promise)
+                .then((result) => {
+                    result.forEach((resultItem) => {
+                        if (resultItem.value === false) {
+                            new Error("Update Db failed with prisma");
+                        };
+                    });
+                });
+            });
+    } catch (e) {
+        return res.status(500).json({
+            position: "Error: create Bill - Update db failed with prisma",
+            msg: "Error from the server",
         });
-    return;
+    };
+
+    return res.sendStatus(200);
 };
 
 export const payBill = async (req, res) => {

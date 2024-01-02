@@ -196,14 +196,15 @@ export const getBill = async (id_user) => {
     };
 };
 
-export const createBill = async (bill) => {
+export const createBill = async (bill, prismaClient = prisma) => {
     try {
         bill.info_bill = {
             create: bill.info_bill
         }
-        await prisma.bill.create({
-            data: bill
+        await prismaClient.bill.create({
+            data: bill,
         });
+        
         return true;
     } catch (e) {
         return false;
