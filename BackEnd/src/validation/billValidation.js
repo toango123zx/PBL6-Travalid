@@ -55,7 +55,7 @@ export const createBillValidation = (req, res, next) => {
         const __bill = billValidation(billSchema, req.body);
         req.bill = __bill;
     } catch (err) {
-        return res.status(404).send(err);
+        return res.status(422).send(err);
     };
 
     next();

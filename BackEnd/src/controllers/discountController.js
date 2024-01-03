@@ -21,6 +21,26 @@ export const getDiscountsForTraveller = async (req, res) => {
     };
 };
 
+export const getDiscountsByIdProducts = async (req, res) => {
+    const __id_products = req.body.id_products;
+    let __discounts = await discountService.getDiscountsByIdProducts(__id_products);
+    if (!__discounts) {
+        return res.status(500).json({
+            position: "Error: Prisma query discount",
+            msg: "Error form the server"
+        });
+    } else {
+        __discounts = __discounts.map((discount) => {
+            discount.supplier = discount.user.role;
+            delete discount.user;
+            return discount;
+        });
+    };
+    return res.status(200).json({
+        data: __discounts
+    });
+};
+
 export const getDiscountsForSupplier = async (req, res) => {
     const __user = req.user;
     const __start = req.start;
