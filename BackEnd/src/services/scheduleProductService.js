@@ -142,6 +142,45 @@ export const createScheduleProduct = async (data) => {
     }
 }
 
+export const updateBookedSchedulesProduct = async (id_schedules_product, quantity, prismaClient = prisma) => {
+    try {
+        await prismaClient.schedule_Product.updateMany({
+            where: {
+                id_schedule_product: {
+                    in: id_schedules_product
+                }
+            },
+            data: {
+                booked: {
+                    increment: quantity
+                }
+            }
+        });
+
+        return true;
+    } catch (error) { 
+        return false;
+    };
+};
+
+export const updateStatusScheduleProduct = async (id_schedules_product, status, prismaClient = prisma) => {
+    try {
+         await prismaClient.schedule_Product.updateMany({
+            where: {
+                id_schedule_product: {
+                    in: id_schedules_product
+                }
+            },
+            data: {
+                status: status,
+            }
+        });
+        
+        return true;
+    } catch (error) {
+        return false;
+    }
+};
 
 export const deleteScheduleProduct = async (id_schedule_product) => {
     try {

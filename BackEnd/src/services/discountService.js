@@ -221,6 +221,11 @@ export const getDiscounts = async (id_discounts, codes, id_prodcuts, id_schedule
                 quantity: true,
                 point: true,
                 applited: true,
+                user: {
+                    select: {
+                        role: true,
+                    }
+                }
             },
             where: {
                 OR: [
@@ -274,7 +279,7 @@ export const createDiscount = async (discount) => {
     };
 };
 
-export const updateDiscount = async (id_discount, id_user, role, status) => {
+export const updateDiscount = async (id_discount, id_user, role, status, prismaClient = prisma) => {
     const __checkStatus = ["full", "cancel"];
     if (!__checkStatus.includes(String(status))) {
         return null;
@@ -288,7 +293,7 @@ export const updateDiscount = async (id_discount, id_user, role, status) => {
     };
 
     try {
-        await prisma.discount.update({
+        await prismaClient.discount.update({
             where: {
                 id_discount: Number(id_discount),
                 id_user: id_user,
@@ -296,6 +301,58 @@ export const updateDiscount = async (id_discount, id_user, role, status) => {
             },
             data: {
                 status: String(status)
+            }
+        });
+
+        return true;
+    } catch (e) {
+        return false;
+    };
+};
+
+export const updateDiscounts = async (id_discounts, id_user, role, status, prismaClient = prisma) => {
+    const __checkStatus = ["full", "cancel"];
+    if (!__checkStatus.includes(String(status))) {
+        return null;
+    };
+    const __where = {
+        id_discount: {
+            in: id_discounts
+        },
+        id_user: Number(id_user),
+        status: 'active'
+    };
+    
+    if (String(status) === 'full' || role === 'admin') {
+        delete __where.id_user;
+    };
+
+    try {
+        await prismaClient.discount.updateMany({
+            where: __where,
+            data: {
+                status: String(status)
+            }
+        });
+
+        return true;
+    } catch (e) {
+        return false;
+    };
+};
+
+export const updateDiscountApplied = async (id_discounts, quantity, prismaClient = prisma) => {
+    try {
+        await prismaClient.discount.updateMany({
+            where: {
+                id_discount: {
+                    in: id_discounts
+                },
+            },
+            data: {
+                applited: {
+                    increment: quantity
+                }
             }
         });
 

@@ -172,6 +172,24 @@ export const updateUser = async (id_user, user) => {
     };
 };
 
+export const updateUserBalance = async (id_user, amount, prismaClient = prisma) => {
+    try {
+        await prismaClient.user.update({
+            where: {
+                id_user: Number(id_user),
+            },
+            data: {
+                balance: {
+                    increment: Number(amount)
+                }
+            },
+        });
+        
+        return true;
+    } catch (e) {
+        return false;
+    };
+};
 
 export const deleteUser = async (username) => {
     try {
