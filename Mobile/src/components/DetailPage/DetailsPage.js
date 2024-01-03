@@ -26,6 +26,7 @@ export default DetailsPage = ({route}) => {
     const [product, setProduct] = useState([])
     const [schedule, setSchedule] = useState([])
     const [supplier, setSupplier] = useState([])
+    const [avgRate, setAvgRate] = useState(0)
     const navigation = useNavigation();
     const handleBackPress = () => {
         // Thực hiện chuyển hướng về trang trước đó
@@ -62,9 +63,18 @@ export default DetailsPage = ({route}) => {
                 console.log(error)
             }
         }
+        const getRate = async () => {
+            try {
+                const res = await authApi.getRate(id)
+                setAvgRate(res.data.avg_rate)
+            } catch (error) {
+                console.log(error)
+            }
+        }
         
         getDetailProduct();
-        //console.log("PRODUCT" + JSON.stringify(product, null, 2));
+        getRate()
+        console.log("Supplier" + JSON.stringify(supplier, null, 2));
         
     },[])
     const [showModal, setShowModal] = useState (false);
@@ -209,8 +219,8 @@ export default DetailsPage = ({route}) => {
                 
             </View>
             
-            {page === INFO ? <InfoPage product={product} scheduleData ={schedule} rate = {rate} count = {count} navigate = {navigate} /> : page === RAITING ? <RaitingsPage product={product} /> : page === SUPPLIER ? <SupplierPage supplier = {supplier}/> : null}
-            <View style = {styleDetailsPage.viewAddTour}>
+            {page === INFO ? <InfoPage product={product} scheduleData ={schedule} rate = {avgRate} count = {count} navigate = {navigate} /> : page === RAITING ? <RaitingsPage product={product} /> : page === SUPPLIER ? <SupplierPage supplier = {supplier}/> : null}
+            {/* <View style = {styleDetailsPage.viewAddTour}>
                 <View style = {{position: 'absolute', width: 90, height: 20, marginTop: 15, left: 95, borderLeftWidth: 1, borderRightWidth: 1, borderLeftColor: 'rgba(128, 128, 128, 0.6)', borderRightColor: 'rgba(128, 128, 128, 0.6)'}}></View>
                 <TouchableOpacity style = {styleDetailsPage.viewDateTime} onPress={() => setShowModal(true)}>
                     <View style = {styleDetailsPage.viewTopDateTime}>
@@ -254,7 +264,7 @@ export default DetailsPage = ({route}) => {
                 <Modal visible = {showModalEnd} animationType="slide" transparent={true}>
                     <DateTimePicker setYear = {setYearEnd} setMonth = {setMonthEnd} setDay = {setDayEnd} setHour={setHourEnd} setMin={setMinEnd} setShowModal={setShowModalEnd}/>
                 </Modal>
-            </View>
+            </View> */}
         </SafeAreaView>
     )
 }

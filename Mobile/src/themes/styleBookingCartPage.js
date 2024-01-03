@@ -30,9 +30,10 @@ export const styleCartPage = StyleSheet.create ({
     },
     viewBottom: {
         width: width,
-        height: 240,
+        height: 140,
         backgroundColor: '#FFF',
         elevation: 10,
+        flexDirection: 'row'
     },
 
     //Quantity
@@ -157,22 +158,27 @@ export const styleCartPage = StyleSheet.create ({
     },
     //Total
     viewSubTotal: {
-        width: '100%',
-        height: 25,
+        width: 100,
+        height: 60,
         borderWidth: 0,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center'
+        
+        marginTop: 10,
+        
+        position: 'absolute',
+        left: (width-380)/2,
+        
     },
     textTotal1: {
         fontFamily: 'Montserrat Medium',
         fontSize: 16,
-        color: '#000'
+        color: '#000',
+        
     },
     textTotal2: {
-        fontFamily: 'Montserrat Medium',
-        fontSize: 18,
-        color: '#FF6B00'
+        fontFamily: 'Montserrat SemiBold',
+        fontSize: 20,
+        color: '#FF6B00',
+        
     },
     view2: {
         width: 380,
@@ -187,12 +193,16 @@ export const styleCartPage = StyleSheet.create ({
         height: '100%'
     },
     btnCheckOut: {
-        width: '75%',
-        height: '100%',
+        width: 250,
+        height: 50,
         backgroundColor: '#FF852C',
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 10
+        borderRadius: 10,
+        
+        marginTop: 10,
+        position: 'absolute',
+        right: (width-380)/2
         
     },
     textCheckOut: {

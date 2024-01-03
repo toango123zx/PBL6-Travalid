@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
-export default DiscountInPayment = ({data, setDiscount, setNameDis, setIDDiscount}) => {
+export default DiscountInPayment = ({data, setDiscount, setNameDis, setIDDiscount, setIDPr}) => {
     const endTime = new Date(data.end_time)
     const role = data.user.role
     return(
@@ -27,7 +27,7 @@ export default DiscountInPayment = ({data, setDiscount, setNameDis, setIDDiscoun
                 </View>
                 
             </View>
-            <TouchableOpacity style = {style.btnSelect} onPress={()=>{setDiscount(data.value), setNameDis(data.name), setIDDiscount(data.id_discount)}}>
+            <TouchableOpacity style = {style.btnSelect} onPress={()=>{setDiscount(data.value), setNameDis(data.name), setIDDiscount(data.id_discount), setIDPr(data.id_product)}}>
                 <Icon name = 'caret-forward' color = '#FFF' size = {30}/>
             </TouchableOpacity>
         </View>

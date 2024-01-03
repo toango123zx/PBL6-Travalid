@@ -10,7 +10,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 const statusBarHeight = StatusBar.currentHeight || 0;
 
-export default HomePage = () => {
+export default HomePage2 = () => {
     const [productData, setProductData] = useState([])
     const [user, setUser]= useState([]);
     const [showProfile, setShowProfile] = useState(false);
@@ -28,27 +28,42 @@ export default HomePage = () => {
                 console.log(error)
             }
         }
-        const getProfileUser = async () =>{
-            try {
+        // const getProfileUser = async () =>{
+        //     try {
                 
-                const token = "bearer " + await AsyncStorage.getItem('userToken')
-                console.log(token)
-                const res = await authApi.getProfileUser({
-                    "token" : token,
-                })
-                setUser(res.data.data)
+        //         const token = "bearer " + await AsyncStorage.getItem('userToken')
+        //         console.log(token)
+        //         const res = await authApi.getProfileUser({
+        //             "token" : token,
+        //         })
+        //         setUser(res.data.data)
                 
                 
-            } catch (error) {
-                console.log(error);
-            }
-        }
-        getProfileUser();
+        //     } catch (error) {
+        //         console.log(error);
+        //     }
+        // }
+        // getProfileUser();
         getAllProduct();
         console.log(user);
     },[])
     
-    
+    useFocusEffect(
+        React.useCallback(() => {
+        const checkUserToken = async () => {
+            try {
+            const token = await AsyncStorage.getItem('userToken');
+            setShowProfile(!!token);
+            setUser(user);
+            //console.log(token);
+            } catch (error) {
+            console.error('Lỗi khi kiểm tra userToken:', error);
+            }
+        };
+
+        checkUserToken();
+        }, [])
+    );
     const attractionData = [
         {
             id: 1,
@@ -171,28 +186,32 @@ export default HomePage = () => {
                     </View>  
                 </View>
             </ScrollView>
+             
             
             <View style = {styleHomePage.view}>
-                <View style = {styleHomePage.viewUser}>
-                    <View style = {styleHomePage.imageUser}>
-                        {user.image  ? (<Image style = {{width: 48, height: 48, borderRadius: 24}} source={{
-                            uri: user.image
-                            }}/>): null}
-                            
-                    </View>
-                    <View style = {styleHomePage.viewUserName}> 
-                        <Text style = {styleHomePage.textUserName}>{user.name}</Text>
-                    </View>
-                    
-                </View>
-                <View style = {styleHomePage.viewNofitication}>
-                    <TouchableOpacity>
-                        <Icon name="notifications-outline" color="#000" size={25} />
+                    <TouchableOpacity 
+                    style = {{
+                        width: 100,
+                        height: 38,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        position: 'absolute',
+                        top: 5,
+                        right: 0,
+                        backgroundColor: '#FF852C',
+                        borderRadius: 18
+                    }}
+                    onPress={() => {navigation.navigate('SignInPage')}}>
+                        <Text style = {{
+                            color: '#FFF',
+                            fontFamily: 'Montserrat SemiBold',
+                            fontSize: 16,
+                            letterSpacing: 0.6
+                        }}>Sign In</Text>
                     </TouchableOpacity>
                     
-                    {/* <Image source={require('../assets/images/menu-notifications.png')}/> */}
-                </View>
-            </View> 
+                    {/* <Image source={require('../assets/images/menu-notifications.png')}/> */} 
+            </View>
         </SafeAreaView>
     )
 }

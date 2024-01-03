@@ -107,8 +107,9 @@ export const styleAttractionPage = StyleSheet.create({
         borderRadius: 24,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#F7F7F9',
+        backgroundColor: '#FFF',
         position: 'absolute',
+        elevation: 5,
         right: 0
     },
     btnSignIn: {

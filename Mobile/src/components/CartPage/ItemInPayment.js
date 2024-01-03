@@ -15,7 +15,8 @@ import Icon1 from 'react-native-vector-icons/Ionicons'
 const { width, height } = Dimensions.get('window');
 export default ItemInCart = ({data}) => {
     
-   
+    const startDate = new Date (data.start_time)
+    const endDate = new Date (data.end_time)
     return(
         <View style = {style.View}>
             <View style = {style.viewTop}>
@@ -27,11 +28,11 @@ export default ItemInCart = ({data}) => {
                 </View>
                 <View style = {style.viewInfo}>
                     <View style = {style.viewName}>
-                        <Text style = {style.textName}>{data.name}</Text>
+                        <Text style = {style.textName}>{data.product_name}</Text>
                     </View>
                     <View style = {style.viewLocation}>
                         <Icon1 name = 'location-outline' size = {18} color = '#6F757C'/>
-                        <Text style = {style.textLocation}>{data.city}</Text>
+                        <Text style = {style.textLocation}>{data.city_name}</Text>
                     </View>
                     <View style = {style.viewPrice}>
                         <Text style = {style.textPrice}>VND {data.price}</Text>
@@ -40,7 +41,7 @@ export default ItemInCart = ({data}) => {
                 
             </View>
             <View style = {style.viewBottom}>
-                <Text style = {style.text}>{data.dayStart}/{data.monthStart}/{data.yearStart}, {data.hourStart}:{data.minStart}     to     {data.dayEnd}/{data.monthEnd}/{data.yearEnd}, {data.hourEnd}:{data.minEnd}</Text>
+                <Text style = {style.text}>{startDate.getUTCHours()}:{startDate.getUTCMinutes()}, {startDate.getUTCDate()}/{startDate.getUTCMonth()+ 1}/{startDate.getUTCFullYear()}     to     {endDate.getUTCHours()}:{endDate.getUTCMinutes()}, {endDate.getUTCDate()}/{endDate.getUTCMonth()+1}/{endDate.getUTCFullYear()}</Text>
             </View>
         </View>
     )

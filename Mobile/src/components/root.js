@@ -22,6 +22,7 @@ import SignInPage from './SignInPage';
 import SignUpPage from './SignUp/SignUpPage';
 import ProfileDetails from './ProfilePage/ProfileDetails';
 import AttractionsPage from './AttractionsPage';
+import HomePage2 from './HomePage2';
 import AddSchedule from './ProductsSupplierPage/AddSchedule';
 import DiscountDetail from './DiscountPage/DiscountDetail';
 import ProductSupplierPage from './ProductsSupplierPage/ProductSupplierPage';
@@ -147,7 +148,7 @@ function MyTabs() {
     <Tab.Navigator 
     tabBar={(props) => <MyTabBar {...props} />}
       screenOptions={{headerShown: false}}>
-      <Tab.Screen name="Home" component={HomePage} />
+      {showProfile===true?(<Tab.Screen name="Home" component={HomePage} />):(<Tab.Screen name="Home2" component={HomePage2} />)}
       <Tab.Screen name="Attractions" component={AttractionsPage} />
       <Tab.Screen name="BookingCartPage" component={BookingCartPage}/>
       <Tab.Screen name="DiscountPage" component={DiscountPage} />

@@ -78,7 +78,9 @@ export default ProfilePage = () =>{
                 <Text style = {styleProfilePage.textProfile}>Profile</Text>
             </View>
             <View style = {styleProfilePage.viewAvatar}>
-                
+                {user.image ? <Image style = {{width: 105, height: 105, borderRadius: 52.5}} source={{
+                    uri: user.image
+                }}/> : null}
             </View>
             <View style = {styleProfilePage.viewName}>
                 <Text style = {styleProfilePage.textName}>{user.name}</Text>

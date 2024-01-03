@@ -78,7 +78,7 @@ export default RaitingsPage = ({product}) => {
                     <TouchableOpacity style = {styleRaittingsPage.btnReview} onPress={()=>{setShowModalRate(true)}}>
                         <Text style = {styleRaittingsPage.textReview}>Rate</Text>
                     </TouchableOpacity>
-                    <Dropdown
+                    {/* <Dropdown
                         style={styleRaittingsPage.dropdown}
                         placeholderStyle={styleRaittingsPage.placeholderStyle}
                         selectedTextStyle={styleRaittingsPage.selectedTextStyle}
@@ -98,7 +98,7 @@ export default RaitingsPage = ({product}) => {
                         setValue(item.value);
                         }}
                     
-                    />
+                    /> */}
                 </View>
             </View>
             <ScrollView>

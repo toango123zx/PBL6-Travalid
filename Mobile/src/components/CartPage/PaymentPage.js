@@ -30,15 +30,16 @@ export default PaymentPage = ({route}) => {
     
     const [showD, setShowD] = useState(false)
     const {dataList, price} = route.params;
-    const [data, setData] = useState([])
+    const [total1, setTotal1] = useState(0)
     const navigation = useNavigation();
     const [quantity, setQuantity] = useState(1);
-    const [discount, setDiscount] = useState(null);
+    const [discount, setDiscount] = useState(0);
     const [discountData, setDiscountData] = useState([])
     const [selectPay, setSelectPay] = useState(false);
     const [nameDis, setNameDis] = useState(null);
     const [idDiscount, setIDDiscount] = useState(null)
     const [id_schedule, setIDSchedule] = useState([])
+    const [idPr, setIDPr] = useState(null)
     const currentDate = new Date()
     const handleBackPress = () => {
         // Thực hiện chuyển hướng về trang trước đó
@@ -50,7 +51,7 @@ export default PaymentPage = ({route}) => {
       };  
     const CreateBill = async () => {
         try {
-            const newSchedule = dataList.map((data) => data.id_schedule);
+            const newSchedule = dataList.map((data) => data.id_schedule_product);
             console.log(newSchedule)
             const token = "bearer " + await AsyncStorage.getItem('userToken')
             const res = await authApi.createBill(
@@ -73,9 +74,31 @@ export default PaymentPage = ({route}) => {
             navigation.navigate('OrderComplete');
              
         } catch (error) {
-            console.log(error)
+            console.log(error);
         }
     }
+    useEffect(()=>{
+
+        if(idPr!== null) {
+            dataList.forEach((data) => {
+            
+                if (data.id === idPr) {
+                  // Nếu id của data trùng với id_discount, áp dụng giảm giá
+                  setTotal1(total1 + (data.price-data.price*discount/100))
+                  console.log(total1)
+                } else {
+                  // Nếu không, sử dụng giá trị mặc định
+                  setTotal1(total1 + data.price)
+                  console.log("Total: " + total1);
+                }
+                
+                
+                
+            });
+        }
+        
+    },[discount])
+    
     useEffect(() => {
         
         
@@ -92,8 +115,6 @@ export default PaymentPage = ({route}) => {
                             "token": token
                         })
                         
-                        
-                        
                         return response.data.data
                     });
                     const results = await Promise.all(apiCalls)
@@ -102,7 +123,7 @@ export default PaymentPage = ({route}) => {
                     
                 } catch (error) {
                     console.log(error);
-                    Alert.alert("Can't Pay")
+                    Alert.alert("Can't Pay");
                 }
             
                 
@@ -111,7 +132,7 @@ export default PaymentPage = ({route}) => {
 
         getDiscountByIdProduct()
         
-        //console.log(discountData),
+        //console.log(JSON.stringify(dataList,null,2))
         
         
         
@@ -121,7 +142,7 @@ export default PaymentPage = ({route}) => {
             <StatusBar translucent backgroundColor="transparent" />
             
             <View style = {style.viewHeader}>
-                <TouchableOpacity style = {style.btnBack} onPress={handleBackPress}>
+                <TouchableOpacity style = {style.btnBack} onPress={()=>{navigation.goBack()}}>
                     <Icon name = 'chevron-back-outline' color = '#FFF' size = {25}/>
                 </TouchableOpacity>
                 <Text style = {style.textPayment}>Payment</Text>
@@ -183,7 +204,7 @@ export default PaymentPage = ({route}) => {
                     //console.log('discoutn data: '+ JSON.stringify(discountData)),
                     
                     currentDate.getTime()>new Date(discountData.start_time).getTime() && currentDate.getTime()<new Date(discountData.end_time).getTime() ?
-                    <DiscountInPayment key={discountData.id_discount} data={discountData} setDiscount = {setDiscount} setNameDis = {setNameDis} setIDDiscount = {setIDDiscount}/> : null
+                    <DiscountInPayment key={discountData.id_discount} data={discountData} setDiscount = {setDiscount} setNameDis = {setNameDis} setIDDiscount = {setIDDiscount} setIDPr = {setIDPr}/> : null
                 ))}
                           
                 </ScrollView>
@@ -194,7 +215,7 @@ export default PaymentPage = ({route}) => {
             <View style = {{width: width, height: 4, backgroundColor: 'rgba(128, 128, 128, 0.3)' }}></View>
             <View style = {style.viewSubTotal}>
                 <View style = {style.viewTopSubTotal}>
-                    <Text style = {style.textDiscount}>Discount</Text>
+                    <Text style = {style.textDiscount}>Discount </Text>
                     {discount === null? (<Text style = {style.text11}>0 VND</Text>): <Text style = {style.text11}>-{Math.round(price*discount/100)} VND</Text>}
                     
                 </View>
@@ -207,7 +228,7 @@ export default PaymentPage = ({route}) => {
             <View style = {style.viewCheckOut}>
                 <View style = {style.leftCheckout}>
                     <Text style = {style.textTotalAmount}>Total amount</Text>
-                    <Text style = {style.textTotalAmount1}>{Math.round(price - price*discount/100)} VND</Text>                        
+                    <Text style = {style.textTotalAmount1}>{price - Math.round(price*discount/100)} VND</Text>                        
                 </View>
                 <TouchableOpacity style = {style.btnCheckout} onPress={CreateBill}>
                     <Text style = {style.textCheckout}>Pay</Text>

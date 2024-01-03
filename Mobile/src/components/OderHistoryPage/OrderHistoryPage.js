@@ -34,7 +34,7 @@ export default OrderHistoryPage = ({route}) =>{
                     //console.log(JSON.stringify(res.data.data,null, 3))
                     setBill(res.data.data)
                 } else {
-                    const res = await authApi.getSellBill({
+                    const res = await authApi.getSellBill(page1,{
                         "token" : token,
                     })
                     //console.log(JSON.stringify(res.data.data,null, 3))

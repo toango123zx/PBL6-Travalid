@@ -17,6 +17,7 @@ import { useDispatch } from "react-redux";
 import { setSharedData } from "../../reducers/actions";
 import { useNavigation } from "@react-navigation/native";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import authApi from "../../API/auth";
 
 export default Schedule = ({scheduleData, product, navigate}) => {
     const startDate = new Date (scheduleData.start_time);
@@ -32,6 +33,20 @@ export default Schedule = ({scheduleData, product, navigate}) => {
             setShowAdd(true)
         } else setShowAdd(false)
     },[])
+    const addScheduleToCart = async () => {
+        try {
+            console.log(scheduleData.id_schedule_product)
+            const token = "bearer " + await AsyncStorage.getItem('userToken')
+            const res = await authApi.addScheduleToCart({
+                id_schedule_product: scheduleData.id_schedule_product
+            },{
+                "token": token
+            })
+            console.log(res.status)
+        } catch (error) {
+            console.log(error)
+        }
+    }
     const dataToSend = {
         id: product.id_product,
         id_schedule: scheduleData.id_schedule_product,
@@ -41,7 +56,7 @@ export default Schedule = ({scheduleData, product, navigate}) => {
         location: product.location,
         price: scheduleData.price,
         yearStart: startDate.getUTCFullYear(),
-        monthStart: startDate.getUTCMonth(),
+        monthStart: startDate.getUTCMonth()+1,
         dayStart: startDate.getUTCDate(),
         hourStart: startDate.getUTCHours(),
         minStart: startDate.getUTCMinutes(),
@@ -97,7 +112,7 @@ export default Schedule = ({scheduleData, product, navigate}) => {
                     <Text style = {style.textAdd}>Add</Text>
                     </TouchableOpacity>
                 ) : (
-                    <TouchableOpacity style = {style.btnAdd} onPress={goToCart}>
+                    <TouchableOpacity style = {style.btnAdd} onPress={addScheduleToCart}>
                     <Text style = {style.textAdd}>Add</Text>
                     </TouchableOpacity>
                 )}
