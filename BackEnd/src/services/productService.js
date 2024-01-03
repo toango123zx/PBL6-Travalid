@@ -12,12 +12,31 @@ export const getAllProducts = async (page) => {
                 avg_rate: true,
                 count_complete: true,
                 city: true,
-                image: true
+                image: true,
+                status: true,
+                time: true,
+                quantity: true,
+                city: true,
+                id_location: true,
+                location: {
+                    select: {
+                        display_name: true,
+                    }
+                }
+            },
+            orderBy: {
+                id_product: 'desc', // Add this line to order by id_product in descending order
             },
             skip: start,
             take: limit,
         });
-        return res
+        const result = res.map((item)=>{
+            return {
+                ...item,
+                location_on_system: item.location.display_name,
+            }
+        })
+        return result
     } catch (error) {
         return false;
     }
@@ -42,20 +61,20 @@ export const getProductById = async (productId) => {
                 count_complete: true,
                 location_map: true,
                 image: true,
-                user: {
-                    select: {
-                        id_user: true,
-                        name: true,
-                        email: true,
-                        phone_number: true,
-                        address: true,
-                        info_supplier: {
-                            select: {
-                                tax_id_number: true,
-                            }
-                        }
-                    }
-                },
+                // user: {
+                //     select: {
+                //         id_user: true,
+                //         name: true,
+                //         email: true,
+                //         phone_number: true,
+                //         address: true,
+                //         info_supplier: {
+                //             select: {
+                //                 tax_id_number: true,
+                //             }
+                //         }
+                //     }
+                // },
                 schedule_product: {
                     select: {
                         id_schedule_product: true,

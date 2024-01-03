@@ -86,6 +86,14 @@ export const getSchedulesProduct = async (id_schedules_product, id_user, role, s
             }
             break;
         }
+        case 'admin': {
+            whereGetScheduleProduct = {
+                product: {
+                    id_user: Number(id_user)
+                }
+            }
+            break;
+        }
         case 'travel_supplier': {
             whereGetScheduleProduct = {
                 product: {
@@ -123,7 +131,44 @@ export const getSchedulesProduct = async (id_schedules_product, id_user, role, s
                 start_time: 'asc'
             },
             skip: start,
-            take: limit,
+            // take: limit,
+        });
+
+    } catch (e) {
+        console.log(e);
+        return false;
+    };
+};
+
+
+
+export const getScheduleProductByProduct = async (id_product) => {
+    try {
+        return await prisma.schedule_Product.findMany({
+            select: {
+                id_schedule_product: true,
+                id_product: true,
+                start_time: true,
+                end_time: true,
+                price: true,
+                booked: true,
+                status: true,
+                product: {
+                    select: {
+                        name: true,
+                        id_user: true,
+                        quantity: true,
+                        age: true,
+                        city: true,
+                    }
+                }
+            },
+            where: {
+                id_product: id_product
+            },
+            orderBy: {
+                start_time: 'asc'
+            },
         });
 
     } catch (e) {

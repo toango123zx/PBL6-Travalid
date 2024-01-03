@@ -163,7 +163,7 @@ export const createBill = async (req, res) => {
         const __discount = lodash.find(__discounts, (discount) => __schedules_product[i].id_product == discount.id_product);
         if (__discount) {
             __bill.discount_value = __schedules_product[i].price * __discount.value / 100;
-            __info_bill.id_discount = Number(__discount.id_discount);
+            // __info_bill.id_discount = Number(__discount.id_discount);
         };
 
         __bill.info_bill.push(__info_bill);

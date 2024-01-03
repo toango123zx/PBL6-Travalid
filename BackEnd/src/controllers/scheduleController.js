@@ -32,6 +32,29 @@ export const getAllScheduleProduct = async (req, res, next) => {
     }
 }
 
+export const getScheduleProductByProduct = async (req, res, next) => {
+    try {
+        const id_product = Number(req.params.id);
+        const schedules = await scheduleProductService.getScheduleProductByProduct(id_product)
+        if (!schedules) {
+            return res.status(403).json({
+                position: "getScheduleProductByProduct",
+                msg: "The user does not have permission to access this resource"
+            });
+        }
+        let schedule = scheduleHelper.formatScheduleFormDb(schedules);
+        return res.status(200).send({
+            data: {
+                schedule
+            }
+        })
+    } catch (err) {
+        return res.status(400).send({
+            error: err,
+        })
+    }
+}
+
 export const createScheduleProduct = async (req, res, next) => {
     try {
         const id_product = parseInt(req.params.id);

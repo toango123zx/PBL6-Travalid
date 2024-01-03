@@ -146,6 +146,7 @@ enum Discount_Status {
   cancel
 }
 
+
 model Discount {
   id_discount Int             @id @default(autoincrement()) @db.UnsignedInt
   id_user     Int             @db.UnsignedInt
@@ -163,7 +164,7 @@ model Discount {
   applited    Int             @default(0) @db.UnsignedSmallInt
   status      Discount_Status @default(active)
 
-  bill Bill[]
+  Info_Bill Info_Bill[]
 }
 
 model Cart {
@@ -183,6 +184,7 @@ enum Bill_Status {
   cancel
 }
 
+
 model Bill {
   id_bill        Int         @id @default(autoincrement()) @db.UnsignedInt
   id_user        Int         @db.UnsignedInt
@@ -190,14 +192,14 @@ model Bill {
   id_supplier    Int         @db.UnsignedInt
   supplier       User        @relation(name: "supplier", fields: [id_supplier], references: [id_user])
   time           DateTime    @default(now())
-  id_discount    Int?        @db.UnsignedInt
-  discount       Discount?   @relation(fields: [id_discount], references: [id_discount])
   discount_value Int
   quantity       Int         @db.UnsignedSmallInt
   status         Bill_Status @default(pending)
 
   info_bill Info_Bill[]
 }
+
+
 
 model Info_Bill {
   id_info_bill        Int              @id @default(autoincrement()) @db.UnsignedInt
@@ -206,6 +208,8 @@ model Info_Bill {
   id_schedule_product Int              @db.UnsignedInt
   schedule_product    Schedule_Product @relation(fields: [id_schedule_product], references: [id_schedule_product])
   product_name        String
+  id_discount         Int?             @db.UnsignedInt
+  discount            Discount?        @relation(fields: [id_discount], references: [id_discount])
   city_name           String
 }
 

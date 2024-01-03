@@ -134,15 +134,16 @@ export const getProductById = async (req, res, next) => {
                 msg: "Product does not exist"
             });
         }
-        const product = productHelper.formatProductFromDb(Product);
-        product.image_description = [];
+        // const product = productHelper.formatProductFromDb(Product);
+        // product.image_description = [];
 
         res.status(200).json({
             status: 'success',
             msg: 'You have successfully.',
-            data: product,
+            data: Product,
         });
     } catch (err) {
+        console.log(err);
         res.status(500).json({
             msg: 'Get internal server error in get product',
         });
