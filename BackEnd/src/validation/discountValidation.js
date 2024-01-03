@@ -102,7 +102,7 @@ export const createDiscountValidation = (req, res, next) => {
         }
         req.discount = __discount;
     } catch (err) {
-        return res.status(404).send(err);
+        return res.status(422).send(err);
     };
 
     next();

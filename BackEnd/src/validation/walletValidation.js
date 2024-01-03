@@ -50,7 +50,8 @@ export const createRequestWithdrawalValidation = (req, res, next) => {
         __requestWithdrawal.time = String(new Date());
         req.requestWithdrawal = __requestWithdrawal;
     } catch (err) {
-        return res.status(404).send(err);
+        return res.status(422).send(err);
     };
+    
     next();
 };

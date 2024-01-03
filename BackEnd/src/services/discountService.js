@@ -101,6 +101,59 @@ export const getDiscountsByIdUser = async (id_user, start) => {
     };
 };
 
+export const getDiscountsByIdProducts = async (id_products, prismaClient = prisma) => {
+    if (!Array.isArray(id_products)) {
+        return false;
+    };
+    try {
+        return await prismaClient.discount.findMany({
+            select: {
+                id_discount: true,
+                id_product: true,
+                name: true,
+                code: true,
+                description: true,
+                start_time: true,
+                end_time: true,
+                value: true,
+                quantity: true,
+                point: true,
+                applited: true,
+                status: true,
+                user: {
+                    select: {
+                        role: true,
+                    }
+                }
+            },
+            where: {
+                id_product: {
+                    in: id_products,
+                },
+                status: 'active',
+                end_time: {
+                    gt: new Date(),
+                }
+            },
+            orderBy: [
+                {
+                    value: 'desc',
+                },
+                {
+                    end_time: 'asc',
+                },
+                {
+                    start_time: 'asc',
+                },
+                {
+                    quantity: 'asc'
+                }]
+        });
+    } catch (e) {
+        return false;
+    };
+};
+
 export const getDetailDiscount = async (id_discount) => {
     try {
         return prisma.discount.findFirst({
@@ -322,7 +375,7 @@ export const updateDiscounts = async (id_discounts, id_user, role, status, prism
         id_user: Number(id_user),
         status: 'active'
     };
-    
+
     if (String(status) === 'full' || role === 'admin') {
         delete __where.id_user;
     };
