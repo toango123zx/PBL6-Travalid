@@ -49,9 +49,9 @@ export default OrderHistoryPage = ({route}) =>{
         }
 
         getBill();
-        console.log(bill);
+        //console.log(bill);
         
-    },[])
+    },[page1])
 
     return(
         <View style = {style.View}>
@@ -63,7 +63,7 @@ export default OrderHistoryPage = ({route}) =>{
                 <Text style = {style.textOderHistory}>Order History</Text>
             </View>
             <ScrollView contentContainerStyle = {style.scrollView} >
-                {bill.slice(0,8).map((bill)=>(     
+                {bill.map((bill)=>(     
                     <Bill key={bill.id_bill} billData = {bill}  role ={user.role}/>
                 ))}
                 <View style = {style.viewPage}>

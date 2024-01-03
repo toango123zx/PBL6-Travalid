@@ -39,6 +39,7 @@ export const styleBillDetail = StyleSheet.create({
             justifyContent: 'center',
             alignItems: 'center',
             borderRadius: 15,
+            elevation: 5
         }
         ,textOrderDetail: {
             color: '#000',

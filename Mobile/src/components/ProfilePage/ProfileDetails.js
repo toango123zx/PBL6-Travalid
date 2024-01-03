@@ -66,9 +66,9 @@ export default ProfileDetails = () => {
            
             <ScrollView style = {styleProfileDetails.ScrollView}>
                 <View style = {{...styleProfilePage.viewAvatar, marginTop: 45+48}}>
-                    <Image style = {{width:105, height: 105}} source={{
+                    {user.image ? (<Image style = {{width:105, height: 105}} source={{
                         uri: user.image
-                        }}/>
+                        }}/>): null}
 
                 </View>
                 <View style = {{...styleProfilePage.viewName, marginBottom: 25}}>
@@ -120,8 +120,8 @@ export default ProfileDetails = () => {
                 
             </ScrollView> 
             <View style = {styleProfileDetails.viewTop}>
-                <TouchableOpacity style = {styleProfileDetails.btnBack} onPress={handleBackPress}><Icon name= 'chevron-back-outline' color = '#1B1E28' size = {25} /></TouchableOpacity>
-                <View style = {{width: 90, height: 33, borderRadius: 15, backgroundColor: '#FFF', justifyContent: 'center', alignItems: 'center'}}>
+                <TouchableOpacity style = {styleProfileDetails.btnBack} onPress={handleBackPress}><Icon name= 'chevron-back-outline' color = '#FFF' size = {25} /></TouchableOpacity>
+                <View style = {{width: 90, height: 33, borderRadius: 15, backgroundColor: '#FFF', justifyContent: 'center', alignItems: 'center', elevation: 5}}>
                     <Text style = {styleProfileDetails.textProfile}>Profile</Text>
                 </View>
                 

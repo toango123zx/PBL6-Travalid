@@ -64,7 +64,7 @@ export default DetailsPage = ({route}) => {
         }
         
         getDetailProduct();
-        console.log(JSON.stringify(product, null, 2));
+        //console.log("PRODUCT" + JSON.stringify(product, null, 2));
         
     },[])
     const [showModal, setShowModal] = useState (false);

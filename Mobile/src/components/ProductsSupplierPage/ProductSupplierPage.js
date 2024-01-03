@@ -86,7 +86,14 @@ export default ProductSuppilerPage = ({route}) => {
     return(
         <View style = {style.View}>
             <StatusBar translucent backgroundColor="transparent" />
-            <View style = {style.viewHeader}>
+            
+            <View style = {{flex: 1}}>
+                    {page === 'PRODUCTS' ?  
+                    <ProductSuppPage product={product} navigation={navigation}/> : 
+                    page === 'DISCOUNTS' ? <DiscountSuppPage discount = {discount} navigation = {navigation} role = {user.role}/> :  
+                    <ScheduleSuppPage schedule={schedule} navigation={navigation} role = {user.role}/>}
+                </View>
+                <View style = {style.viewHeader}>
                 <TouchableOpacity style = {style.btnBack} onPress={()=>{navigation.goBack()}}>
                     <Icon name = 'chevron-back' color = '#FFF' size = {25}/>
                 </TouchableOpacity>
@@ -117,12 +124,6 @@ export default ProductSuppilerPage = ({route}) => {
                 
                 
             </View>
-            <View style = {{flex: 1}}>
-                    {page === 'PRODUCTS' ?  
-                    <ProductSuppPage product={product} navigation={navigation}/> : 
-                    page === 'DISCOUNTS' ? <DiscountSuppPage discount = {discount} navigation = {navigation} role = {user.role}/> :  
-                    <ScheduleSuppPage schedule={schedule} navigation={navigation} role = {user.role}/>}
-                </View>
             
                 <View style = {styleProductSuppPage.viewPage}>
                     <TouchableOpacity style = {style.btnPage} 
@@ -151,8 +152,20 @@ const ScheduleSuppPage = ({schedule, navigation, role}) => {
     const [value1, setValue1] = useState('Place');
     return(
         <View>
+            
+            <ScrollView contentContainerStyle ={styleProductSuppPage.ScrollView}>
+            <View style = {{height: 110}}>
+
+            </View>
+                {schedule.slice(0,10).map((schedule) => (
+                    <ScheduleSupp key={schedule.id_schedule_product} data ={schedule} role = {role} />
+                ))}
+                <View style = {{height: 60}}>
+
+                </View>
+            </ScrollView>
             <View style = {styleProductSuppPage.viewAddProduct}>
-                <Dropdown
+                {/* <Dropdown
                     style={styleProductSuppPage.dropdown}
                     placeholderStyle={styleProductSuppPage.placeholderStyle}
                     selectedTextStyle={styleProductSuppPage.selectedTextStyle}
@@ -172,22 +185,13 @@ const ScheduleSuppPage = ({schedule, navigation, role}) => {
                     setValue1(item.value);
                 }}
                     
-                />
+                /> */}
                 <TouchableOpacity style = {styleProductSuppPage.btnAddProduct} onPress={() => {navigation.navigate('AddDiscountPage')}}>
                     <Text style = {styleProductSuppPage.textAddProduct}>
                         ADD DISCOUNT
                     </Text>
                 </TouchableOpacity>
             </View>
-            <ScrollView contentContainerStyle ={styleProductSuppPage.ScrollView}>
-                
-                {schedule.slice(0,10).map((schedule) => (
-                    <ScheduleSupp key={schedule.id_schedule_product} data ={schedule} role = {role} />
-                ))}
-                <View style = {{height: 60}}>
-
-                </View>
-            </ScrollView>
             
         </View>
     )
@@ -201,8 +205,20 @@ const DiscountSuppPage = ({discount, navigation, role}) => {
     const [value1, setValue1] = useState('Place');
     return(
         <View>
+            
+            <ScrollView contentContainerStyle ={styleProductSuppPage.ScrollView}>
+                <View style = {{height: 110}}>
+
+                </View>
+                {discount.slice(0,10).map((discount) => (
+                    <DiscountSupp key={discount.id_discount} data ={discount} role = {role} />
+                ))}
+                <View style = {{height: 60}}>
+
+                </View>
+            </ScrollView>
             <View style = {styleProductSuppPage.viewAddProduct}>
-                <Dropdown
+                {/* <Dropdown
                     style={styleProductSuppPage.dropdown}
                     placeholderStyle={styleProductSuppPage.placeholderStyle}
                     selectedTextStyle={styleProductSuppPage.selectedTextStyle}
@@ -222,22 +238,13 @@ const DiscountSuppPage = ({discount, navigation, role}) => {
                     setValue1(item.value);
                 }}
                     
-                />
+                /> */}
                 <TouchableOpacity style = {styleProductSuppPage.btnAddProduct} onPress={() => {navigation.navigate('AddDiscountPage')}}>
                     <Text style = {styleProductSuppPage.textAddProduct}>
                         ADD DISCOUNT
                     </Text>
                 </TouchableOpacity>
             </View>
-            <ScrollView contentContainerStyle ={styleProductSuppPage.ScrollView}>
-                
-                {discount.slice(0,10).map((discount) => (
-                    <DiscountSupp key={discount.id_discount} data ={discount} role = {role} />
-                ))}
-                <View style = {{height: 60}}>
-
-                </View>
-            </ScrollView>
             
         </View>
     )
@@ -251,8 +258,20 @@ const ProductSuppPage = ({product, navigation}) => {
     const [value1, setValue1] = useState('Place');
     return(
         <View>
+           
+            <ScrollView contentContainerStyle ={styleProductSuppPage.ScrollView}>
+                <View style = {{height: 110}}>
+
+                </View>
+                {product.map((product) => (
+                    <ProductSupp key={product.id_product} data ={product} />
+                ))}
+                <View style = {{height: 60}}>
+
+                </View>
+            </ScrollView>
             <View style = {styleProductSuppPage.viewAddProduct}>
-                <Dropdown
+                {/* <Dropdown
                     style={styleProductSuppPage.dropdown}
                     placeholderStyle={styleProductSuppPage.placeholderStyle}
                     selectedTextStyle={styleProductSuppPage.selectedTextStyle}
@@ -272,22 +291,13 @@ const ProductSuppPage = ({product, navigation}) => {
                     setValue1(item.value);
                 }}
                     
-                />
+                /> */}
                 <TouchableOpacity style = {styleProductSuppPage.btnAddProduct} onPress={() => {navigation.navigate('AddProductPage')}}>
                     <Text style = {styleProductSuppPage.textAddProduct}>
                         ADD PRODUCT
                     </Text>
                 </TouchableOpacity>
             </View>
-            <ScrollView contentContainerStyle ={styleProductSuppPage.ScrollView}>
-                
-                {product.map((product) => (
-                    <ProductSupp key={product.id_product} data ={product} />
-                ))}
-                <View style = {{height: 60}}>
-
-                </View>
-            </ScrollView>
             
         </View>
     )
@@ -340,7 +350,8 @@ const style = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         marginTop: 10,
-        marginBottom: 10
+        marginBottom: 10,
+        position: 'absolute'
     }
     ,btnBack: {
         width: 48,
@@ -390,7 +401,8 @@ const style = StyleSheet.create({
         width: 150,
         height: 35,
         borderWidth: 0,
-       
+        backgroundColor: '#FFF',
+        elevation: 5,
         borderRadius: 17.5,
         
         alignItems: 'center'
@@ -455,6 +467,7 @@ const styleProductSuppPage = StyleSheet.create({
         width: width,
         alignItems: 'center',
         
+        
     }
     ,viewPage: {
         width: 200,
@@ -507,7 +520,11 @@ const styleProductSuppPage = StyleSheet.create({
         width: 380,
         height: 35,
         marginBottom: 10,
-        marginLeft: (width-380)/2
+        marginLeft: (width-380)/2,
+        position: 'absolute',
+        top: 70,
+        
+        
     }
     ,btnAddProduct: {
         width: 150,
@@ -516,7 +533,7 @@ const styleProductSuppPage = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         position: 'absolute',
-        right: 0,
+        left: 0,
         borderRadius: 17.5
     }
     ,textAddProduct: {

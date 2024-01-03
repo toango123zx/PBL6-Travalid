@@ -47,10 +47,11 @@ export default ItemInCart = ({data}) => {
                     <View style = {style.viewLocation}>
                         <Icon1 name = 'location-outline' size = {18} color = '#6F757C'/>
                         <Text style = {style.textLocation}>{data.city_name}</Text>
-                        <View style = {style.viewPrice}>
+                        
+                    </View>
+                    <View style = {style.viewPrice}>
                             <Text style = {style.textPrice}>{data.price} VND</Text>
                         </View>
-                    </View>
                     
                 </View>
                 
@@ -147,8 +148,8 @@ const style = StyleSheet.create({
         height: 25,
         borderWidth: 0,
         justifyContent: 'center',
-        position: 'absolute',
-        right: (width -380)/2
+        
+        
     },
     textLocation: {
         color: '#6F757C',

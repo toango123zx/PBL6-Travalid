@@ -7,9 +7,10 @@ import {styleInfoPage} from "../../themes/styleDetailsPage";
 import Schedule from "./Schedule";
 import { useFocusEffect } from "@react-navigation/core";
 export default InfoPage = ({product,scheduleData, navigate, rate, count}) => {
+    const currentDate = new Date()
     
     const image = product.image
-    console.log("product info page: " + JSON.stringify(product, null,2))
+    //console.log("product info page: " + JSON.stringify(scheduleData, null,2))
     return(
         
         <ScrollView style = {styleInfoPage.scrollView}>
@@ -56,8 +57,9 @@ export default InfoPage = ({product,scheduleData, navigate, rate, count}) => {
                 </View>
             </View>
 
-            {(scheduleData).map((scheduleData) => (
-                <Schedule key={scheduleData.id_schedule_product} scheduleData={scheduleData} product = {product} navigate = {navigate} />
+            {(scheduleData).map((scheduleData) => ( 
+                currentDate.getTime() < new Date(scheduleData.start_time).getTime() ? 
+                <Schedule key={scheduleData.id_schedule_product} scheduleData={scheduleData} product = {product} navigate = {navigate} /> : null
             ))}
             <View style = {{height: 100}}>
                 

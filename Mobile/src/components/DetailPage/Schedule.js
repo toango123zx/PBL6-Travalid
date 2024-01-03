@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import {
     View,
@@ -21,10 +21,17 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 export default Schedule = ({scheduleData, product, navigate}) => {
     const startDate = new Date (scheduleData.start_time);
     const endDate = new Date (scheduleData.end_time);
-    
+    const [showAdd, setShowAdd] = useState(false)
     const dispatch = useDispatch();
     const navigation = useNavigation();
-    
+    useEffect(()=>{
+        const currentDate = new Date()
+        console.log(currentDate)
+        console.log(startDate)
+        if (startDate>currentDate) {
+            setShowAdd(true)
+        } else setShowAdd(false)
+    },[])
     const dataToSend = {
         id: product.id_product,
         id_schedule: scheduleData.id_schedule_product,
@@ -85,9 +92,16 @@ export default Schedule = ({scheduleData, product, navigate}) => {
                     <Icon name = 'check-circle-outline' color = '#01AB31' size = {25}/>
                     <Text style = {style.textStatus}>{scheduleData.status === 'active' ? 'Active' :  null}</Text>
                 </View>
-                <TouchableOpacity style = {style.btnAdd} onPress={goToCart}>
+                {showAdd === false ? (
+                    <TouchableOpacity style = {style.btnAdd} >
                     <Text style = {style.textAdd}>Add</Text>
-                </TouchableOpacity>
+                    </TouchableOpacity>
+                ) : (
+                    <TouchableOpacity style = {style.btnAdd} onPress={goToCart}>
+                    <Text style = {style.textAdd}>Add</Text>
+                    </TouchableOpacity>
+                )}
+                
             </View>
         </View>
     )

@@ -118,9 +118,9 @@ export default ProfilePage = () =>{
                 </TouchableOpacity>
             </View>
             <View style = {styleProfilePage.viewBtnVersion}>
-                <TouchableOpacity style = {styleProfilePage.BtnProfile}>
-                    <Icon style = {styleProfilePage.icon1} name="card-outline" color="#7D848D" size={25}/>
-                    <Text style = {styleProfilePage.text1}>Card</Text>
+                <TouchableOpacity style = {styleProfilePage.BtnProfile} onPress={()=>{navigation.navigate('WalletPage')}}>
+                    <Icon style = {styleProfilePage.icon1} name="wallet-outline" color="#7D848D" size={25}/>
+                    <Text style = {styleProfilePage.text1}>Wallet</Text>
                     <Icon style = {styleProfilePage.iconChevronforward} name="chevron-forward" color="#7D848D" size={25}/>
                 </TouchableOpacity>
             </View>
@@ -136,6 +136,7 @@ export default ProfilePage = () =>{
                 <TouchableOpacity style = {styleProfilePage.BtnLogout} onPress={async () => {
                         try {
                         await AsyncStorage.removeItem('userToken');
+                        await AsyncStorage.setItem('balance', '0');
                         navigation.navigate('SplishPage');
                         } catch (error) {
                         console.error('Lỗi khi xóa userToken:', error);

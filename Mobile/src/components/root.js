@@ -35,6 +35,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import DiscountPage from './DiscountPage/DiscountPage';
 import BookingCartPage from './CartPage/BookingCartPage';
+import WalletPage from './Wallet/WalletPage';
 import PaymentPage from './CartPage/PaymentPage';
 import EditProfile from './ProfilePage/EditProfile';
 import InfoPageSU from './SignUp/InfoPage';
@@ -44,6 +45,7 @@ import ProfilePage1 from './ProfilePage/ProfilePage1';
 import store from '../reducers/store';
 import Icon from 'react-native-vector-icons/Ionicons'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import OrderComplete from './OrderComplete';
 const Tab = createBottomTabNavigator();
 const { width, height } = Dimensions.get('window');
 function MyTabBar({ state, descriptors, navigation }) {
@@ -181,6 +183,8 @@ export default RootComponent = function(){
             <Stack.Screen name="BillDetailPage" component={BillDetailPage} />
             <Stack.Screen name="AddDiscountPage" component={AddDiscountPage}/>
             <Stack.Screen name="AddSchdule" component={AddSchedule}/>
+            <Stack.Screen name="OrderComplete" component={OrderComplete}/>
+            <Stack.Screen name="WalletPage" component={WalletPage}/>
 
 
           </Stack.Navigator>

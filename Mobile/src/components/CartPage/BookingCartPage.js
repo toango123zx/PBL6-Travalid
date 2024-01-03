@@ -42,12 +42,12 @@ export default BookingCartPage = ({route}) => {
         console.log("trung")
         if (data) {
             setDataList((prevList) => [...prevList, data]);
-            console.log('Data nhan duoc: '+JSON.stringify(data));
+            //console.log('Data nhan duoc: '+JSON.stringify(data));
             
         }
       }, [data]);
     useEffect(() => {
-        console.log('Data in Payment:', dataPayment);
+        //console.log('Data in Payment:', dataPayment);
         
       }, [dataPayment]);  
     

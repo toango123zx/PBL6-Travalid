@@ -7,8 +7,8 @@ const { width, height } = Dimensions.get('window');
 
 export default RaittingComponent = ({raittingData}) => {
     const iconStar = [];
-    for (let i = 0; i < raittingData.rate; i++) {
-        if (i<raittingData.rate - 1){
+    for (let i = 0; i < raittingData.star; i++) {
+        if (i<raittingData.star - 1){
             iconStar.push(<Icon key={i} name={"star"} size={12} color="#FFC633" />);
         } else iconStar.push(<Icon key={i} name={"star-half-outline"} size={12} color="#FFC633" />);
     }
@@ -22,13 +22,13 @@ export default RaittingComponent = ({raittingData}) => {
                 
             </View>
             <View style = {style.viewName}>
-                <Text style = {style.textName}>{raittingData.name}</Text>
+                <Text style = {style.textName}>{raittingData.id_user}</Text>
             </View>
             <View style = {style.viewCmt}> 
-                <Text style = {style.textCmt}>"{raittingData.cmt}"</Text>
+                <Text style = {style.textCmt}>"{raittingData.comment}"</Text>
             </View>
             <View style = {style.viewDate}>
-                <Text style = {style.textDate}>{raittingData.date}</Text>
+                <Text style = {style.textDate}>20/2/2</Text>
             </View>
         </View>
 

@@ -139,7 +139,7 @@ export const styleProfileDetails = StyleSheet.create({
     View: {
         width: width,
         height: height,
-        
+        top: statusBarHeight,
         backgroundColor: '#FFF'
     },
     viewTop:{
@@ -149,7 +149,7 @@ export const styleProfileDetails = StyleSheet.create({
         justifyContent: 'space-between',
         flexDirection: 'row',
         position: 'absolute',
-        marginTop: 10 + statusBarHeight,
+        top: 10 ,
         alignItems: 'center',
         
         
@@ -158,7 +158,7 @@ export const styleProfileDetails = StyleSheet.create({
         width: 48,
         height: 48,
         borderRadius: 24,
-        backgroundColor: '#F7F7F9',
+        backgroundColor: 'rgba(255, 133, 44, 1)',
         justifyContent: 'center',
         alignItems: 'center'
     },
@@ -178,7 +178,7 @@ export const styleProfileDetails = StyleSheet.create({
     ScrollView: {
         width: width,
         position: 'relative',
-        marginTop: statusBarHeight+ 10,
+        
         
     },
     viewPersonalInfo: {
@@ -200,7 +200,8 @@ export const styleProfileDetails = StyleSheet.create({
         borderWidth: 0,
         borderRadius: 10,
         marginTop: 10,
-        backgroundColor: '#F7F7F9'
+        backgroundColor: '#F7F7F9',
+        justifyContent: "center"
         
     },
     text: {
@@ -209,7 +210,7 @@ export const styleProfileDetails = StyleSheet.create({
         fontSize: 17.55,
         letterSpacing: 0.3,
         marginLeft: 23,
-        lineHeight: 47
+        
     }
 
 })

@@ -99,7 +99,7 @@ const style = StyleSheet.create({
         width: 105,
         height: 105,
         borderRadius: 52.5,
-        marginTop: 45 + statusBarHeight,
+        marginTop: 45 ,
         backgroundColor: 'rgba(0,0,0,0.1)',
         marginLeft: (width-105)/2 
     }

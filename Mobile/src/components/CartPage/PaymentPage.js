@@ -10,7 +10,8 @@ import {
     StatusBar,
     TouchableOpacity,
     TextInput,
-    Modal
+    Modal,
+    Alert
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -36,16 +37,49 @@ export default PaymentPage = ({route}) => {
     const [discountData, setDiscountData] = useState([])
     const [selectPay, setSelectPay] = useState(false);
     const [nameDis, setNameDis] = useState(null);
-    
-    
+    const [idDiscount, setIDDiscount] = useState(null)
+    const [id_schedule, setIDSchedule] = useState([])
+    const currentDate = new Date()
     const handleBackPress = () => {
         // Thực hiện chuyển hướng về trang trước đó
         navigation.goBack();
       };
-
-    
+      const handlePress = () => {
+        // Thực hiện chuyển hướng về trang trước đó
+        navigation.navigate('OrderComplete');
+      };  
+    const CreateBill = async () => {
+        try {
+            const newSchedule = dataList.map((data) => data.id_schedule);
+            console.log(newSchedule)
+            const token = "bearer " + await AsyncStorage.getItem('userToken')
+            const res = await authApi.createBill(
+            {
+                id_discount: idDiscount ? [idDiscount]: [],
+                id_schedule_product: newSchedule,
+                quantity: quantity
+            },
+            {
+                token: token
+            }
+            )
+            console.log(res.status)
+            const storedBalance = await AsyncStorage.getItem('balance');
+            // Parse the storedBalance to a number if needed
+            const balanceValue = parseFloat(storedBalance);
+            AsyncStorage.setItem('balance', JSON.stringify(balanceValue - (Math.round(price - price*discount/100))))
+            
+            console.log(balanceValue- (Math.round(price - price*discount/100)))
+            navigation.navigate('OrderComplete');
+             
+        } catch (error) {
+            console.log(error)
+        }
+    }
     useEffect(() => {
-        console.log("data da nhan : "+JSON.stringify(dataList, null, 2))
+        
+        
+        //console.log("data da nhan : "+JSON.stringify(dataList, null, 2))
         const getDiscountByIdProduct = async () => {
                 // if (Array.isArray(data) ) {
                 // setData(JSON.parse(dataList));
@@ -68,6 +102,7 @@ export default PaymentPage = ({route}) => {
                     
                 } catch (error) {
                     console.log(error);
+                    Alert.alert("Can't Pay")
                 }
             
                 
@@ -75,7 +110,9 @@ export default PaymentPage = ({route}) => {
         }
 
         getDiscountByIdProduct()
-        console.log(showD)
+        
+        //console.log(discountData),
+        
         
         
       }, []);
@@ -94,8 +131,8 @@ export default PaymentPage = ({route}) => {
             <ScrollView style = {style.viewBookedTour}>
                 { 
                     dataList.map((data) => (
-                        <View>
-                            <ItemInPayment key={data.id} data={data} />
+                        <View  key={data.id}>
+                            <ItemInPayment data={data} />
                         </View>
                     ))
                 }
@@ -143,7 +180,10 @@ export default PaymentPage = ({route}) => {
 
                 <ScrollView contentContainerStyle = {style.viewPay}>
                 {discountData.map((discountData) => (
-                    <DiscountInPayment key={discountData.id_discount} data={discountData} setDiscount = {setDiscount} setNameDis = {setNameDis}/>
+                    //console.log('discoutn data: '+ JSON.stringify(discountData)),
+                    
+                    currentDate.getTime()>new Date(discountData.start_time).getTime() && currentDate.getTime()<new Date(discountData.end_time).getTime() ?
+                    <DiscountInPayment key={discountData.id_discount} data={discountData} setDiscount = {setDiscount} setNameDis = {setNameDis} setIDDiscount = {setIDDiscount}/> : null
                 ))}
                           
                 </ScrollView>
@@ -169,8 +209,8 @@ export default PaymentPage = ({route}) => {
                     <Text style = {style.textTotalAmount}>Total amount</Text>
                     <Text style = {style.textTotalAmount1}>{Math.round(price - price*discount/100)} VND</Text>                        
                 </View>
-                <TouchableOpacity style = {style.btnCheckout}>
-                    <Text style = {style.textCheckout}>Checkout</Text>
+                <TouchableOpacity style = {style.btnCheckout} onPress={CreateBill}>
+                    <Text style = {style.textCheckout}>Pay</Text>
                 </TouchableOpacity>
             </View>
 

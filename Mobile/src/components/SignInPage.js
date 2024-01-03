@@ -69,6 +69,7 @@ export default SignInPage = () => {
                 password: password
             })
             AsyncStorage.setItem('userToken',res.data.token)
+            AsyncStorage.setItem('balance', JSON.stringify(res.data.data.balance))
             navigation.navigate('Home1')
             
             

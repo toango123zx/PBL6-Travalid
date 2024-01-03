@@ -47,7 +47,7 @@ export default BillDetailPage = ({route}) => {
         }
 
         getDetailBill();
-        
+        console.log(JSON.stringify(billDetail, null,2))
         
        
         
@@ -204,7 +204,7 @@ export default BillDetailPage = ({route}) => {
                     <Text style = { styleBillDetail.textVoucher}> Voucher </Text>
                 </View>
                 <View >
-                    <Text style = {styleBillDetail.voucher}>{Math.round(billDetail.voucher)} VND</Text>
+                    <Text style = {styleBillDetail.voucher}>{Math.round(billDetail.discount_value)} VND</Text>
                 </View>
             </View>
             <View style = {{width: width, height: 3, backgroundColor: 'rgba(128, 128, 128, 0.3)'}}></View>
