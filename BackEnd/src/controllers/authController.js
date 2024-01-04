@@ -1,7 +1,10 @@
+const {default : axios} = require("axios")
 import * as envSupplier from '../config/envSupplier';
 import * as userService from '../services/userService';
 import * as hash from '../helpers/hash';
 import * as authHelper from '../helpers/authHelper';
+
+
 
 export const travellerSignUp = async (req, res, next) => {
     const __user = req.user;
@@ -147,3 +150,31 @@ export const decodeJWT = (req, res) => {
         data: req.user
     });
 };
+
+export const chat =  async (req, res) => {
+    const username = req.body.username.replace(/\s/g, '');
+    const __user = await userService.getUser(undefined, username, "", "");
+    if (__user === false) {
+        return res.status(500).json({
+            position: "Prisma query User",
+            msg: "Error from the server"
+        });
+    };
+    if (__user === null) {
+        return res.status(404).json({
+            position: "username",
+            msg: "username does not exist"
+        });
+    };
+    console.log(username);
+    try {
+        const r = await axios.put(
+            'https://api.chatengine.io/users/',
+            {username : username , secret : username , first_name : username},
+            {headers : {"private-key": "0de8b922-cb81-46dc-8768-3104c1ce6db6"}}
+        )
+        return res.status(r.status).json(r.data)
+    } catch (e) {
+        return res.status(e.response.status).json(e.response.data)
+    }
+  }
