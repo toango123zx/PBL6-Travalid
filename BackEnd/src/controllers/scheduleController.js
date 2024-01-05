@@ -3,7 +3,7 @@ import { prisma } from '../config/prismaDatabase';
 import * as scheduleHelper from '../helpers/scheduleHelper';
 import * as productService from '../services/productService';
 import * as scheduleProductService from '../services/scheduleProductService';
-const { scheduleCreateValidate } = require('../validation/authValidation');
+const { scheduleCreateValidate } = require('../validation/scheduleProductValidation');
 
 export const getAllScheduleProduct = async (req, res, next) => {
     try {

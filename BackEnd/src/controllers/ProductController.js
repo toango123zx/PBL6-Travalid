@@ -1,6 +1,7 @@
 const cron = require('node-cron');
-const { productCreateValidate, productUpdateValidate, productDeleteValidate} = require('../validation/authValidation');
-
+const { productCreateValidate,productUpdateValidate, productDeleteValidate} = require('../validation/productValidation');
+const { scheduleCreateValidate} = require('../validation/scheduleProductValidation');
+const { addDiscountValidate} = require('../validation/discountValidation');
 import * as envApp from '../config/envApp';
 import * as productHelper from '../helpers/productHelper';
 import * as scheduleHelper from '../helpers/scheduleHelper';
@@ -150,43 +151,95 @@ export const getProductById = async (req, res, next) => {
 };
 export const createProduct = async (req, res, next) => {
     try {
-        const __user = req.user;
         const id_user = req.user.id_user;
-        const { name, location_map, time, quantity, age, description, id_location, city } = req.body;
-        let product = {
-            name: name,
-            id_user: id_user,
-            location_map: location_map,
-            time: time,
-            quantity: quantity,
-            age: age,
-            description: description,
-            id_location: id_location,
-            city: city
-        }
+        const product = req.body.product;
+        product.id_user = id_user;
+        const schedule_product = req.body.schedule_product;
+        const discount = req.body.discount;
+        console.log(product);
         const { error } = productCreateValidate(product);
         if (error) {
             return res.status(400).json({
                 msg: error.details[0].message
             })
         }
-        const createProduct = await productService.create_Product(product);
-        if (!createProduct) {
-            if (__user.role === 'traveller' || __user.role === 'admin') {
-                return res.status(403).json({
-                    position: "Role not allowed",
-                    msg: "The user does not have permission to update this resource"
-                })
+        if (schedule_product && schedule_product.length > 0) {
+            for (const schedule of schedule_product) {
+                let data = {
+                    start_time: new Date(schedule.start_time),
+                    end_time: new Date(schedule.end_time),
+                    price: Number(schedule.price),
+                }
+                const { error } = scheduleCreateValidate(data);
+                if (error) {
+                    return res.status(400).json({
+                        msg: error.details[0].message
+                    })
+                }
             }
-            else {
+        }
+        if (discount && discount.length > 0) {
+            for (const discountItem of discount) {
+                let data = {
+                    ...discountItem,
+                }
+                const { error } = addDiscountValidate(data);
+                if (error) {
+                    return res.status(400).json({
+                        msg: error.details[0].message
+                    })
+                }
+            }
+        }
+        let isScheduleProductCreated = false; 
+        const createProduct = await productService.create_Product(product);
+
+        for (const schedule of req.body.schedule_product) {
+            const data = {
+                id_product: createProduct.id_product,
+                start_time: new Date(schedule.start_time),
+                end_time: new Date(schedule.end_time),
+                price: Number(schedule.price),
+            };
+
+            try {
+                const scheduleCreate = await scheduleProductService.createScheduleProduct(data);
+                if (!scheduleCreate) {
+                    await productService.deleteProduct(createProduct.id_product); 
+                    return res.json({
+                        msg: 'Schedule not created'
+                    });
+                } else {
+                    isScheduleProductCreated = true; 
+                }
+            } catch (err) {
+                await productService.deleteProduct(createProduct.id_product); 
                 return res.status(500).json({
-                    position: "Create product failed",
-                    msg: "Product registration unsuccessful"
+                    msg: 'Error creating schedule',
                 });
             }
         }
-        return res.sendStatus(200)
+        for (const discountItem of req.body.discount) {
+            const data = {
+                id_product: createProduct.id_product,
+                ...discountItem,
+            };
+
+            try {
+                await discountService.createDiscount(data)
+            } catch (err) {
+                await productService.deleteProduct(createProduct.id_product);
+                if (isScheduleProductCreated) {
+                    await scheduleProductService.deleteScheduleProductByProductId(createProduct.id_product);
+                }
+                return res.status(500).json({
+                    msg: 'Error creating discount',
+                });
+            }
+        }
+        return res.sendStatus(200);
     } catch (err) {
+        console.log(err);
         return res.status(500).json({
             msg: 'Get internal server error in get product',
         });
