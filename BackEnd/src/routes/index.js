@@ -6,6 +6,7 @@ const discountRouter = require ('./discount');
 const userRouter = require ('./user');
 const walletRouter = require ('./wallet');
 const rateRouter = require ('./rate');
+const locationRouter = require ('./location');
 const scheduleProductRouter = require ('./scheduleProduct');
 
 function route(app) {
@@ -18,6 +19,7 @@ function route(app) {
     app.use('/cart',cartRouter)
     app.use('/bill', billRouter);
     app.use('/rate', rateRouter);
+    app.use('/location', locationRouter);
 }
 
 module.exports = route;
