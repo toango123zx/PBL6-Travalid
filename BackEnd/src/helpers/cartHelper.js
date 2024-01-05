@@ -3,8 +3,10 @@ export const formatCartFormDb = (cart) => {
         scheduleProduct = {
             ... scheduleProduct,
             ... scheduleProduct.schedule_poruduct,
+            ... scheduleProduct.schedule_poruduct.product
         };
         delete scheduleProduct.schedule_poruduct;
+        delete scheduleProduct.product;
         return scheduleProduct;
     });
 

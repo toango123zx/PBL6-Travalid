@@ -11,6 +11,11 @@ export const getCarts = async (id_user) => {
                     select: {
                         id_schedule_product: true,
                         id_product: true,
+                        product: {
+                            select: {
+                                image: true,
+                            },
+                        },
                         start_time: true,
                         end_time: true,
                         price: true,

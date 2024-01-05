@@ -22,9 +22,9 @@ export const getDiscountsForTraveller = async (req, res) => {
 };
 
 export const getDiscountsByIdProducts = async (req, res) => {
-    const __id_products = req.body.id_products;
+    const __id_products = req.idProducts;
     let __discounts = await discountService.getDiscountsByIdProducts(__id_products);
-    if (!__discounts) {
+    if (__discounts === false) {
         return res.status(500).json({
             position: "Error: Prisma query discount",
             msg: "Error form the server"
@@ -32,7 +32,10 @@ export const getDiscountsByIdProducts = async (req, res) => {
     } else {
         __discounts = __discounts.map((discount) => {
             discount.supplier = discount.user.role;
+            discount.id_product = discount.product.id_product;
+            discount.name_product = discount.product.name;
             delete discount.user;
+            delete discount.product;
             return discount;
         });
     };

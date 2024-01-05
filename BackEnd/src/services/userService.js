@@ -158,9 +158,9 @@ export const createSupplier = async (user, info_Supplier) => {
     };
 };
 
-export const updateUser = async (id_user, user) => {
+export const updateUser = async (id_user, user, prismaClient = prisma) => {
     try {
-        await prisma.user.update({
+        await prismaClient.user.update({
             where: {
                 id_user: Number(id_user),
             },

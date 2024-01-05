@@ -109,7 +109,12 @@ export const getDiscountsByIdProducts = async (id_products, prismaClient = prism
         return await prismaClient.discount.findMany({
             select: {
                 id_discount: true,
-                id_product: true,
+                product: {
+                    select: {
+                        id_product: true,
+                        name: true,
+                    }
+                },
                 name: true,
                 code: true,
                 description: true,
@@ -150,6 +155,7 @@ export const getDiscountsByIdProducts = async (id_products, prismaClient = prism
                 }]
         });
     } catch (e) {
+        console.log("🚀 ~ file: discountService.js:156 ~ getDiscountsByIdProducts ~ e:", e)
         return false;
     };
 };
