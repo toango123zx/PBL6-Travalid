@@ -72,16 +72,16 @@ export default ProductSuppilerPage = ({route}) => {
                 })
                 setSchedule(res.data.data.schedule)
             } catch (error) {
-                console.log(error)
+                console.log(error);
             }
         }
         console.log("-----------------------------------------------------")
         getProductBySupplier();
         getDisountBySupplier();
         getScheduleBySupplier();
-        console.log(schedule);
-        console.log("page: "+ page1);
         
+        console.log("page: "+ page1);
+        console.log(user.id_user)
     },[page1])
     return(
         <View style = {style.View}>
@@ -89,7 +89,7 @@ export default ProductSuppilerPage = ({route}) => {
             
             <View style = {{flex: 1}}>
                     {page === 'PRODUCTS' ?  
-                    <ProductSuppPage product={product} navigation={navigation}/> : 
+                    <ProductSuppPage product={product} id_user = {user.id_user} navigation={navigation}/> : 
                     page === 'DISCOUNTS' ? <DiscountSuppPage discount = {discount} navigation = {navigation} role = {user.role}/> :  
                     <ScheduleSuppPage schedule={schedule} navigation={navigation} role = {user.role}/>}
                 </View>
@@ -188,7 +188,7 @@ const ScheduleSuppPage = ({schedule, navigation, role}) => {
                 /> */}
                 <TouchableOpacity style = {styleProductSuppPage.btnAddProduct} onPress={() => {navigation.navigate('AddDiscountPage')}}>
                     <Text style = {styleProductSuppPage.textAddProduct}>
-                        ADD DISCOUNT
+                        ADD SCHEDULE
                     </Text>
                 </TouchableOpacity>
             </View>
@@ -249,7 +249,7 @@ const DiscountSuppPage = ({discount, navigation, role}) => {
         </View>
     )
 }
-const ProductSuppPage = ({product, navigation}) => {
+const ProductSuppPage = ({product, id_user, navigation}) => {
     const data1 = [
         { label: 'Latest', value: '1' },
         { label: 'Item 2', value: '2' },
@@ -292,7 +292,7 @@ const ProductSuppPage = ({product, navigation}) => {
                 }}
                     
                 /> */}
-                <TouchableOpacity style = {styleProductSuppPage.btnAddProduct} onPress={() => {navigation.navigate('AddProductPage')}}>
+                <TouchableOpacity style = {styleProductSuppPage.btnAddProduct} onPress={() => {navigation.navigate('AddProductPage', {id_user})}}>
                     <Text style = {styleProductSuppPage.textAddProduct}>
                         ADD PRODUCT
                     </Text>

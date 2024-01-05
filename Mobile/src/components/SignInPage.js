@@ -12,8 +12,8 @@ import axiosClient from "../API";
 import authApi from "../API/auth";
 //const URL = `http://localhost:8000`
 export default SignInPage = () => {
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+    const [email, setEmail] = useState('travel_supplier')
+    const [password, setPassword] = useState('travel_supplier')
     const [accessToken, setAccessToken] = useState('')
     const [ipAddress, setIpAddress] = useState(null);
     // useEffect(() => {

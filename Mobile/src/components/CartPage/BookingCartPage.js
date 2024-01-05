@@ -23,8 +23,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import authApi from "../../API/auth";
 export default BookingCartPage = ({route}) => {
+    
     const [total, setTotal] = useState(0)
-    const [dataList, setDataList] = useState([]);
+    const [IDPrList, setIDPrList] = useState([]);
     const [dataPayment, setDataPayment] = useState([]);
     const [price, setPrice] = useState(0);
     const [componentItemList, setComponentCList] = useState([]);
@@ -37,6 +38,7 @@ export default BookingCartPage = ({route}) => {
       navigation.navigate('PaymentPage',{
         dataList: dataPayment,
         price: price,
+        listIDPr: IDPrList
         
     }
         );
@@ -79,8 +81,8 @@ export default BookingCartPage = ({route}) => {
     
     useEffect(() => {
         //console.log('Data in Payment:', dataPayment);
-        
-      }, [dataPayment]);  
+        console.log(IDPrList)
+      }, [IDPrList]);  
     
     //   const validateInputQuantity = (text) => {
     //     const value = text.trim();
@@ -121,10 +123,13 @@ export default BookingCartPage = ({route}) => {
         deleteItemInCart(itemToDelete)  }
     const handleAddToPayment = (itemToSelect) => {
         setDataPayment((prevList) => [...prevList, itemToSelect]);
+        setIDPrList((prevArr) => [...prevArr, itemToSelect.id_product]);
         setPrice(price+itemToSelect.price)
     };
     const handleRemoveInPayment = (itemToSelect) => {
-        setDataPayment((prevList) => prevList.filter((item) => item !== itemToSelect));
+        setDataPayment((prevList) => prevList.filter((item) => JSON.stringify(item) !== JSON.stringify(itemToSelect)));
+        
+        //console.log("item select " + JSON.stringify(itemToSelect));
         setPrice(price-itemToSelect.price);
         
     };

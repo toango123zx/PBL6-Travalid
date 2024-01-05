@@ -24,12 +24,13 @@ import ItemInPayment from "./ItemInPayment";
 import DiscountInPayment from "./DiscountInPayment";
 import SelectDiscount from "./SelectDiscount";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 const { width, height } = Dimensions.get('window');
 const statusBarHeight = StatusBar.currentHeight || 0;
 export default PaymentPage = ({route}) => {
     
     const [showD, setShowD] = useState(false)
-    const {dataList, price} = route.params;
+    const {dataList, price, listIDPr} = route.params;
     const [total1, setTotal1] = useState(0)
     const navigation = useNavigation();
     const [quantity, setQuantity] = useState(1);
@@ -38,7 +39,10 @@ export default PaymentPage = ({route}) => {
     const [selectPay, setSelectPay] = useState(false);
     const [nameDis, setNameDis] = useState(null);
     const [idDiscount, setIDDiscount] = useState(null)
-    const [id_schedule, setIDSchedule] = useState([])
+    const [id_schedule, setIDSchedule] = useState(4)
+    const [listDis, setListDiscount] = useState([])
+    const [disValue, setDisValue] = useState(0)
+    const [disID, setDisId] = useState([])
     const [idPr, setIDPr] = useState(null)
     const currentDate = new Date()
     const handleBackPress = () => {
@@ -47,6 +51,7 @@ export default PaymentPage = ({route}) => {
       };
       const handlePress = () => {
         // Thực hiện chuyển hướng về trang trước đó
+
         navigation.navigate('OrderComplete');
       };  
     const CreateBill = async () => {
@@ -75,33 +80,25 @@ export default PaymentPage = ({route}) => {
              
         } catch (error) {
             console.log(error);
+            Alert.alert("Can't Pay");
         }
     }
     useEffect(()=>{
 
-        if(idPr!== null) {
-            dataList.forEach((data) => {
-            
-                if (data.id === idPr) {
-                  // Nếu id của data trùng với id_discount, áp dụng giảm giá
-                  setTotal1(total1 + (data.price-data.price*discount/100))
-                  console.log(total1)
-                } else {
-                  // Nếu không, sử dụng giá trị mặc định
-                  setTotal1(total1 + data.price)
-                  console.log("Total: " + total1);
+        for (const dis of listDis ) {
+            for (const sche of dataList) {
+                if(sche.id_product==dis.id_product) {
+                    setDisValue(Math.round(disValue+(dis.value*sche.price/100)))
+                    
                 }
-                
-                
-                
-            });
+            }
         }
-        
-    },[discount])
+        console.log(JSON.stringify(listDis, null, 2))
+    },[listDis])
     
     useEffect(() => {
         
-        
+        console.log(listIDPr);
         //console.log("data da nhan : "+JSON.stringify(dataList, null, 2))
         const getDiscountByIdProduct = async () => {
                 // if (Array.isArray(data) ) {
@@ -109,21 +106,30 @@ export default PaymentPage = ({route}) => {
                 // console.log(data)
             
                 try {
-                    const apiCalls = dataList.map(async (item) => {
+                    const x = 5
                         const token = "bearer " + await AsyncStorage.getItem('userToken')
-                        const response = await authApi.getDiscountByProduct(item.id,{
-                            "token": token
-                        })
-                        
-                        return response.data.data
-                    });
-                    const results = await Promise.all(apiCalls)
-                    const resArrFlat = results.flat()
-                    setDiscountData(resArrFlat)
+                        const response = await authApi.getDiscountByProduct(
+                            {params: {
+                                id_products: listIDPr
+                            }}
+                        )
+                        setDiscountData(response.data.data)
+                        console.log(response.data.data)
+                        // const res = await axios.get('http://192.168.34.71:3000/discount/product',{
+                        //     method: 'get',
+                        //     body: JSON.stringify({
+                        //         id_products: [4]
+                        //     }),
+                        //     headers: {
+                        //         "content-type": "application/json; charset=utf-8"
+                        //     }
+                        // })
+                        // .then(res => res.json())
+                        // console.log(res)
                     
                 } catch (error) {
                     console.log(error);
-                    Alert.alert("Can't Pay");
+                    
                 }
             
                 
@@ -152,7 +158,7 @@ export default PaymentPage = ({route}) => {
             <ScrollView style = {style.viewBookedTour}>
                 { 
                     dataList.map((data) => (
-                        <View  key={data.id}>
+                        <View  key={data.id_schedule_product}>
                             <ItemInPayment data={data} />
                         </View>
                     ))
@@ -204,7 +210,7 @@ export default PaymentPage = ({route}) => {
                     //console.log('discoutn data: '+ JSON.stringify(discountData)),
                     
                     currentDate.getTime()>new Date(discountData.start_time).getTime() && currentDate.getTime()<new Date(discountData.end_time).getTime() ?
-                    <DiscountInPayment key={discountData.id_discount} data={discountData} setDiscount = {setDiscount} setNameDis = {setNameDis} setIDDiscount = {setIDDiscount} setIDPr = {setIDPr}/> : null
+                    <DiscountInPayment key={discountData.id_discount} data={discountData} setDiscount = {setDiscount} setNameDis = {setNameDis} setIDDiscount = {setIDDiscount} setIDPr = {setIDPr} setListDiscount = {setListDiscount} listDis = {listDis} setDisId = {setDisId}/> : null
                 ))}
                           
                 </ScrollView>
@@ -216,19 +222,19 @@ export default PaymentPage = ({route}) => {
             <View style = {style.viewSubTotal}>
                 <View style = {style.viewTopSubTotal}>
                     <Text style = {style.textDiscount}>Discount </Text>
-                    {discount === null? (<Text style = {style.text11}>0 VND</Text>): <Text style = {style.text11}>-{Math.round(price*discount/100)} VND</Text>}
+                    {discount === null? (<Text style = {style.text11}>0 VND</Text>): <Text style = {style.text11}>- {disValue*quantity} VND</Text>}
                     
                 </View>
                 <View style = {style.viewBotSubTotal}>
                     <Text style = {style.textDiscount}>Subtotal</Text>  
-                    <Text style = {style.text11}>{price} VND</Text>                 
+                    <Text style = {style.text11}>{price*quantity} VND</Text>                 
                 </View>
             </View>
             <View style = {{width: width, height: 4, backgroundColor: 'rgba(128, 128, 128, 0.3)' }}></View>
             <View style = {style.viewCheckOut}>
                 <View style = {style.leftCheckout}>
                     <Text style = {style.textTotalAmount}>Total amount</Text>
-                    <Text style = {style.textTotalAmount1}>{price - Math.round(price*discount/100)} VND</Text>                        
+                    <Text style = {style.textTotalAmount1}>{(price - disValue)*quantity} VND</Text>                        
                 </View>
                 <TouchableOpacity style = {style.btnCheckout} onPress={CreateBill}>
                     <Text style = {style.textCheckout}>Pay</Text>
@@ -445,7 +451,7 @@ const style = StyleSheet.create({
     //Pay
     viewPay: {
         width: 380,
-        height: 250,
+        //height: 250,
         borderWidth: 0,
         marginLeft: (width-380)/2
     },

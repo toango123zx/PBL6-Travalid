@@ -22,7 +22,7 @@ export default InfoPage = ({product,scheduleData, navigate, rate, count}) => {
             <View style = {styleInfoPage.viewRate}>
                 <Icon Icon style = {styleInfoPage.iconStar} name="star" color="#FFD336" size={16}/>
                 <Text style = {styleInfoPage.textRate}>{rate}</Text>
-                <Text style = {styleInfoPage.textSoLuong}>({count})</Text>
+                <Text style = {styleInfoPage.textSoLuong}>({product.count_complete})</Text>
             </View>
             <ScrollView style = {styleInfoPage.viewImage}>
                 {image ? (<Image style = {{width: 100, height: 100, borderRadius: 10}} source={{
@@ -31,7 +31,7 @@ export default InfoPage = ({product,scheduleData, navigate, rate, count}) => {
             </ScrollView>
             <View style = {styleInfoPage.viewMota}>
                 <Text style = {styleInfoPage.textMota}>{product.description}</Text>
-                <TouchableOpacity><Text style = {styleInfoPage.textReadmore}>Read more</Text></TouchableOpacity>
+                {/* <TouchableOpacity><Text style = {styleInfoPage.textReadmore}>Read more</Text></TouchableOpacity> */}
             </View>
             <View style = {styleInfoPage.viewInfo}>
                 <View style = {styleInfoPage.viewDetails}>
@@ -49,7 +49,7 @@ export default InfoPage = ({product,scheduleData, navigate, rate, count}) => {
                 </View>
                 <View style = {styleInfoPage.viewDetails}>
                     <Text style = {styleInfoPage.textDetails1}>Count compelete</Text>
-                    <Text style = {styleInfoPage.textDetails2}>24</Text>
+                    <Text style = {styleInfoPage.textDetails2}>{product.count_complete}</Text>
                 </View>
                 <View style = {styleInfoPage.viewDetails}>
                     <Text style = {styleInfoPage.textDetails1}>Location on Map</Text>

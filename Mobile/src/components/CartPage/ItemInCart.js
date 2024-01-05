@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {useState} from "react"
 import { 
     View,
@@ -12,14 +12,21 @@ import {
 
 import Icon from 'react-native-vector-icons/AntDesign'
 import Icon1 from 'react-native-vector-icons/Ionicons'
+import { useFocusEffect } from "@react-navigation/native";
 const { width, height } = Dimensions.get('window');
 export default ItemInCart = ({data, onDelete, onAddtoPayment, onRemoveInPayment}) => {
     const [select, setSelect] = useState(false)
     const handleDelete = () => {
         // Gọi hàm onDelete và truyền data để xóa mục khỏi danh sách
         if (select===true) onRemoveInPayment(data);
+        console.log(data);
         onDelete(data);
     };
+    
+    useEffect(()=>{
+        console.log(select)
+        
+    }, [select])
     const startDate = new Date (data.start_time)
     const endDate = new Date (data.end_time)
     return(
@@ -27,8 +34,8 @@ export default ItemInCart = ({data, onDelete, onAddtoPayment, onRemoveInPayment}
             <View style = {style.viewTop}>
                 <View style = {style.viewCheckBox}>
                     
-                    <TouchableOpacity style = {style.viewBtnCheck} onPress={()=>{setSelect(!select)
-                        select=== false ? onAddtoPayment(data): onRemoveInPayment(data) }}>
+                    <TouchableOpacity style = {style.viewBtnCheck} onPress={()=>{ setSelect(!select)
+                        select === false ? onAddtoPayment(data) : select === true ? onRemoveInPayment(data) : null}}>
                         <View style = {select === true ? [style.viewInCheckBox, { backgroundColor: '#FF6B00' }] : style.viewInCheckBox}>
 
                         </View>

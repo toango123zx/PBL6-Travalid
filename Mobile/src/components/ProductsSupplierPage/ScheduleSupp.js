@@ -7,15 +7,17 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import { useNavigation } from "@react-navigation/native";
 
 export default ScheduleSupp = ({data, role})=> {
-    const start = new Date (data.start_time);
-    const end = new Date (data.end_time);
+    const startTime = new Date (data.start_time);
+    const endTime = new Date (data.end_time);
+    const formattedDateStart = `${startTime.getFullYear()}/${String(startTime.getMonth() + 1).padStart(2, '0')}/${String(startTime.getDate()).padStart(2, '0')}, ${String(startTime.getHours()).padStart(2, '0')}:${String(startTime.getMinutes()).padStart(2, '0')}`;
     
+    const formattedDateEnd = `${endTime.getFullYear()}/${String(endTime.getMonth() + 1).padStart(2, '0')}/${String(endTime.getDate()).padStart(2, '0')}, ${String(endTime.getHours()).padStart(2, '0')}:${String(endTime.getMinutes()).padStart(2, '0')}`;
     return (
         <View style = {style.View}>
             <View style = {{...style.view, marginTop: 5}}>
                 
-                <Text style = {style.textTime}>{start.getUTCDate()}/{start.getUTCMonth()}/{start.getUTCFullYear()}, {start.getUTCHours()}:{start.getUTCMinutes()}</Text>
-                <Text style = {style.textTime}>{end.getUTCDate()}/{end.getUTCMonth()}/{end.getUTCFullYear()}, {end.getUTCHours()}:{end.getUTCMinutes()}</Text>
+                <Text style = {style.textTime}>{formattedDateStart}</Text>
+                <Text style = {style.textTime}>{formattedDateEnd}</Text>
             </View>
             <View style = {{...style.view, justifyContent: 'flex-start'}}>
                 <View style = {style.viewName}>
@@ -26,14 +28,14 @@ export default ScheduleSupp = ({data, role})=> {
             </View>
             <View style = {style.view}>
                 <View style = {style.viewPoint}>
-                    <Icon/>
+                    
                     <Text style = {style.textQuantity}>{data.quantity} people</Text>
                 </View>
                 
                 {data.status === 'active'? <Text style = {style.textStatusAvailable}>AVAILABLE</Text> : <Text style = {style.textStatusCanceled}>CANCELED</Text>}
 
                 { role === 'travel_supplier' ?(<TouchableOpacity style = {style.btnDelete}>
-                    <Icon name = 'trash-outline' size = {25} color = '#000'/>
+                    <Icon name = 'trash-outline' size = {20} color = '#000'/>
                 </TouchableOpacity>): null}
             </View>
         </View>
@@ -75,7 +77,7 @@ const style = StyleSheet.create({
     ,textValue: {
         color: '#FF6B00',
         fontFamily: 'Montserrat SemiBold',
-        fontSize: 22,
+        fontSize: 20,
     }
     ,viewName: {
         height: 30,
@@ -114,7 +116,7 @@ const style = StyleSheet.create({
         flexDirection: 'row',
         height: 30,
         width: 30,
-        borderRadius: 7,
+        borderRadius: 10,
         borderWidth: 0.5,
         justifyContent: 'center',
         alignItems: 'center',

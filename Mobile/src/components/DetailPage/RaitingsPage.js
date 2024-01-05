@@ -104,7 +104,7 @@ export default RaitingsPage = ({product}) => {
             <ScrollView>
                 <View>
                     {rate.map((raittingData) => (
-                        <RaittingComponent key={raittingData.id} raittingData={raittingData} />
+                        <RaittingComponent key={raittingData.id_rate} raittingData={raittingData} />
                     ))}
                 </View>
                 

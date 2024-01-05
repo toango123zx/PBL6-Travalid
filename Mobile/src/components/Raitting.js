@@ -28,7 +28,7 @@ export default RaittingComponent = ({raittingData}) => {
                 <Text style = {style.textCmt}>"{raittingData.comment}"</Text>
             </View>
             <View style = {style.viewDate}>
-                <Text style = {style.textDate}>20/2/2</Text>
+                <Text style = {style.textDate}>13:09, 20/02/2023</Text>
             </View>
         </View>
 

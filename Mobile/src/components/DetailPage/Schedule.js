@@ -6,7 +6,8 @@ import {
     Dimensions,
     StatusBar,
     StyleSheet,
-    TouchableOpacity
+    TouchableOpacity,
+    Alert
 } from 'react-native'
 import { useState } from "react";
 import useFocusEffect from "@react-navigation/native";
@@ -24,7 +25,9 @@ export default Schedule = ({scheduleData, product, navigate}) => {
     const endDate = new Date (scheduleData.end_time);
     const [showAdd, setShowAdd] = useState(false)
     const dispatch = useDispatch();
+    const [showProfile, setShowProfile] = useState(false)
     const navigation = useNavigation();
+    
     useEffect(()=>{
         const currentDate = new Date()
         console.log(currentDate)
@@ -44,8 +47,9 @@ export default Schedule = ({scheduleData, product, navigate}) => {
             })
             console.log(res.status)
         } catch (error) {
-            console.log(error)
+            Alert.alert()
         }
+        
     }
     const dataToSend = {
         id: product.id_product,
@@ -112,7 +116,7 @@ export default Schedule = ({scheduleData, product, navigate}) => {
                     <Text style = {style.textAdd}>Add</Text>
                     </TouchableOpacity>
                 ) : (
-                    <TouchableOpacity style = {style.btnAdd} onPress={addScheduleToCart}>
+                    <TouchableOpacity style = {style.btnAdd} onPress={addScheduleToCart }>
                     <Text style = {style.textAdd}>Add</Text>
                     </TouchableOpacity>
                 )}

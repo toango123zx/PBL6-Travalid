@@ -15,12 +15,14 @@ const authApi = {
     getDiscountTraveller: (page) => axiosClient.get('discount/all?page='+page),
     getScheduleSupplier: (page, headers) => axiosClient.get('schedule_product?page='+page, {headers}),
     createSchedule: (id_product, headers, params) => axiosClient.post('schedule_product/'+id_product, params, {headers}),
-    getDiscountByProduct: (params, headers) => axiosClient.get('discount/product',params,{headers}),
+    getDiscountByProduct: (params) => axiosClient.get('discount/product',params),
     createRate: (id_product, headers, params) => axiosClient.post('rate/'+id_product, params,{headers}),
     getRate: (id_product)=> axiosClient.get('rate/'+id_product),
     createBill: (params, headers) => axiosClient.post('bill', params, {headers}),
     addScheduleToCart: (params, headers) => axiosClient.post('cart', params,{headers}),
     viewCart: (headers) => axiosClient.get('cart', {headers}),
-    deleteScheduleInCart: (id_cart, headers) => axiosClient.delete('cart/'+id_cart, {headers})
+    deleteScheduleInCart: (id_cart, headers) => axiosClient.delete('cart/'+id_cart, {headers}),
+    getLocation: () => axiosClient.get('location'),
+    createProduct: (params,headers) => axiosClient.post('product',params,{headers})
 }
 export default authApi
