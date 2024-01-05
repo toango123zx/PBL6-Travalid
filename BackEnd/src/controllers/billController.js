@@ -58,7 +58,6 @@ export const getDetailBill = async (req, res) => {
 export const createBill = async (req, res) => {
     let __user = req.user;
     let __bill = req.bill;
-
     __bill.id_user = __user.id_user;
 
     let __promise = [
@@ -166,22 +165,22 @@ export const createBill = async (req, res) => {
 
     __bill.total = Number(__bill.cost - __bill.discount_value);
 
-    if (__user.balance < __bill.total) {
-        return res.status(409).json({
-            position: "Error: User balance",
-            msg: `User balance is not enough to pay for this bill`
-        });
-    };
-
     try {
         await prisma.$transaction(async (prismaClient) => {
             __promise = null;
             __promise = [
                 scheduleProductService.updateBookedSchedulesProduct(__bill.id_schedule_product, __bill.quantity, prismaClient),
-                userService.updateUserBalance(__user.id_user, - __bill.total, prismaClient),
-                userService.updateUserBalance(__bill.id_supplier, __bill.total + __adminDiscount, prismaClient)
             ];
+            if (__user.balance > __bill.total) {
+                __bill.status = "paided";
+                __promise.push(userService.updateUserBalance(__user.id_user, - __bill.total, prismaClient));
+                __promise.push(userService.updateUserBalance(__bill.id_supplier, __bill.total + __adminDiscount, prismaClient));
 
+                // return res.status(409).json({
+                //     position: "Error: User balance",
+                //     msg: `User balance is not enough to pay for this bill`
+                // });
+            };
             if (__bill.id_discount.length > 0) {
                 __promise.push(discountService.updateDiscountApplied(__bill.id_discount, __bill.quantity, prismaClient));
                 if (__fulledDiscounts.length !== 0) {
@@ -192,23 +191,29 @@ export const createBill = async (req, res) => {
             if (__fulledScheduleProduct.length !== 0) {
                 __promise.push(scheduleProductService.updateStatusScheduleProduct(__fulledScheduleProduct, "full", prismaClient));
             };
-            
+
             delete __bill.id_discount;
             delete __bill.id_schedule_product;
             delete __bill.cost;
             delete __bill.total;
-            __bill.status = "paided"
             __promise.push(billService.createBill(__bill, prismaClient));
 
-            await Promise.allSettled(__promise)
+            __bill = await Promise.allSettled(__promise)
                 .then((result) => {
                     result.forEach((resultItem) => {
                         if (resultItem.value === false) {
-                            new Error("Update Db failed with prisma");
+                            return new Error("Update Db failed with prisma");
                         };
                     });
+                    return result[result.length - 1].value;
                 });
+        },
+            {
+                maxWait: 2000,
+                timeout: 5000,
+                isolationLevel: 'ReadUncommitted',
             });
+
     } catch (e) {
         return res.status(500).json({
             position: "Error: create Bill - Update db failed with prisma",
@@ -216,7 +221,9 @@ export const createBill = async (req, res) => {
         });
     };
 
-    return res.sendStatus(200);
+    return res.status(200).json({
+        data: __bill,
+    });
 };
 
 export const payBill = async (req, res) => {
@@ -268,40 +275,34 @@ export const payBill = async (req, res) => {
     };
 
     __user.balance -= Number(__bill.total);
-    const __total = __bill.total;
-    delete __bill.cost;
-    delete __bill.total;
+    try {
+        await prisma.$transaction(async (prismaClient) => {
+            await Promise.allSettled([
+                billService.updateBillStatus(__bill.id_bill, __user.id_user, "paided", prismaClient),
+                userService.updateUserBalance(__user.id_user, - __bill.total, prismaClient),
+                userService.updateUserBalance(__bill.supplier.id_user, __bill.total, prismaClient)
+            ])
+                .then((result) => {
+                    result.forEach((resultItem) => {
+                        if (resultItem.value === false) {
+                            return new Error("Update Db failed with prisma");
+                        };
+                    });
+                });
+        },
+            {
+                maxWait: 2000,
+                timeout: 5000,
+                isolationLevel: 'ReadUncommitted',
+            });
 
-    await Promise.allSettled([
-        billService.updateBillStatus(__bill.id_bill, __user.id_user, "paided"),
-        userService.updateUser(__user.id_user, { balance: Number(__user.balance) })
-    ])
-        .then(async (result) => {
-            const __status = String(result[0].value) + String(result[1].value);
-            switch (__status) {
-                case "truetrue":
-                    return res.sendStatus(200);
-                case "truefalse":
-                    await billService.updateBillStatus(__bill, __bill.id_user, "pending");
-                    return res.status(500).json({
-                        position: "Error: Prisma Update User balance",
-                        msg: "Error from the server"
-                    });
-                case "falsetrue":
-                    await userService.updateUser(__user.id_user, { balance: Number(__user.balance) + Number(__total) });
-                    return res.status(403).json({
-                        position: "Error: Prisma upadate bill status",
-                        msg: "The user does not have permission to update this resource"
-                    });
-                case "falsefalse":
-                    return res.status(500).json({
-                        position: "Error: Prisma Update User balance and upadate bill status",
-                        msg: "Error from the server"
-                    });
-            };
+    } catch (e) {
+        return res.status(500).json({
+            position: "Error: create Bill - Update db failed with prisma",
+            msg: "Error from the server",
         });
-
-    return;
+    };
+    return res.sendStatus(200)
 };
 
 export const cancelBill = async (req, res) => {

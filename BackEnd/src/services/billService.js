@@ -109,7 +109,7 @@ export const getDetailBill = async (id_bill, id_user) => {
     };
 };
 
-export const updateBillStatus = async (id_bill, id_user, status) => {
+export const updateBillStatus = async (id_bill, id_user, status, prismaClient = prisma) => {
     const __checkStatus = ['done', 'paided', 'pending', 'cancel'];
     let __status = '';
     if (!__checkStatus.includes(String(status))) {
@@ -131,7 +131,7 @@ export const updateBillStatus = async (id_bill, id_user, status) => {
             return false;
     };
     try {
-        await prisma.bill.update({
+        await prismaClient.bill.update({
             where: {
                 id_bill: Number(id_bill),
                 status: __status,
@@ -201,12 +201,13 @@ export const createBill = async (bill, prismaClient = prisma) => {
         bill.info_bill = {
             create: bill.info_bill
         }
-        await prismaClient.bill.create({
+        console.log("🚀 ~ file: billService.js:202 ~ createBill ~ bill:", bill)
+        console.log("🚀 ~ file: billService.js:204 ~ createBill ~ bill.info_bill:", bill.info_bill)
+        return await prismaClient.bill.create({
             data: bill,
         });
-        
-        return true;
     } catch (e) {
+        console.log("🚀 ~ file: billService.js:208 ~ createBill ~ e:", e)
         return false;
     };
 };

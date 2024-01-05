@@ -4,22 +4,18 @@ import * as envApp from '../config/envApp';
 
 const idProductsSchema = Joi.object({
     id_products: Joi.array()
-        .items(Joi.number()
-            .integer()
-            .strict()
+        .items(Joi
             .required()
             .label('id_product item error')
             .messages({
-                "number.base": "Items id_products must be integer",
-                "number.integer": "Items id_products must be integer",
                 "any.required": "error due to input data missing id_product item",
             }))
         .required()
         .label('id_products error')
         .messages({
-            "array.base": "id_products must be a array contains numeric items",
-            "number.base": "Items id_products must be integer",
-            "number.integer": "Items id_products must be integer",
+            "array.base": "id_products must be a array contains string items",
+            "string.base": "Items id_products must be string",
+            "string.integer": "Items id_products must be string",
             "any.required": "error due to input data missing id_products array",
             "array.includesRequiredKnowns": "error due to input data missing id_product item"
         }),
@@ -34,13 +30,17 @@ const prodcutValidation = (schemaValidation, data) => {
         };
         throw __error;
     };
-    
+
     return value;
 };
 
-export const idProductsValidation = (req, res, next) => {
+export const idProductsValidation = async (req, res, next) => {
     try {
-        const __bill = prodcutValidation(idProductsSchema, req.body);
+        let __idProducts = await prodcutValidation(idProductsSchema, req.query);
+        __idProducts = __idProducts.id_products.map(idProduct => {
+            return Number(idProduct)
+        });
+        req.idProducts = __idProducts;
     } catch (err) {
         return res.status(422).send(err);
     };
