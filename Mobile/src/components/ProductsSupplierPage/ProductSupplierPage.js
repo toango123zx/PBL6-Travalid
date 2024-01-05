@@ -36,6 +36,18 @@ export default ProductSuppilerPage = ({route}) => {
         { label: 'Schedules', value: 'SCHEDULES' },
         { label: 'Disounts', value: 'DISCOUNTS' },
     ];
+    const DeleteSchedule = async (id_schedule) => {
+        try {
+            const token = "bearer " + await AsyncStorage.getItem('userToken')
+            const res = await authApi.deleteSchedule(id_schedule,{
+                "token": token
+            })
+            console.log(res.status)
+            Alert.alert("Delete done")
+        } catch (error) {
+            console.log(error)
+        }
+    }
     useEffect(()=>{
 
         const getProductBySupplier = async () => {
@@ -89,7 +101,7 @@ export default ProductSuppilerPage = ({route}) => {
             
             <View style = {{flex: 1}}>
                     {page === 'PRODUCTS' ?  
-                    <ProductSuppPage product={product} id_user = {user.id_user} navigation={navigation}/> : 
+                    <ProductSuppPage product={product} id_user = {user.id_user} navigation={navigation} DeleteSchedule = {DeleteSchedule}/> : 
                     page === 'DISCOUNTS' ? <DiscountSuppPage discount = {discount} navigation = {navigation} role = {user.role}/> :  
                     <ScheduleSuppPage schedule={schedule} navigation={navigation} role = {user.role}/>}
                 </View>
@@ -143,12 +155,13 @@ export default ProductSuppilerPage = ({route}) => {
     )
 }
 
-const ScheduleSuppPage = ({schedule, navigation, role}) => {
+const ScheduleSuppPage = ({schedule, navigation, role, DeleteSchedule}) => {
     const data1 = [
         { label: 'Latest', value: '1' },
         { label: 'Item 2', value: '2' },
         { label: 'Item 3', value: '3' },
     ];
+    
     const [value1, setValue1] = useState('Place');
     return(
         <View>
@@ -158,7 +171,7 @@ const ScheduleSuppPage = ({schedule, navigation, role}) => {
 
             </View>
                 {schedule.slice(0,10).map((schedule) => (
-                    <ScheduleSupp key={schedule.id_schedule_product} data ={schedule} role = {role} />
+                    <ScheduleSupp key={schedule.id_schedule_product} data ={schedule} role = {role} deleteSchedule = {DeleteSchedule} />
                 ))}
                 <View style = {{height: 60}}>
 

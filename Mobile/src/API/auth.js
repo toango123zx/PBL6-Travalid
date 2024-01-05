@@ -23,6 +23,8 @@ const authApi = {
     viewCart: (headers) => axiosClient.get('cart', {headers}),
     deleteScheduleInCart: (id_cart, headers) => axiosClient.delete('cart/'+id_cart, {headers}),
     getLocation: () => axiosClient.get('location'),
-    createProduct: (params,headers) => axiosClient.post('product',params,{headers})
+    createProduct: (params,headers) => axiosClient.post('product',params,{headers}),
+    deleteDiscount: (id_discount, headers) => axiosClient.delete('discount/'+id_discount, {headers}),
+    deleteSchedule: (id_discount, headers) => axiosClient.delete('schedule_product/'+id_discount, {headers})
 }
 export default authApi

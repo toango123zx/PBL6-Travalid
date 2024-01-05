@@ -1,12 +1,27 @@
 import React from "react";
-import { StyleSheet, Vibration, View, Dimensions, Text, TouchableOpacity } from 'react-native'
+import { StyleSheet, Vibration, View, Dimensions, Text, TouchableOpacity, Alert } from 'react-native'
 
 const { width, height } = Dimensions.get('window');
 
 import Icon from 'react-native-vector-icons/Ionicons'
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import authApi from "../../API/auth";
+const DeleteSchedule = async (id_schedule) => {
+    try {
+        const token = "bearer " + await AsyncStorage.getItem('userToken')
+        const res = await authApi.deleteSchedule(id_schedule,{
+            "token": token
+        })
+        console.log(res.status)
+        Alert.alert("Delete done")
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 export default ScheduleSupp = ({data, role})=> {
+    
     const startTime = new Date (data.start_time);
     const endTime = new Date (data.end_time);
     const formattedDateStart = `${startTime.getFullYear()}/${String(startTime.getMonth() + 1).padStart(2, '0')}/${String(startTime.getDate()).padStart(2, '0')}, ${String(startTime.getHours()).padStart(2, '0')}:${String(startTime.getMinutes()).padStart(2, '0')}`;
@@ -34,7 +49,7 @@ export default ScheduleSupp = ({data, role})=> {
                 
                 {data.status === 'active'? <Text style = {style.textStatusAvailable}>AVAILABLE</Text> : <Text style = {style.textStatusCanceled}>CANCELED</Text>}
 
-                { role === 'travel_supplier' ?(<TouchableOpacity style = {style.btnDelete}>
+                { role === 'travel_supplier' ?(<TouchableOpacity style = {style.btnDelete} onPress={()=>{DeleteSchedule(data.id_schedule_product)}}>
                     <Icon name = 'trash-outline' size = {20} color = '#000'/>
                 </TouchableOpacity>): null}
             </View>

@@ -1,11 +1,24 @@
 import React from "react";
-import { StyleSheet, Vibration, View, Dimensions, Text, TouchableOpacity } from 'react-native'
+import { StyleSheet, Vibration, View, Dimensions, Text, TouchableOpacity, Alert } from 'react-native'
 
 const { width, height } = Dimensions.get('window');
 
 import Icon from 'react-native-vector-icons/Ionicons'
 import { useNavigation } from "@react-navigation/native";
-
+import authApi from "../../API/auth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+const DeleteDiscount = async (id_discount) => {
+    try {
+        const token = "bearer " + await AsyncStorage.getItem('userToken')
+        const res = await authApi.deleteDiscount(id_discount,{
+            "token": token
+        })
+        console.log(res.status)
+        Alert.alert("Delete done")
+    } catch (error) {
+        console.log(error)
+    }
+}
 export default ProductSupp = ({data, role})=> {
     const start = new Date (data.start_time);
     const end = new Date (data.end_time);
@@ -32,9 +45,9 @@ export default ProductSupp = ({data, role})=> {
                 
                 {data.status === 'active'? <Text style = {style.textStatusAvailable}>AVAILABLE</Text> : <Text style = {style.textStatusCanceled}>CANCELED</Text>}
 
-                { role === 'admin' ?(<TouchableOpacity style = {style.btnDelete}>
-                    <Icon name = 'trash-outline' size = {25} color = '#000'/>
-                </TouchableOpacity>): null}
+                <TouchableOpacity style = {style.btnDelete} onPress={()=>{DeleteDiscount(data.id_discount)}}>
+                    <Icon name = 'trash-outline' size = {20} color = '#000'/>
+                </TouchableOpacity>
             </View>
         </View>
     )
@@ -114,7 +127,7 @@ const style = StyleSheet.create({
         flexDirection: 'row',
         height: 30,
         width: 30,
-        borderRadius: 7,
+        borderRadius: 10,
         borderWidth: 0.5,
         justifyContent: 'center',
         alignItems: 'center',

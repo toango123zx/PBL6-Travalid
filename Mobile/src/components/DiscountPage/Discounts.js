@@ -14,6 +14,8 @@ import authApi from "../../API/auth";
 export default DiscountsComp = ({discountData}) => {
     const endTime = new Date (discountData.end_time);
     const supplier = discountData.supplier;
+    
+    const formattedDateEnd = `${endTime.getFullYear()}/${String(endTime.getMonth() + 1).padStart(2, '0')}/${String(endTime.getDate()).padStart(2, '0')} ${String(endTime.getHours()).padStart(2, '0')}:${String(endTime.getMinutes()).padStart(2, '0')}`;
     const navigation = useNavigation();
     useEffect (()=>{
         console.log(endTime)
@@ -28,7 +30,7 @@ export default DiscountsComp = ({discountData}) => {
                 <View style = {style.viewTime}>
                     <Text style = {style.textValidFrom}>Valid from 
                     </Text>
-                    <Text style = {style.textTime}> {endTime.getUTCHours()}:{endTime.getUTCMinutes()}, {endTime.getUTCDate()}/{endTime.getMonth() + 1}/{endTime.getUTCFullYear()}</Text>
+                    <Text style = {style.textTime}> {formattedDateEnd}</Text>
                 </View>
                 <View style = {style.viewPoint}>
                     <Icon name= 'server' color ='rgba(255, 213, 33, 1)' size ={17}/>

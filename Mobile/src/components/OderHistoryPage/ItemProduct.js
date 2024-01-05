@@ -16,8 +16,11 @@ import authApi from "../../API/auth";
 const { width, height } = Dimensions.get('window');
 export default ItemInCart = ({data}) => {
     const [image, setImage] = useState(null)
-    const start = new Date (data.start_time)
-    const end = new Date (data.end_time)
+    
+    const startTime = new Date(data.start_time)
+    const formattedDateStart = `${startTime.getFullYear()}/${String(startTime.getMonth() + 1).padStart(2, '0')}/${String(startTime.getDate()).padStart(2, '0')} ${String(startTime.getHours()).padStart(2, '0')}:${String(startTime.getMinutes()).padStart(2, '0')}`;
+    const endTime = new Date(data.end_time)
+    const formattedDateEnd = `${endTime.getFullYear()}/${String(endTime.getMonth() + 1).padStart(2, '0')}/${String(endTime.getDate()).padStart(2, '0')} ${String(endTime.getHours()).padStart(2, '0')}:${String(endTime.getMinutes()).padStart(2, '0')}`;
     useEffect(()=>{
         console.log(data);
         const getProduct = async () => {
@@ -57,7 +60,7 @@ export default ItemInCart = ({data}) => {
                 
             </View>
             <View style = {style.viewBottom}>
-                <Text style = {style.text}> {start.getUTCDate()}/{start.getUTCMonth()+1}/{start.getUTCFullYear()}, {start.getUTCHours()}:{start.getUTCMinutes()}    To    {end.getUTCDate()}/{end.getUTCMonth()+1}/{end.getUTCFullYear()}, {end.getUTCHours()}:{end.getUTCMinutes()}  </Text>
+                <Text style = {style.text}> {formattedDateStart}    To    {formattedDateEnd}  </Text>
             </View>
         </View>
     )

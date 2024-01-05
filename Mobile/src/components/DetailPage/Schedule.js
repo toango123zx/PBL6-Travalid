@@ -51,7 +51,8 @@ export default Schedule = ({scheduleData, product, navigate}) => {
         }
         
     }
-    const dataToSend = {
+
+    const dataToSend = { 
         id: product.id_product,
         id_schedule: scheduleData.id_schedule_product,
         name: product.name,
@@ -116,7 +117,7 @@ export default Schedule = ({scheduleData, product, navigate}) => {
                     <Text style = {style.textAdd}>Add</Text>
                     </TouchableOpacity>
                 ) : (
-                    <TouchableOpacity style = {style.btnAdd} onPress={addScheduleToCart }>
+                    <TouchableOpacity style = {style.btnAdd} onPress={()=>{if(navigate===true) {addScheduleToCart()} else {navigation.navigate('SignInPage')} }}>
                     <Text style = {style.textAdd}>Add</Text>
                     </TouchableOpacity>
                 )}

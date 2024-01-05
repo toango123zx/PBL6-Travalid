@@ -13,6 +13,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 export default Bill = ({billData, role}) =>{
     const time = new Date(billData.time)
+    
+    const formattedDateEnd = `${time.getFullYear()}/${String(time.getMonth() + 1).padStart(2, '0')}/${String(time.getDate()).padStart(2, '0')}, ${String(time.getHours()).padStart(2, '0')}:${String(time.getMinutes()).padStart(2, '0')}`;
     const [token, setToken] = useState()
     const navigation = useNavigation()
     useFocusEffect(
@@ -48,7 +50,7 @@ export default Bill = ({billData, role}) =>{
             <View style = {style.view}>
                 
                 <Text style = {style.textTime}>
-                    {time.getUTCHours()}:{time.getUTCMinutes()}, {time.getUTCDate()}/{time.getUTCMonth()+1}/{time.getUTCFullYear()}
+                    {formattedDateEnd}
                 </Text>
                 <TouchableOpacity style = {style.btnEdit} onPress={()=> {navigation.navigate('BillDetailPage', {billData})}}>
                     <Text style = {style.textEdit}>View Detail </Text>

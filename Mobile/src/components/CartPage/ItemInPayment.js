@@ -17,6 +17,10 @@ export default ItemInCart = ({data}) => {
     
     const startDate = new Date (data.start_time)
     const endDate = new Date (data.end_time)
+    const startTime = new Date(data.start_time)
+    const formattedDateStart = `${startTime.getFullYear()}/${String(startTime.getMonth() + 1).padStart(2, '0')}/${String(startTime.getDate()).padStart(2, '0')} ${String(startTime.getHours()).padStart(2, '0')}:${String(startTime.getMinutes()).padStart(2, '0')}`;
+    const endTime = new Date(data.end_time)
+    const formattedDateEnd = `${endTime.getFullYear()}/${String(endTime.getMonth() + 1).padStart(2, '0')}/${String(endTime.getDate()).padStart(2, '0')} ${String(endTime.getHours()).padStart(2, '0')}:${String(endTime.getMinutes()).padStart(2, '0')}`;
     return(
         <View style = {style.View}>
             <View style = {style.viewTop}>
@@ -41,7 +45,7 @@ export default ItemInCart = ({data}) => {
                 
             </View>
             <View style = {style.viewBottom}>
-                <Text style = {style.text}>{startDate.getUTCHours()}:{startDate.getUTCMinutes()}, {startDate.getUTCDate()}/{startDate.getUTCMonth()+ 1}/{startDate.getUTCFullYear()}     to     {endDate.getUTCHours()}:{endDate.getUTCMinutes()}, {endDate.getUTCDate()}/{endDate.getUTCMonth()+1}/{endDate.getUTCFullYear()}</Text>
+                <Text style = {style.text}>{formattedDateStart}     to     {formattedDateEnd}</Text>
             </View>
         </View>
     )

@@ -25,6 +25,8 @@ export default BillDetailPage = ({route}) => {
     const [supplier, setSupplier] = useState([])
     const navigation = useNavigation()
     const time = new Date (billDetail.time)
+    
+    const formattedDate = `${time.getFullYear()}/${String(time.getMonth() + 1).padStart(2, '0')}/${String(time.getDate()).padStart(2, '0')}, ${String(time.getHours()).padStart(2, '0')}:${String(time.getMinutes()).padStart(2, '0')}`;
     useEffect(()=>{
         const getDetailBill = async ()=> {
             try {
@@ -64,7 +66,7 @@ export default BillDetailPage = ({route}) => {
                     <Text style = {styleBillDetail.textQuantity}>
                         {billDetail.quantity} people - </Text>
                     <Text style = {styleBillDetail.textTime}>
-                         Order Placed in {time.getUTCDate()}/{time.getUTCMonth()}/{time.getUTCFullYear()} at {time.getUTCHours()}:{time.getUTCMinutes()}
+                         Order Placed in {formattedDate}
                     </Text>
                 </View>
                 <Text style = {styleBillDetail.textTotal}>{Math.round(billDetail.total)} VND</Text>
