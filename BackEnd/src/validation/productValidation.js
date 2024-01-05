@@ -57,3 +57,38 @@ export const checkPage = (req, res, next) => {
     req.start = (__page - 1) * envApp.LimitGetDiscount;
     next();
 };
+
+export const productCreateValidate = data => {
+    const productSchema = Joi.object({
+        id_user: Joi.number().strict().required(),
+        name: Joi.string().pattern(/^[^\d~`!@#$%^&*()_+\-={[}\]|;:'",<.>?/]+$/).required(),
+        location_map: Joi.string().required(),
+        time: Joi.number().strict().required(),
+        quantity: Joi.number().strict().required(),
+        age: Joi.number().strict().required(),
+        description: Joi.string().pattern(/^[^\d~`!@#$%^&*()_+\-={[}\]|;:'",<.>?/]+$/).required(),
+        id_location: Joi.number().strict().required(),
+        city: Joi.string().pattern(/^[^\d~`!@#$%^&*()_+\-={[}\]|;:'",<.>?/]+$/).required(),
+    });
+    return productSchema.validate(data)
+}
+
+export const productUpdateValidate = data => {
+    const productSchema = Joi.object({
+        id_user: Joi.number().strict(),
+        name: Joi.string().pattern(/^[^\d~`!@#$%^&*()_+\-={[}\]|;:'",<.>?/]+$/),
+        location_map: Joi.string(),
+        time: Joi.number().strict(),
+        quantity: Joi.number().strict(),
+        age: Joi.number().strict(),
+        description: Joi.string().pattern(/^[^\d~`!@#$%^&*()_+\-={[}\]|;:'",<.>?/]+$/),
+        id_location: Joi.number().strict(),
+        city: Joi.string().pattern(/^[^\d~`!@#$%^&*()_+\-={[}\]|;:'",<.>?/]+$/),
+    });
+    return productSchema.validate(data)
+}
+
+export const productDeleteValidate = data => {
+    const time = Joi.number().required()
+    return time.validate(data)
+}

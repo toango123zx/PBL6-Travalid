@@ -95,6 +95,19 @@ export const updateProduct = async (id_product, product) => {
     }
 }
 
+export const deleteProduct = async (id_product) => {
+    try {
+        const deleteProduct = await prisma.product.delete({
+            where: {
+                id_product: id_product
+            }
+        })
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
 export const getIdProductsByIdUser = async (id_user) => {
     try {
         return await prisma.product.findMany({

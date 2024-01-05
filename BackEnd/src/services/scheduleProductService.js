@@ -198,6 +198,18 @@ export const deleteScheduleProduct = async (id_schedule_product) => {
 
 }
 
+export const deleteScheduleProductByProductId = async (id_product) => {
+    try {
+        return await prisma.schedule_Product.delete({
+            where: {
+                id_product: id_product
+            }
+        });
+    } catch (error) {
+        return false;
+    }
+}
+
 export const getIdScheduleProductbyId = async (id_schedule_product) => {
     try {
         return await prisma.schedule_Product.findUnique({
