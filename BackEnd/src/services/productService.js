@@ -82,6 +82,24 @@ export const create_Product = async (product) => {
     }
 }
 
+export const createProductImageDescription = async (id_product, imageURLs) => {
+    try {131
+        let __data = [];
+        imageURLs.forEach((url) => {
+            __data.push({
+                id_product: id_product,
+                image_url: url,
+            })
+        })
+        await prisma.Product_Image_Description.createMany({
+            data: __data,
+        });
+        return true;
+    } catch (error) {
+        return false;
+    }
+};
+
 export const updateProduct = async (id_product, product) => {
     try {
         return await prisma.product.update({
@@ -91,6 +109,7 @@ export const updateProduct = async (id_product, product) => {
             data: product
         });
     } catch (error) {
+        console.log("🚀 ~ file: productService.js:112 ~ updateProduct ~ error:", error)
         return false;
     }
 }
@@ -151,6 +170,7 @@ export const getAllProductForSupplier = async (id_user, start, limit) => {
         });
     }
     catch (err) {
+        console.log("🚀 ~ file: productService.js:154 ~ getAllProductForSupplier ~ err:", err)
         return false;
     }
 }

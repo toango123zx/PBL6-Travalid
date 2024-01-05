@@ -1,13 +1,14 @@
 const cron = require('node-cron');
-const { productCreateValidate,productUpdateValidate, productDeleteValidate} = require('../validation/productValidation');
-const { scheduleCreateValidate} = require('../validation/scheduleProductValidation');
-const { addDiscountValidate} = require('../validation/discountValidation');
+const { productCreateValidate, productUpdateValidate, productDeleteValidate } = require('../validation/productValidation');
+const { scheduleCreateValidate } = require('../validation/scheduleProductValidation');
+const { addDiscountValidate } = require('../validation/discountValidation');
 import * as envApp from '../config/envApp';
 import * as productHelper from '../helpers/productHelper';
 import * as scheduleHelper from '../helpers/scheduleHelper';
 import * as productService from '../services/productService';
 import * as scheduleProductService from '../services/scheduleProductService';
 import * as discountService from '../services/discountService';
+import * as imageHelper from '../helpers/imageHelper';
 
 cron.schedule('0 */3 * * *', inactiveProduct);// run 3 hours each time
 
@@ -32,7 +33,7 @@ async function inactiveProduct() {
 }
 
 export const getAllProduct = async (req, res, next) => {
-    try { 
+    try {
         let page = parseInt(req.query.page, 10);
         if (page < 0 || !!page == false) page = 1;
         const allProduct = await productService.getAllProducts(page);
@@ -206,7 +207,7 @@ export const createProduct = async (req, res, next) => {
                 const scheduleCreate = await scheduleProductService.createScheduleProduct(data);
                 if (!scheduleCreate) {
                     await productService.deleteProduct(createProduct.id_product); 
-                    return res.json({
+                    return res.status(400).json({
                         msg: 'Schedule not created'
                     });
                 } else {
@@ -365,4 +366,24 @@ export const activeProduct = async (req, res, next) => {
             msg: 'Delete Product error',
         });
     }
+}
+
+export const uploadImage = async (req, res) => {
+    const __user = req.user;
+    const __idProduct = Number(req.params.id);
+    const __imageAvatar = req.files['image'];
+    const __imagesDescription = req.files['images_description'];
+    const __imageAvatarURL = await imageHelper.uploadImage("avatar", __user.name, __imageAvatar);
+    const __imageDescriptionURL = (await imageHelper.uploadImages('product', __idProduct, __imagesDescription)).imageURLs;
+    if (!__imageAvatarURL || !__imageDescriptionURL) {
+        return res.status(500).json({
+            position: "Error: create image with firebase",
+            msg: "The error in server"
+        });
+    };
+    const x = await productService.updateProduct(__user.id_user, { image: __imageAvatarURL })
+    const y = await productService.createProductImageDescription(__idProduct, __imageDescriptionURL);
+    return res.status(200).json({
+        data: 1
+    })
 }

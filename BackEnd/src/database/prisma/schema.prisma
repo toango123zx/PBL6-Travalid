@@ -102,15 +102,22 @@ model Product {
   id_location    Int      @db.UnsignedInt
   location       Location @relation(fields: [id_location], references: [id_location])
   image          String   @default("https://firebasestorage.googleapis.com/v0/b/travalid-e11b6.appspot.com/o/product%2Fproduct-image-default.png?alt=media&token=30cb0db9-7219-4a7d-88c0-0afd92b7047a")
-  hj             String   @default(cuid())
 
   city   String
   status Product_Status @default(active)
 
-  schedule_product Schedule_Product[]
-  discount         Discount[]
-  rate             Rate[]
-  inactive_product Inactive_Product[]
+  schedule_product          Schedule_Product[]
+  discount                  Discount[]
+  rate                      Rate[]
+  inactive_product          Inactive_Product[]
+  Product_image_description Product_Image_Description[]
+}
+
+model Product_Image_Description {
+  id_product_image_description String  @id @default(cuid())
+  id_product                   Int     @db.UnsignedInt
+  product                      Product @relation(fields: [id_product], references: [id_product])
+  image_url                    String
 }
 
 enum Schedule_Product_Status {
