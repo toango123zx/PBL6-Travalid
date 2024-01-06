@@ -8,6 +8,7 @@ const walletRouter = require ('./wallet');
 const rateRouter = require ('./rate');
 const locationRouter = require ('./location');
 const scheduleProductRouter = require ('./scheduleProduct');
+const analysisRouter = require ('./analysis');
 
 function route(app) {
     app.use('/', authRouter);
@@ -20,6 +21,7 @@ function route(app) {
     app.use('/bill', billRouter);
     app.use('/rate', rateRouter);
     app.use('/location', locationRouter);
+    app.use('/analysis', analysisRouter);
 }
 
 module.exports = route;
