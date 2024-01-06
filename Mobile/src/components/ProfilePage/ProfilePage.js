@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import{
+import {
     View,
     TouchableOpacity,
     Text,
@@ -8,18 +8,18 @@ import{
     SafeAreaView,
     StatusBar,
 } from 'react-native';
-import {styleProfilePage} from "../../themes/styleProfilePage";
+import { styleProfilePage } from "../../themes/styleProfilePage";
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import authApi from "../../API/auth";
-export default ProfilePage = () =>{
+export default ProfilePage = () => {
     const navigation = useNavigation(); // Sử dụng hook navigation
-    const [user, setUser]= useState([]);
-    useEffect( ()=>{
-        
-        const getProfileUser = async () =>{
+    const [user, setUser] = useState([]);
+    useEffect(() => {
+
+        const getProfileUser = async () => {
 
             // const token = "bearer " + await AsyncStorage.getItem('userToken')
             // //     console.log(token)
@@ -34,120 +34,123 @@ export default ProfilePage = () =>{
             //         console.log(err)
             //     })
             try {
-                
+
                 const token = "bearer " + await AsyncStorage.getItem('userToken')
                 console.log(token)
                 const res = await authApi.getProfileUser({
-                    "token" : token,
+                    "token": token,
                 })
                 setUser(res.data.data)
-                
-                
+
+
             } catch (error) {
                 console.log(error)
             }
         }
         getProfileUser()
         console.log(user.role)
-    },[])
+    }, [])
     const handlePressProfile = () => {
-      navigation.navigate('ProfileDetails');
+        navigation.navigate('ProfileDetails');
     };
 
 
     const [showProfile, setShowProfile] = useState(false);
     useFocusEffect(
         React.useCallback(() => {
-        const checkUserToken = async () => {
-            try {
-            const token = await AsyncStorage.getItem('userToken');
-            setShowProfile(!!token);
-            //console.log(token);
-            } catch (error) {
-            console.error('Lỗi khi kiểm tra userToken:', error);
-            }
-        };
+            const checkUserToken = async () => {
+                try {
+                    const token = await AsyncStorage.getItem('userToken');
+                    setShowProfile(!!token);
+                    //console.log(token);
+                } catch (error) {
+                    console.error('Lỗi khi kiểm tra userToken:', error);
+                }
+            };
 
-        checkUserToken();
+            checkUserToken();
         }, [])
     );
-    return(
-        <View style = {styleProfilePage.View}>
+    return (
+        <View style={styleProfilePage.View}>
             <StatusBar translucent backgroundColor="transparent" />
-            <View style = {styleProfilePage.viewText}>
-                <Text style = {styleProfilePage.textProfile}>Profile</Text>
+            <View style={styleProfilePage.viewText}>
+                <Text style={styleProfilePage.textProfile}>Profile</Text>
             </View>
-            <View style = {styleProfilePage.viewAvatar}>
-                {user.image ? <Image style = {{width: 105, height: 105, borderRadius: 52.5}} source={{
+            <View style={styleProfilePage.viewAvatar}>
+                {user.image ? <Image style={{ width: 105, height: 105, borderRadius: 52.5 }} source={{
                     uri: user.image
-                }}/> : null}
+                }} /> : null}
             </View>
-            <View style = {styleProfilePage.viewName}>
-                <Text style = {styleProfilePage.textName}>{user.name}</Text>
+            <View style={styleProfilePage.viewName}>
+                <Text style={styleProfilePage.textName}>{user.name}</Text>
             </View>
-            <View style = {styleProfilePage.viewBtnProfile}>
-                <TouchableOpacity style = {styleProfilePage.BtnProfile} onPress={handlePressProfile}>
-                    <Icon style = {styleProfilePage.icon1} name="person-outline" color="#7D848D" size={25}/>
-                    <Text style = {styleProfilePage.text1}>Profile</Text>
-                    <Icon style = {styleProfilePage.iconChevronforward} name="chevron-forward" color="#7D848D" size={25}/>
+            <View style={styleProfilePage.viewBtnProfile}>
+                <TouchableOpacity style={styleProfilePage.BtnProfile} onPress={handlePressProfile}>
+                    <Icon style={styleProfilePage.icon1} name="person-outline" color="#7D848D" size={25} />
+                    <Text style={styleProfilePage.text1}>Profile</Text>
+                    <Icon style={styleProfilePage.iconChevronforward} name="chevron-forward" color="#7D848D" size={25} />
                 </TouchableOpacity>
             </View>
 
-            {user.role === 'travel_supplier' || user.role === 'admin' ? 
-            <View style = {styleProfilePage.viewBtnBill}>
-                <TouchableOpacity style = {styleProfilePage.BtnProfile} onPress={()=>{navigation.navigate('ProductSupplierPage', {user})}}>
-                    <Icon style = {styleProfilePage.icon1} name="map-outline" color="#7D848D" size={25}/>
-                    <Text style = {styleProfilePage.text1}>Products</Text>
-                    <Icon style = {styleProfilePage.iconChevronforward} name="chevron-forward" color="#7D848D" size={25}/>
-                </TouchableOpacity>
-            </View>
-            : null}
-            <View style = {styleProfilePage.viewBtnBill}>
-                <TouchableOpacity style = {styleProfilePage.BtnProfile} onPress={() => {
-                    navigation.navigate('OrderHistoryPage', {user})
+            {user.role === 'travel_supplier' || user.role === 'admin' ?
+                <View style={styleProfilePage.viewBtnBill}>
+                    <TouchableOpacity style={styleProfilePage.BtnProfile} onPress={() => { navigation.navigate('ProductSupplierPage', { user }) }}>
+                        <Icon style={styleProfilePage.icon1} name="map-outline" color="#7D848D" size={25} />
+                        <Text style={styleProfilePage.text1}>Products</Text>
+                        <Icon style={styleProfilePage.iconChevronforward} name="chevron-forward" color="#7D848D" size={25} />
+                    </TouchableOpacity>
+                </View>
+                : null}
+            <View style={styleProfilePage.viewBtnBill}>
+                <TouchableOpacity style={styleProfilePage.BtnProfile} onPress={() => {
+                    navigation.navigate('OrderHistoryPage', { user })
                 }}>
-                    <Icon style = {styleProfilePage.icon1} name="earth-outline" color="#7D848D" size={25}/>
-                    <Text style = {styleProfilePage.text1}>Oder History</Text>
-                    <Icon style = {styleProfilePage.iconChevronforward} name="chevron-forward" color="#7D848D" size={25}/>
-                </TouchableOpacity>
-            </View>
-            
-            <View style = {styleProfilePage.viewBtnBill}>
-                <TouchableOpacity style = {styleProfilePage.BtnProfile}>
-                    <Icon style = {styleProfilePage.icon1} name="chatbox-outline" color="#7D848D" size={25}/>
-                    <Text style = {styleProfilePage.text1}>Contact Us</Text>
-                    <Icon style = {styleProfilePage.iconChevronforward} name="chevron-forward" color="#7D848D" size={25}/>
-                </TouchableOpacity>
-            </View>
-            <View style = {styleProfilePage.viewBtnVersion}>
-                <TouchableOpacity style = {styleProfilePage.BtnProfile} onPress={()=>{navigation.navigate('WalletPage', {id: user.id_user})}}>
-                    <Icon style = {styleProfilePage.icon1} name="wallet-outline" color="#7D848D" size={25}/>
-                    <Text style = {styleProfilePage.text1}>Wallet</Text>
-                    <Icon style = {styleProfilePage.iconChevronforward} name="chevron-forward" color="#7D848D" size={25}/>
+                    <Icon style={styleProfilePage.icon1} name="earth-outline" color="#7D848D" size={25} />
+                    <Text style={styleProfilePage.text1}>Oder History</Text>
+                    <Icon style={styleProfilePage.iconChevronforward} name="chevron-forward" color="#7D848D" size={25} />
                 </TouchableOpacity>
             </View>
 
-            <View style = {styleProfilePage.viewBtnSetting}>
-                <TouchableOpacity style = {styleProfilePage.BtnProfile}>
-                    <Icon style = {styleProfilePage.icon1} name="settings-outline" color="#7D848D" size={25}/>
-                    <Text style = {styleProfilePage.text1}>Setting</Text>
-                    <Icon style = {styleProfilePage.iconChevronforward} name="chevron-forward" color="#7D848D" size={25}/>
+            <View style={styleProfilePage.viewBtnBill}>
+                <TouchableOpacity style={styleProfilePage.BtnProfile}>
+                    <Icon style={styleProfilePage.icon1} name="chatbox-outline" color="#7D848D" size={25} />
+                    <Text style={styleProfilePage.text1}>Contact Us</Text>
+                    <Icon style={styleProfilePage.iconChevronforward} name="chevron-forward" color="#7D848D" size={25} />
                 </TouchableOpacity>
             </View>
-            <View style = {styleProfilePage.viewBtnLogout}> 
-                <TouchableOpacity style = {styleProfilePage.BtnLogout} onPress={async () => {
-                        try {
+            <View style={styleProfilePage.viewBtnVersion}>
+                <TouchableOpacity style={styleProfilePage.BtnProfile} onPress={() => { navigation.navigate('WalletPage', { id: user.id_user }) }}>
+                    <Icon style={styleProfilePage.icon1} name="wallet-outline" color="#7D848D" size={25} />
+                    <Text style={styleProfilePage.text1}>Wallet</Text>
+                    <Icon style={styleProfilePage.iconChevronforward} name="chevron-forward" color="#7D848D" size={25} />
+                </TouchableOpacity>
+            </View>
+
+            <View style={styleProfilePage.viewBtnSetting}>
+                <TouchableOpacity style={styleProfilePage.BtnProfile} onPress={() => {
+                    console.log(1);
+                    navigation.navigate('LineChart')
+                }}>
+                    <Icon style={styleProfilePage.icon1} name="settings-outline" color="#7D848D" size={25} />
+                    <Text style={styleProfilePage.text1}>Setting</Text>
+                    <Icon style={styleProfilePage.iconChevronforward} name="chevron-forward" color="#7D848D" size={25} />
+                </TouchableOpacity>
+            </View>
+            <View style={styleProfilePage.viewBtnLogout}>
+                <TouchableOpacity style={styleProfilePage.BtnLogout} onPress={async () => {
+                    try {
                         await AsyncStorage.removeItem('userToken');
                         await AsyncStorage.setItem('balance', '0');
                         navigation.navigate('SplishPage');
-                        } catch (error) {
+                    } catch (error) {
                         console.error('Lỗi khi xóa userToken:', error);
-                        }
-                    }}> 
-                    <Text style = {styleProfilePage.textLogout}>Log out</Text>
-                    <Icon style = {styleProfilePage.iconLogout} name="log-out-outline" color="#FFF" size={25}/>
+                    }
+                }}>
+                    <Text style={styleProfilePage.textLogout}>Log out</Text>
+                    <Icon style={styleProfilePage.iconLogout} name="log-out-outline" color="#FFF" size={25} />
                 </TouchableOpacity>
-                
+
             </View>
         </View>
     )
