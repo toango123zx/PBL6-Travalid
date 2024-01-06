@@ -16,6 +16,7 @@ import InfoPage from './DetailPage/InfoPage';
 //Page 
 import DetailsPage from './DetailPage/DetailsPage';
 import ProfilePage from './ProfilePage/ProfilePage';
+import LineChartDemo from './ChartPage/LineChartDemo';
 import SplishPage from './SplishPage'
 import AddDiscountPage from './ProductsSupplierPage/AddDiscountPage';
 import SignInPage from './SignInPage';
@@ -49,6 +50,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import OrderComplete from './OrderComplete';
 const Tab = createBottomTabNavigator();
 const { width, height } = Dimensions.get('window');
+
 function MyTabBar({ state, descriptors, navigation }) {
   return (
     <View style={styleTabBar.View} >
@@ -186,6 +188,8 @@ export default RootComponent = function(){
             <Stack.Screen name="AddSchdule" component={AddSchedule}/>
             <Stack.Screen name="OrderComplete" component={OrderComplete}/>
             <Stack.Screen name="WalletPage" component={WalletPage}/>
+            <Stack.Screen name="LineChart" component={LineChartDemo}/>
+
 
 
           </Stack.Navigator>
