@@ -48,6 +48,7 @@ import store from '../reducers/store';
 import Icon from 'react-native-vector-icons/Ionicons'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import OrderComplete from './OrderComplete';
+import AnalysisPage from './AnalysisPage/AnalysisPage';
 const Tab = createBottomTabNavigator();
 const { width, height } = Dimensions.get('window');
 
@@ -189,6 +190,8 @@ export default RootComponent = function(){
             <Stack.Screen name="OrderComplete" component={OrderComplete}/>
             <Stack.Screen name="WalletPage" component={WalletPage}/>
             <Stack.Screen name="LineChart" component={LineChartDemo}/>
+            <Stack.Screen name="AnalysisPage" component={AnalysisPage}/>
+
 
 
 

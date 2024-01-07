@@ -2,7 +2,7 @@ import React from "react";
 
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
-export default Discount = ({data, deleteEvent}) => {
+export default Discount = ({data, deleteDiscount}) => {
     const startTime = new Date(data.start_time)
     const formattedDateStart = `${startTime.getFullYear()}/${String(startTime.getMonth() + 1).padStart(2, '0')}/${String(startTime.getDate()).padStart(2, '0')} ${String(startTime.getHours()).padStart(2, '0')}:${String(startTime.getMinutes()).padStart(2, '0')}`;
     const endTime = new Date(data.end_time)

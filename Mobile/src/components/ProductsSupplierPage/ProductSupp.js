@@ -5,10 +5,29 @@ const { width, height } = Dimensions.get('window');
 
 import Icon from 'react-native-vector-icons/Ionicons'
 import { useNavigation } from "@react-navigation/native";
+import authApi from "../../API/auth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default ProductSupp = ({data})=> {
     const navigation = useNavigation()
     const [idP, setIdP] = useState(data.id_product)
+    const delele = async (id) =>  {
+        try {
+            
+            const token = "bearer " + await AsyncStorage.getItem('userToken')
+            console.log(token)
+            console.log(id)
+            const res = await authApi.deleteProduct(id,
+            {
+                "token": token
+            }
+            
+            )
+            console.log(res.status)
+        } catch (error) {
+            console.log(error)
+        }
+    }
     return (
         <View style = {style.View}>
             <View style = {{...style.view, marginTop: 5}}>
@@ -27,8 +46,8 @@ export default ProductSupp = ({data})=> {
             <View style = {style.view}>
                 <Text style = {style.textQuantity}>{data.quantity} people</Text>
                 <Text style = {style.textTime}>{data.time} hours</Text>
-                <TouchableOpacity style = {style.btnEdit}>
-                    <Text style = {style.textEdit}>Edit </Text>
+                <TouchableOpacity style = {style.btnEdit} onPress={()=> {delele(data.id_product)}}>
+                    <Text style = {style.textEdit}>Delete </Text>
                     <Icon name = 'arrow-forward' size = {18} color = '#2DA5F3'/>
                 </TouchableOpacity>
             </View>

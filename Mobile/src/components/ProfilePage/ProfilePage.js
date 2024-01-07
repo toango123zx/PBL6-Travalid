@@ -113,7 +113,7 @@ export default ProfilePage = () => {
             </View>
 
             <View style={styleProfilePage.viewBtnBill}>
-                <TouchableOpacity style={styleProfilePage.BtnProfile}>
+                <TouchableOpacity style={styleProfilePage.BtnProfile} onPress={()=>{navigation.navigate('AnalysisPage')}}>
                     <Icon style={styleProfilePage.icon1} name="chatbox-outline" color="#7D848D" size={25} />
                     <Text style={styleProfilePage.text1}>Contact Us</Text>
                     <Icon style={styleProfilePage.iconChevronforward} name="chevron-forward" color="#7D848D" size={25} />
@@ -132,8 +132,8 @@ export default ProfilePage = () => {
                     console.log(1);
                     navigation.navigate('LineChart')
                 }}>
-                    <Icon style={styleProfilePage.icon1} name="settings-outline" color="#7D848D" size={25} />
-                    <Text style={styleProfilePage.text1}>Setting</Text>
+                    <Icon style={styleProfilePage.icon1} name="analytics-outline" color="#7D848D" size={25} />
+                    <Text style={styleProfilePage.text1}>Analysis</Text>
                     <Icon style={styleProfilePage.iconChevronforward} name="chevron-forward" color="#7D848D" size={25} />
                 </TouchableOpacity>
             </View>

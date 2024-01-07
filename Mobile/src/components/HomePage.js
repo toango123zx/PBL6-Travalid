@@ -23,7 +23,7 @@ export default HomePage = () => {
             try {
                 const res = await authApi.getProduct(1)
                 setProductData(res.data.data)
-                
+                console.log(res.data.data)
             } catch (error) {
                 console.log(error)
             }

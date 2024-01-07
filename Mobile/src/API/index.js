@@ -1,7 +1,7 @@
 import axios from 'axios';
 const URL = 'https://8d4871dae7b3b0735f6506b516023f89.serveo.net'
 const axiosClient = axios.create({
-    baseURL: 'http://192.168.32.92:3000/',
+    baseURL: 'http://172.20.10.8:3000/',
     //baseURL: '192.168.35.20:8000',
     headers: {
         'Cache-Control': 'no-cache',

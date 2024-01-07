@@ -10,7 +10,8 @@ import {
     TextInput,
     ScrollView,
     Modal,
-    Alert
+    Alert,
+    Image
     
  } from 'react-native'
 
@@ -23,9 +24,11 @@ import { current } from "@reduxjs/toolkit";
 import Discount from "./Discount";
 import authApi from "../../API/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import { PermissionsAndroid } from "react-native";
+import {launchImageLibrary} from 'react-native-image-picker'
 const { width, height } = Dimensions.get('window');
 const statusBarHeight = StatusBar.currentHeight || 0;
+import ImageProduct from "./Image";
 export default AddProductPage = ({route}) => {
     const {id_user} = route.params
     // const [name, setName] = useState()
@@ -84,8 +87,8 @@ export default AddProductPage = ({route}) => {
     const [disValue, setDisValue] = useState();
     const [disQuantity, setDisQuantity] = useState();
     const [disPoint, setDisPoint] = useState();
-    const [listDiscount, setListDiscount] = useState([])
-    const [listSchedule, setListSchedule] = useState([])
+    // const [listDiscount, setListDiscount] = useState([])
+    // const [listSchedule, setListSchedule] = useState([])
 
     // const [name, setName] = useState('Thach Ban')
     // const [locationOnSys, setLocationOnSys] = useState(2);
@@ -113,8 +116,8 @@ export default AddProductPage = ({route}) => {
     // const [disValue, setDisValue] = useState();
     // const [disQuantity, setDisQuantity] = useState();
     // const [disPoint, setDisPoint] = useState();
-    // const [listDiscount, setListDiscount] = useState([{"key":"1","name":"ATrung soi","code":"Tring","description":"Êrffcvbnjj","start_time":"2024-01-06 08:00","end_time":"2024-01-31 04:00","value":25,"quantity":25,"point":0},{"key":"2","name":"Anh tam robot","code":"Tam","description":"Jjđhsjsjsjssssf","start_time":"2024-01-06 04:00","end_time":"2024-01-26 05:00","value":20,"quantity":10,"point":0}])
-    // const [listSchedule, setListSchedule] = useState([{"key":"1","price":20000,"start_time":"2024-01-06 10:00","end_time":"2024-01-31 10:00"},{"key":"2","price":300000,"start_time":"2024-01-10 04:00","end_time":"2024-01-27 10:00"}])
+    const [listDiscount, setListDiscount] = useState([{"key":"1","name":"ATrung soi","code":"Tring","description":"rffcvbnjj","start_time":"2024-01-06 08:00","end_time":"2024-01-31 04:00","value":25,"quantity":25,"point":0},{"key":"2","name":"Anh tam robot","code":"Tam","description":"Jjđhsjsjsjssssf","start_time":"2024-01-06 04:00","end_time":"2024-01-26 05:00","value":20,"quantity":10,"point":0}])
+    const [listSchedule, setListSchedule] = useState([{"key":"1","price":20000,"start_time":"2024-01-06 10:00","end_time":"2024-01-31 10:00"},{"key":"2","price":300000,"start_time":"2024-01-10 04:00","end_time":"2024-01-27 10:00"}])
     
     const [showModal, setShowModal] = useState (false);
     const [showModalEnd, setShowModalEnd] = useState (false)
@@ -122,8 +125,38 @@ export default AddProductPage = ({route}) => {
     const navigation = useNavigation()
     const [location, setLocation] = useState([])
     // Discount data
-
-    
+    const [image, setImg] = useState(null)
+    const [imgArr, setImgArr] = useState([])
+    const requestCameraPermission = async () => {
+        try {
+          const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            console.log("Camera permission given");
+            const result = await launchImageLibrary({mediaType:'photo'})
+            setImg(result.assets[0]);
+            console.log(result.assets[0])
+          } else {
+            console.log("Camera permission denied");
+          }
+        } catch (err) {
+          console.warn(err);
+        }
+    };  
+    const requestCameraPermission2 = async () => {
+        try {
+          const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            console.log("Camera permission given");
+            const result = await launchImageLibrary({mediaType:'photo'})
+            setImgArr([...imgArr, result.assets[0]]);
+            console.log(result.assets[0])
+          } else {
+            console.log("Camera permission denied");
+          }
+        } catch (err) {
+          console.warn(err);
+        }
+    };  
     const date = new Date()
     const data = [
         { label: 'Latest', value: 'trung' },
@@ -162,12 +195,18 @@ export default AddProductPage = ({route}) => {
                 schedule_product: dataSche,
                 discount: dataDis,
             }, {
-                "token": token
+                "token": token,
+                
             }
             )
             console.log(res.status)
+            updateImage(res.data.data.product.id_product)
+            console.log(res.data.data.product.id_product)
+            console.log("Ok luon")
+            Alert.alert('Created')
         } catch (error) {
             console.log(error)
+            console.log("loi tao product")
         }
     }
     useEffect(()=>{
@@ -185,6 +224,9 @@ export default AddProductPage = ({route}) => {
         console.log("Shedule: " +JSON.stringify(listSchedule))
         console.log("Discount: " + JSON.stringify(listDiscount))
     },[listSchedule, listDiscount])
+    useEffect(()=> {
+        console.log(JSON.stringify(imgArr, null, 2))
+    },[imgArr])
     const deleteEvent = (keyToDelete) => {
         // Sử dụng filter để tạo một danh sách mới không bao gồm đối tượng cần xóa
         const updatedList = listSchedule.filter(event => event.key !== keyToDelete);
@@ -297,6 +339,36 @@ export default AddProductPage = ({route}) => {
                 } else {Alert.alert("Select a start time after the current time and before the end time")}
             } else Alert.alert("Completely fill in time data"); 
     }
+    const updateImage = async (id) => {
+        try {
+            const imageData = new FormData
+            imageData.append('image',{
+                uri: image.uri,
+                name: image.fileName,
+                type: image.type
+            });
+            imgArr.forEach((image, index)=>{
+                imageData.append('images_description',{
+                    uri: image.uri,
+                    name: image.fileName,
+                    type: image.type
+                })
+            })
+            
+            const token = "bearer " + await AsyncStorage.getItem('userToken')
+            //console.log(token)
+            const res = await authApi.upImage(id, imageData, {
+                "token": token,
+                'Content-Type': 'multipart/form-data',
+            })
+            console.log(res.status)
+
+        } catch (error) {
+            console.log(error)
+            console.log("loi tao anh")
+        }
+    
+    }
     return (
         <View style = {style.View}>
             <StatusBar translucent backgroundColor="transparent" />
@@ -309,9 +381,17 @@ export default AddProductPage = ({route}) => {
                     <Text style = {style.textAdd}>Add</Text>
                 </TouchableOpacity>
             </View>
-            <ScrollView contentContainerStyle = {style.scrollView}>
 
-            
+
+            <ScrollView contentContainerStyle = {style.scrollView}>
+            <Text style = {{...style.textAddProduct, marginBottom: 15}}>Image</Text>
+            <TouchableOpacity style = {{width: 151, height: 131, backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: 10, borderWidth: 0.5}} onPress={()=>{requestCameraPermission()}}>
+                {image ? 
+                 <Image style = {{width: 150, height: 130, borderRadius: 10}} source={{
+                    uri: image.uri
+                    }}/> : null 
+                }
+            </TouchableOpacity>
             <View style = {style.viewName}>
                 <Text style = {style.textProductName}>Product Name</Text>
                 <View style = {style.viewInputName}>
@@ -424,9 +504,22 @@ export default AddProductPage = ({route}) => {
             </View>
             <View style = {style.viewImage}>
                 <Text style = {style.textProductName}>From Our Gallery</Text>
-                <TouchableOpacity style = {style.btnAddImage}>
-                    <Icon name = 'add-circle' size = {25} color = '#7D848D'/>
-                </TouchableOpacity>
+                <View style = {{width: width - (width-380)/2, borderWidth: 0, height: 70, flexDirection: 'row', marginTop: 10}}>
+                    <TouchableOpacity style = {{...style.btnAddImage, marginTop: 0}} onPress={()=>{requestCameraPermission2()}}>
+                        <Icon name = 'add-circle' size = {25} color = '#7D848D'/>
+                    </TouchableOpacity>
+                    <ScrollView contentContainerStyle ={{flexDirection: 'row'}}>
+
+                        {imgArr.length > 0 ? (
+                            imgArr.map((img, index) => (
+                                <ImageProduct key={index} uri={img.uri} />
+                            ))
+                            ) : null}
+                                                    
+
+                    </ScrollView>
+                </View>
+                
             </View>
             <View style = {showAddSchedule === true ? {...style.viewSchedules, height: 526}: style.viewSchedules}>
                 <View style = {style.viewAddSchedule}>

@@ -6,9 +6,13 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {styleInfoPage} from "../../themes/styleDetailsPage";
 import Schedule from "./Schedule";
 import { useFocusEffect } from "@react-navigation/core";
+import ImageProduct from "../ProductsSupplierPage/Image";
 export default InfoPage = ({product,scheduleData, navigate, rate, count}) => {
     const currentDate = new Date()
-    
+    const [imgArr, setImage] = useState([])
+    useEffect(()=>{
+        setImage(product.image_description);
+    },[])
     const image = product.image
     //console.log("product info page: " + JSON.stringify(scheduleData, null,2))
     return(
@@ -24,10 +28,12 @@ export default InfoPage = ({product,scheduleData, navigate, rate, count}) => {
                 <Text style = {styleInfoPage.textRate}>{rate}</Text>
                 <Text style = {styleInfoPage.textSoLuong}>({product.count_complete})</Text>
             </View>
-            <ScrollView style = {styleInfoPage.viewImage}>
-                {image ? (<Image style = {{width: 100, height: 100, borderRadius: 10}} source={{
-                    uri: image
-                    }}/>): null}
+            <ScrollView contentContainerStyle = {{flexDirection: 'row', marginTop: 10}}>
+                    {product.image_description ? (
+                            product.image_description.map((img, index) => (
+                                <ImageProduct key={index} uri={img.image_url} />
+                            ))
+                            ) : null}
             </ScrollView>
             <View style = {styleInfoPage.viewMota}>
                 <Text style = {styleInfoPage.textMota}>{product.description}</Text>

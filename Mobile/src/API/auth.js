@@ -28,5 +28,7 @@ const authApi = {
     deleteSchedule: (id_discount, headers) => axiosClient.delete('schedule_product/'+id_discount, {headers}),
     analysisCompleteInMonthsBySupplier: (start, end, headers) => axiosClient.get('analysis/supplier/product_by_time?start='+start+'&end='+end, {headers}),
     analysisRevenueInMonthsBySupplier: (start, end, headers) => axiosClient.get('analysis/supplier/revenue?start='+start+'&end='+end, {headers}),
+    upImage: (id, data, headers) => axiosClient.post('product/image/'+id, data, {headers}),
+    deleteProduct: (id, headers) => axiosClient.delete('product/'+id, {headers})
 }
 export default authApi
